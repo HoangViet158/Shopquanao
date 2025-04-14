@@ -21,7 +21,7 @@ USE `shopaoquan`;
 
 -- Dumping structure for table shopaoquan.anh
 CREATE TABLE IF NOT EXISTS `anh` (
-  `MaAnh` int NOT NULL,
+  `MaAnh` int NOT NULL AUTO_INCREMENT,
   `MaSP` int NOT NULL,
   `Url` varchar(255) DEFAULT NULL,
   `TrangThai` tinyint DEFAULT NULL,
@@ -47,7 +47,7 @@ INSERT INTO `anh` (`MaAnh`, `MaSP`, `Url`, `TrangThai`) VALUES
 -- Dumping structure for table shopaoquan.chitiet_quyen_cn
 CREATE TABLE IF NOT EXISTS `chitiet_quyen_cn` (
   `MaQuyen` int NOT NULL,
-  `MaCTQ` int NOT NULL,
+  `MaCTQ` int NOT NULL ,
   `HanhDong` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`MaQuyen`,`MaCTQ`),
   KEY `fk_pq_cn` (`MaCTQ`),
@@ -70,7 +70,7 @@ INSERT INTO `chitiet_quyen_cn` (`MaQuyen`, `MaCTQ`, `HanhDong`) VALUES
 
 -- Dumping structure for table shopaoquan.chucnang
 CREATE TABLE IF NOT EXISTS `chucnang` (
-  `MaCTQ` int NOT NULL,
+  `MaCTQ` int NOT NULL AUTO_INCREMENT,
   `Chuc nang` varchar(255) NOT NULL,
   PRIMARY KEY (`MaCTQ`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -86,7 +86,7 @@ INSERT INTO `chucnang` (`MaCTQ`, `Chuc nang`) VALUES
 
 -- Dumping structure for table shopaoquan.cthoadon
 CREATE TABLE IF NOT EXISTS `cthoadon` (
-  `MaHD` int NOT NULL,
+  `MaHD` int NOT NULL ,
   `MaSP` int NOT NULL,
   `SoLuongBan` int DEFAULT NULL,
   `DonGia` double DEFAULT NULL,
@@ -155,7 +155,7 @@ INSERT INTO `danhmuc` (`MaDM`, `TenDM`, `TrangThai`) VALUES
 
 -- Dumping structure for table shopaoquan.hoadon
 CREATE TABLE IF NOT EXISTS `hoadon` (
-  `MaHD` int NOT NULL,
+  `MaHD` int NOT NULL AUTO_INCREMENT,
   `MaTK` int DEFAULT NULL,
   `ThoiGian` date DEFAULT NULL,
   `ThanhToan` double DEFAULT NULL,
@@ -175,7 +175,7 @@ INSERT INTO `hoadon` (`MaHD`, `MaTK`, `ThoiGian`, `ThanhToan`, `MoTa`, `TrangTha
 
 -- Dumping structure for table shopaoquan.khuyenmai
 CREATE TABLE IF NOT EXISTS `khuyenmai` (
-  `MaKM` int NOT NULL,
+  `MaKM` int NOT NULL AUTO_INCREMENT,
   `TenKM` varchar(200) DEFAULT NULL,
   `TrangThai` int DEFAULT NULL,
   `NgayBatDau` datetime DEFAULT NULL,
@@ -193,7 +193,7 @@ INSERT INTO `khuyenmai` (`MaKM`, `TenKM`, `TrangThai`, `NgayBatDau`, `NgayKetThu
 
 -- Dumping structure for table shopaoquan.loai
 CREATE TABLE IF NOT EXISTS `loai` (
-  `MaLoai` int NOT NULL,
+  `MaLoai` int NOT NULL AUTO_INCREMENT,
   `TenLoai` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`MaLoai`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -207,7 +207,7 @@ INSERT INTO `loai` (`MaLoai`, `TenLoai`) VALUES
 
 -- Dumping structure for table shopaoquan.nguoidung
 CREATE TABLE IF NOT EXISTS `nguoidung` (
-  `MaNguoiDung` int NOT NULL,
+  `MaNguoiDung` int NOT NULL AUTO_INCREMENT,
   `DiaChi` varchar(255) DEFAULT NULL,
   `TrangThai` int NOT NULL,
   `Email` varchar(255) DEFAULT NULL,
@@ -228,7 +228,7 @@ INSERT INTO `nguoidung` (`MaNguoiDung`, `DiaChi`, `TrangThai`, `Email`, `MaLoai`
 
 -- Dumping structure for table shopaoquan.nhacungcap
 CREATE TABLE IF NOT EXISTS `nhacungcap` (
-  `MaNCC` int NOT NULL,
+  `MaNCC` int NOT NULL AUTO_INCREMENT,
   `TenNCC` varchar(255) NOT NULL,
   `TrangThai` int DEFAULT NULL,
   PRIMARY KEY (`MaNCC`)
@@ -243,7 +243,7 @@ INSERT INTO `nhacungcap` (`MaNCC`, `TenNCC`, `TrangThai`) VALUES
 
 -- Dumping structure for table shopaoquan.phieunhap
 CREATE TABLE IF NOT EXISTS `phieunhap` (
-  `MaPN` int NOT NULL,
+  `MaPN` int NOT NULL AUTO_INCREMENT,
   `MaTK` int NOT NULL,
   `MaNCC` int NOT NULL,
   `ThanhToan` double NOT NULL,
@@ -265,7 +265,7 @@ INSERT INTO `phieunhap` (`MaPN`, `MaTK`, `MaNCC`, `ThanhToan`, `ThoiGian`, `Tran
 
 -- Dumping structure for table shopaoquan.quyen
 CREATE TABLE IF NOT EXISTS `quyen` (
-  `MaQuyen` int NOT NULL,
+  `MaQuyen` int NOT NULL AUTO_INCREMENT,
   `TenQuyen` varchar(255) NOT NULL,
   `TrangThai` int NOT NULL,
   PRIMARY KEY (`MaQuyen`)
@@ -280,7 +280,7 @@ INSERT INTO `quyen` (`MaQuyen`, `TenQuyen`, `TrangThai`) VALUES
 
 -- Dumping structure for table shopaoquan.sanpham
 CREATE TABLE IF NOT EXISTS `sanpham` (
-  `MaSP` int NOT NULL,
+  `MaSP` int NOT NULL AUTO_INCREMENT,
   `MaKM` int DEFAULT NULL,
   `MaDM` int DEFAULT NULL,
   `TenSP` varchar(200) DEFAULT NULL,
@@ -312,7 +312,7 @@ INSERT INTO `sanpham` (`MaSP`, `MaKM`, `MaDM`, `TenSP`, `MoTa`, `GiaBan`, `Trang
 
 -- Dumping structure for table shopaoquan.size
 CREATE TABLE IF NOT EXISTS `size` (
-  `MaSize` int NOT NULL,
+  `MaSize` int NOT NULL AUTO_INCREMENT,
   `TenSize` varchar(50) NOT NULL,
   PRIMARY KEY (`MaSize`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -365,7 +365,7 @@ INSERT INTO `size_sanpham` (`MaSP`, `MaSize`, `SoLuong`) VALUES
 
 -- Dumping structure for table shopaoquan.taikhoan
 CREATE TABLE IF NOT EXISTS `taikhoan` (
-  `MaTK` int NOT NULL,
+  `MaTK` int NOT NULL AUTO_INCREMENT,
   `MaQuyen` int NOT NULL,
   `TenTK` varchar(200) NOT NULL,
   `MatKhau` varchar(255) NOT NULL,
@@ -383,7 +383,7 @@ INSERT INTO `taikhoan` (`MaTK`, `MaQuyen`, `TenTK`, `MatKhau`, `NgayTaoTK`, `Tra
 	(2, 2, 'nhanvien1', 'e10adc3949ba59abbe56e057f20f883e', '2023-01-02', 1),
 	(3, 3, 'khachhang1', 'e10adc3949ba59abbe56e057f20f883e', '2023-01-03', 1),
 	(4, 3, 'khachhang2', 'e10adc3949ba59abbe56e057f20f883e', '2023-01-04', 1);
-
+ALTER TABLE sanpham MODIFY COLUMN MaKM INT NULL;
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

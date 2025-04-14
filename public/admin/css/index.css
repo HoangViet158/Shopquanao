@@ -36,7 +36,9 @@ body {
     background: #89CFF0;
     z-index: 10;
 }
-
+.toolbar {
+    position: static !important;
+  }
 .admin-avatar {
     width: 40px;
     height: 40px;
@@ -106,7 +108,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    /* padding: 0 20px; */
     border-bottom: 1px solid #e0e0e0;
     position: sticky;
     top: 0;

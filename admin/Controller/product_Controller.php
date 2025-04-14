@@ -11,6 +11,45 @@ class product_Controller{
     public function getAllProducts(){
        return $this->product_model->getAllProducts();
     }
+    public function AddProducts($MaKM,$MaDM,$tenSP,$Mota,$GioiTinh){
+        return $this->product_model->AddProducts($MaKM,$MaDM,$tenSP,$Mota,$GioiTinh);
+    }
+    public function addProductImage($maSP,$Url){
+        return $this->product_model->addProductImage($maSP,$Url);
+    }
+    public function getProductById($masp){
+        return $this->product_model->getProductById($masp);
+    }
+    public function updateProduct($MaSP, $productData, $deletedImages = [], $newImages = []) {
+        $updateResult = $this->product_model->updateProductInfo(
+            $MaSP,
+            $productData['TenSP'],
+            $productData['MaDM'],
+            $productData['MaKM'],
+            $productData['GioiTinh'],
+            $productData['MoTa']
+        );
+    
+        if (!$updateResult) {
+            return ['success' => false, 'message' => 'Cập nhật thông tin sản phẩm thất bại'];
+        }
+        if (!empty($deletedImages)) {
+            foreach ($deletedImages as $imageId) {
+                $this->product_model->deleteProductImage($imageId);
+            }
+        }
+        if (!empty($newImages)) {
+            foreach ($newImages as $imagePath) {
+                if (!$MaSP) {
+                    return ['success' => false, 'message' => 'Mã sản phẩm không hợp lệ khi thêm ảnh mới'];
+                }
+                $this->product_model->addProductImage($MaSP, $imagePath);
+            }
+        }
+    
+        return ['success' => true, 'message' => 'Cập nhật sản phẩm thành công'];
+    }
+    
 }
 
 ?>
