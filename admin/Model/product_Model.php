@@ -2,6 +2,7 @@
 require_once("../../config/connect.php");
 class product_Model
 {
+    
     private $database = null;
     public function __construct()
     {
@@ -54,4 +55,133 @@ class product_Model
 
         return $data;
     }
+    // public function getLastIdSP(){
+    //     $sql="Select MaSP FROM sanpham ORDER BY sanpham.MaSP desc limit 1";
+    //     $result=$this->database->execute($sql);
+    //     return $result;
+    //    }
+    // public function getLastIdAnh(){
+    //     $sql="Select MaAnh from anh order by anh.MaAnh desc limit 1";
+    //     $result=$this->database->execute($sql);
+    //     return $result;
+    // }
+    public function AddProducts($MaKM, $MaDM, $tenSP, $Mota, $GioiTinh) {
+        $giaBan = 0;
+        $soLuongTong = 0;
+        $trangThai = 1;
+        $ngayTao = date('Y-m-d');
+    
+        $MaKM = (empty($MaKM) || $MaKM === 'null') ? NULL : (int)$MaKM;
+    
+        if ($MaKM === NULL) {
+            $sql = "INSERT INTO sanpham 
+                    (MaDM, TenSP, MoTa, GiaBan, TrangThai, NgayTao, SoLuongTong, GioiTinh) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->database->prepare($sql);
+            $stmt->bind_param("issiisii", 
+                $MaDM, $tenSP, $Mota, $giaBan, $trangThai, $ngayTao, $soLuongTong, $GioiTinh);
+        } else {
+            $sql = "INSERT INTO sanpham 
+                    (MaKM, MaDM, TenSP, MoTa, GiaBan, TrangThai, NgayTao, SoLuongTong, GioiTinh) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->database->prepare($sql);
+            $stmt->bind_param("iissiisii", 
+                $MaKM, $MaDM, $tenSP, $Mota, $giaBan, $trangThai, $ngayTao, $soLuongTong, $GioiTinh);
+        }
+    
+        $result = $stmt->execute();
+        $lastInsertId = $this->database->getInsertId();
+        $stmt->close();
+    
+        return $result ? $lastInsertId : false;
+    }
+    
+    public function addProductImage($MaSP, $Url) {
+        $trangThai = 1;
+        $sql = "INSERT INTO anh (MaSP, Url, TrangThai) VALUES (?, ?, ?)";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("isi", $MaSP, $Url, $trangThai);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+    public function getProductById($MaSP) {
+        $sql = "SELECT sp.*, dm.TenDM, km.TenKM 
+                FROM sanpham sp
+                LEFT JOIN danhmuc dm ON sp.MaDM = dm.MaDM
+                LEFT JOIN khuyenmai km ON sp.MaKM = km.MaKM
+                WHERE sp.MaSP = ?";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $MaSP);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $product = $result->fetch_assoc();
+            
+            // Lấy danh sách ảnh
+            $product['Anh'] = $this->getProductImages($MaSP);
+            
+            return $product;
+        }
+        
+        return null;
+    }
+    
+    public function getProductImages($MaSP) {
+        $sql = "SELECT * FROM anh WHERE MaSP = ? AND TrangThai = 1";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $MaSP);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $images = array();
+        while ($row = $result->fetch_assoc()) {
+            $images[] = $row;
+        }
+        
+        return $images;
+    }
+    
+    public function updateProductInfo($MaSP, $TenSP, $MaDM, $MaKM, $GioiTinh, $MoTa) {
+        $sql = "UPDATE sanpham SET 
+                TenSP = ?, 
+                MaDM = ?, 
+                MaKM = ?, 
+                GioiTinh = ?, 
+                MoTa = ?
+                WHERE MaSP = ?";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("sisisi", $TenSP, $MaDM, $MaKM, $GioiTinh, $MoTa, $MaSP);
+        $result = $stmt->execute();
+        $stmt->close();
+        
+        return $result;
+    }
+    
+    public function deleteProductImage($imageId) {
+        $sqlSelect = "SELECT Url FROM anh WHERE MaAnh = ?";
+        $stmtSelect = $this->database->prepare($sqlSelect);
+        $stmtSelect->bind_param("i", $imageId);
+        $stmtSelect->execute();
+        $result = $stmtSelect->get_result();
+        $image = $result->fetch_assoc();
+        $stmtSelect->close();
+        
+        if ($image && file_exists("../../" . $image['Url'])) {
+            unlink("../../" . $image['Url']);
+        }
+        
+        $sqlDelete = "DELETE FROM anh WHERE MaAnh = ?";
+        $stmtDelete = $this->database->prepare($sqlDelete);
+        $stmtDelete->bind_param("i", $imageId);
+        $result = $stmtDelete->execute();
+        $stmtDelete->close();
+        
+        return $result;
+    }
+    
+   
 }

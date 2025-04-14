@@ -32,7 +32,9 @@ class Database{
         $this->result = $this->conn->query($sql);
         return $this->result;
     }
-
+    public function getInsertId() {
+        return $this->conn->insert_id; // hàm để lấy mã cuối cùng ( cái mã vừa thêm)
+    } 
      // Phương thức prepare
      public function prepare($sql){
         // Kiểm tra xem kết nối có tồn tại không
@@ -46,7 +48,7 @@ class Database{
         if ($stmt === false) {
             die('Lỗi chuẩn bị câu lệnh SQL: ' . $this->conn->error);
         }
-
+        
         return $stmt;
     }
 

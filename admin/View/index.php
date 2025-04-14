@@ -67,19 +67,7 @@
         <!-- Phần nội dung chính -->
         <div class="content-container">
             <!-- Thanh công cụ -->
-            <div class="toolbar">
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Tìm kiếm...">
-                    <button class="search-button">
-                        <i class="fas fa-search"></i>
-                        <span>Tìm kiếm</span>
-                    </button>
-                </div>
-                <button class="add-button">
-                    <i class="fas fa-plus"></i>
-                    <span>Thêm mới</span>
-                </button>
-            </div>
+            
             <div class="Mange_client">
                 <div class="admin_home">
                     <h4>Chào Mừng Đến Với Trang Quản Trị</h4>
