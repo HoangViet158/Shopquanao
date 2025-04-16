@@ -1,4 +1,5 @@
 let selectedImages = []
+let selectedNewImages=[]
 function handleProduct() {
   const Mange_client = document.getElementsByClassName("Mange_client")[0]
   const ProductOut = `
@@ -6,7 +7,7 @@ function handleProduct() {
     <div class="toolbar mb-3">
       <div class="input-group" style="width:300px;">
         <input type="text" class="form-control" placeholder="Tìm kiếm......">
-        <button class="btn "style="background-color: #89CFF0; border-color: #89CFF0; color: black;" type="button">
+        <button class="btn "style="background-color: #89CFF0; border-color: #89CFF0; color: black;" type="button" onClick="searchProduct()">
           <i class="fas fa-search"></i>
         </button>
       </div>
@@ -91,7 +92,7 @@ function handleProduct() {
             <div class="mb-3">
               <label class="form-label">Ảnh sản phẩm</label>
               <div id="editImagePreview" class="d-flex flex-wrap gap-2 mb-2"></div>
-              <input class="form-control" type="file" id="editProductImage" multiple accept="image/*">
+              <input class="form-control" type="file" id="editProductImage" name="newImages[]" multiple accept="image/*">
               <small class="text-muted">Chọn ảnh mới để thay thế (nếu cần)</small>
             </div>
           </form>
@@ -171,6 +172,34 @@ function handleProduct() {
   loadProductData()
   loadCategoriesAndPromotions()
 }
+function searchProduct() {
+  const searchValue = document.querySelector(".input-group input").value.trim()
+  if (searchValue === "") {
+    loadProductData()
+    return
+  }
+  $.ajax({
+    url: "../../admin/api/index.php?type=searchProducts",
+    type: "GET",
+    data: { search: searchValue },
+    dataType: "json",
+    success: (data) => {
+      const tableBody = $("#productTableBody")
+      tableBody.empty()
+      if (data.length === 0) {
+        tableBody.append('<tr><td colspan="8" class="text-center py-4">Không tìm thấy sản phẩm nào!</td></tr>')
+        return
+      }
+      else{
+        renderProductTable(data);
+      }
+    },
+    error: (xhr, status, error) => {
+      console.error("Lỗi khi tìm kiếm:", error)
+      alert("Không thể tìm kiếm sản phẩm!")
+    },
+  })
+}
 function loadProductData() {
   $.ajax({
     url: "../../admin/api/index.php?type=getAllProducts",
@@ -209,12 +238,11 @@ function loadCategoriesAndPromotions() {
     },
   })
   $("#productImage").change(function () {
-    const preview = $("#imagePreview")
-    const newFiles = Array.from(this.files)
-
+    const preview = $("#imagePreview");
+    const newFiles = Array.from(this.files);
     // Cộng dồn ảnh mới vào danh sách cũ
-    selectedImages = selectedImages.concat(newFiles)
-    preview.empty()
+    selectedImages = selectedImages.concat(newFiles);
+    preview.empty();
 
     selectedImages.forEach((file, index) => {
       const reader = new FileReader()
@@ -228,28 +256,29 @@ function loadCategoriesAndPromotions() {
           </div>
         `)
       }
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(file);
     })
   })
-  $("#editProductImage").change(function () {
-    const preview = $("#editImagePreview")
-    const files = Array.from(this.files)
-
-    files.forEach((file, index) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        preview.append(`
-          <div class="position-relative" style="width:100px; height:100px;">
-            <img src="${e.target.result}" class="img-thumbnail" 
-                 style="width:100%;height:100%; object-fit: cover;">
-            <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
-                    onclick="removeNewImage(this)"></button>
-          </div>
-        `)
-      }
-      reader.readAsDataURL(file)
-    })
-  })
+  $('#editProductImage').change(function() {
+      const newFiles = Array.from(this.files);
+      selectedNewImages = selectedNewImages.concat(newFiles); // Cộng dồn file mới vào mảng
+      const preview = $('#editImagePreview');
+      
+      newFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.append(`
+            <div class="position-relative" style="width:100px; height:100px;">
+              <img src="${e.target.result}" class="img-thumbnail" 
+                   style="width:100%;height:100%; object-fit: cover;">
+              <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
+                      onclick="removeImagePreview(${selectedNewImages.length - newFiles.length + index})"></button>
+            </div>
+          `);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
 }
 function removeImagePreview(index) {
   selectedImages.splice(index, 1)
@@ -377,6 +406,30 @@ function renderProductTable(products) {
     tableBody.append(row)
   })
 }
+function deleteProduct(productId) {
+  if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+    const url = `../../admin/api/index.php?type=deleteProduct&MaSP=${productId}`;
+    
+    $.ajax({
+      url: url,
+      type: "GET", // vì dữ liệu được gửi qua URL
+      dataType: "json",
+      success: (response) => {
+        if (response.success) {
+          alert("Xóa sản phẩm thành công!");
+          loadProductData();
+        } else {
+          alert("Lỗi: " + response.message);
+        }
+      },
+      error: (xhr, status, error) => {
+        alert("Lỗi khi xóa sản phẩm: " + error);
+        console.log(xhr.responseText);
+      },
+    });
+  }
+}
+
 function showEditForm(productId) {
   // dùng when vs then để load đồng thời danh sách danh mục, khuyến mãi và thông tin sản phẩm
   $.when(
@@ -430,8 +483,6 @@ function showEditForm(productId) {
     </div>
   `)
       })
-
-      // Hiển thị modal
       $("#editProductModal").modal("show")
     })
     .fail((xhr, status, error) => {
@@ -440,23 +491,26 @@ function showEditForm(productId) {
 }
 
 function updateProduct() {
-  const productId = $("#editMaSP").val()
+  const productId = $("#editMaSP").val();
   if (!productId) {
-    alert("Không tìm thấy ID sản phẩm!")
-    return
+    alert("Không tìm thấy ID sản phẩm!");
+    return;
   }
 
-  const formData = new FormData()
-  formData.append("MaSP", productId)
-  formData.append("TenSP", $("#editProductName").val())
-  formData.append("MaDM", $("#editProductCategory").val())
-  formData.append("MaKM", $("#editProductPromotion").val() || "null")
-  formData.append("GioiTinh", $("#editProductGender").val())
-  formData.append("MoTa", $("#editProductDescription").val())
-  const files = $('#editProductImage')[0].files;
-  for (let i = 0; i < files.length; i++) {
-    formData.append('newImages[]', files[i]); 
-  }
+  const formData = new FormData();
+  formData.append("MaSP", productId);
+  formData.append("TenSP", $("#editProductName").val());
+  formData.append("MaDM", $("#editProductCategory").val());
+  formData.append("MaKM", $("#editProductPromotion").val() || "null");
+  formData.append("GioiTinh", $("#editProductGender").val());
+  formData.append("MoTa", $("#editProductDescription").val());
+
+  // Thêm ảnh mới từ danh sách đã chọn
+  selectedNewImages.forEach((file) => {
+    formData.append('newImages[]', file);
+  });
+
+  // Thêm ảnh cần xóa
   const deletedImages = $('#editProductForm').data('deletedImages') || [];
   deletedImages.forEach(id => {
     formData.append('deletedImages[]', id);
@@ -471,17 +525,19 @@ function updateProduct() {
     dataType: "json",
     success: (response) => {
       if (response.success) {
-        alert("Cập nhật sản phẩm thành công!")
-        $("#editProductModal").modal("hide")
-        loadProductData()
+        alert("Cập nhật sản phẩm thành công!");
+        $("#editProductModal").modal("hide");
+        loadProductData();
+        // Reset sau khi thành công
+        selectedNewImages = [];
       } else {
-        alert("Lỗi: " + (response.message || "Không thể cập nhật sản phẩm"))
+        alert("Lỗi: " + (response.message || "Không thể cập nhật sản phẩm"));
       }
     },
     error: (xhr, status, error) => {
-      alert("Lỗi khi cập nhật: " + error)
+      alert("Lỗi khi cập nhật: " + error);
     },
-  })
+  });
 }
 function removeEditImage(imageId) {
   if (confirm("Bạn có chắc muốn xóa ảnh này?")) {

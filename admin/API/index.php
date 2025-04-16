@@ -88,17 +88,48 @@ switch ($type) {
                     if ($_FILES['newImages']['error'][$i] === UPLOAD_ERR_OK) {
                         $fileName = uniqid() . '_' . basename($_FILES['newImages']['name'][$i]);
                         $targetPath = $uploadDir . $fileName;
-                        
+            
                         if (move_uploaded_file($_FILES['newImages']['tmp_name'][$i], $targetPath)) {
                             $relativePath = 'upload/products/' . $fileName;
                             $newImages[] = $relativePath;
-                            $productController->addProductImage($MaSP, $relativePath);
                         }
                     }
                 }
             }
             
+            
             $result = $productController->updateProduct($MaSP, $productData, $deletedImages, $newImages);
+            $result['debug'] = [
+                'newImages' => $newImages,
+                'fileCount' => isset($_FILES['newImages']) ? count($_FILES['newImages']['name']) : 0,
+            ];
+            
+            
             echo json_encode($result);
+            
             break;
+            case 'deleteProduct':
+                if (isset($_GET['MaSP'])) {
+                    $productId = $_GET['MaSP']; 
+                    $result = $productController->deleteProduct($productId);
+                    echo json_encode([
+                        'success' => $result,
+                        'message' => $result ? 'Xóa thành công' : 'Xóa thất bại'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Thiếu tham số MaSP'
+                    ]);
+                }
+                break;
+    case 'searchProducts':
+        if (isset($_GET['search'])) {
+            $searchTerm = $_GET['search'];
+            $products = $productController->searchByIdOrTenSP($searchTerm);
+            echo json_encode($products);
+        } else {
+            echo json_encode([]); // Trả về mảng rỗng nếu không có từ khóa tìm kiếm
+        }
+        break;
 }

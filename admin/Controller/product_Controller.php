@@ -49,7 +49,12 @@ class product_Controller{
     
         return ['success' => true, 'message' => 'Cập nhật sản phẩm thành công'];
     }
-    
+    public function deleteProduct($MaSP) {
+        return $this->product_model->deleteProduct($MaSP);
+    }
+    public function searchByIdOrTenSP($keyword) {
+        return $this->product_model->searchByIdOrTenSP($keyword);
+    }
 }
 
 ?>
