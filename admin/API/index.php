@@ -6,6 +6,10 @@ $con = $db->connection();
 require_once('../Controller/category_Controller.php');
 require_once('../Controller/promotion_Controller.php');
 require_once('../Controller/product_Controller.php');
+require_once('../Controller/goodsReceipt_Controller.php');
+require_once('../Controller/bill_Controller.php');
+$billController=new bill_Controller();
+$goodReceiptController=new goodsReceipt_Controller();
 $type = isset($_GET['type']) ? $_GET['type'] : null;
 $productController = new product_Controller();
 $categoryController = new category_Controller();
@@ -55,7 +59,62 @@ switch ($type) {
         }
         break;
 
-
+        case 'addGoodReceipt':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                try {
+                    $data = [
+                        'MaNCC' => $_POST['MaNCC'] ?? null,
+                        'TongTien' => $_POST['TongTien'] ?? 0,
+                        'ProfitPercentage' => $_POST['ProfitPercentage'] ?? 0,
+                        'products' => []
+                    ];
+        
+                    if (isset($_POST['products'])) {
+                        $data['products'] = json_decode($_POST['products'], true);
+                        if ($data['products'] === null) {
+                            throw new Exception("Lỗi parse products");
+                        }
+                    }
+        
+                    $result = $goodReceiptController->addGoodReceipt($data);
+                    echo $result; // Không cần json_encode thêm nữa
+        
+                } catch (Exception $e) {
+                    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                }
+            }
+            break;
+        
+            
+        case 'getProductDiscount':
+            if (isset($_GET['MaSP'])) {
+                $productId = (int)$_GET['MaSP'];
+                $discount = $goodReceiptController->getProductDiscount($productId);
+                echo json_encode(['discount' => $discount]);
+            }
+            break;
+    
+        case 'getProductDiscount':
+            if (isset($_GET['MaSP'])) {
+                $productId = (int)$_GET['MaSP'];
+                $sql = "SELECT km.giaTriKM 
+                        FROM sanpham sp 
+                        JOIN khuyenmai km ON sp.MaKM = km.MaKM 
+                        WHERE sp.MaSP = ?";
+                $stmt = $db->prepare($sql);
+                $stmt->bind_param("i", $productId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                $discount = 0;
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $discount = $row['giaTriKM'];
+                }
+                
+                echo json_encode(['discount' => (float)$discount]);
+            }
+            break;
     case 'getAllCategories':
         echo json_encode($categoryController->getAllCategories());
         break;
@@ -70,7 +129,7 @@ switch ($type) {
         }
         break;
 
-        case 'updateProduct':
+    case 'updateProduct':
             $MaSP = $_POST['MaSP'];
             $productData = [
                 'TenSP' => $_POST['TenSP'],
@@ -108,7 +167,7 @@ switch ($type) {
             echo json_encode($result);
             
             break;
-            case 'deleteProduct':
+    case 'deleteProduct':
                 if (isset($_GET['MaSP'])) {
                     $productId = $_GET['MaSP']; 
                     $result = $productController->deleteProduct($productId);
@@ -132,4 +191,27 @@ switch ($type) {
             echo json_encode([]); // Trả về mảng rỗng nếu không có từ khóa tìm kiếm
         }
         break;
-}
+    case 'loadGoodsReceiptList':
+        echo json_encode($goodReceiptController->getAllGoodsReceipt());
+        break;
+    case 'getGoodReceiptDetail':
+        $Detail=$_GET['MaPN'];
+        echo json_encode($goodReceiptController->getAllGoodsReceiptDetail($Detail));
+        break;
+    case 'getAllTenSP':
+        echo json_encode($goodReceiptController->getAllTenSP());
+        break;
+    case 'getAllSize':
+        echo json_encode($goodReceiptController->getAllSize());    
+        break;
+    case 'getAllProvider':
+        echo json_encode($goodReceiptController->getAllProvider());
+        break;
+    case 'getAllBill':
+        echo json_encode($billController->getAllBill());
+        break;
+    case 'getAllBillDetail':
+        $Detail=$_GET['MaHD'];
+        echo json_encode($billController->getAllBillDetail($Detail));
+        break;
+}       

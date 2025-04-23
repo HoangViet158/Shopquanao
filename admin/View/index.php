@@ -29,21 +29,21 @@
             
             <!-- Menu sidebar -->
             <div class="content_side">
-                <div class="side_item" onclick="handleProduct()">
+                <div class="side_item" data-route="/products">
                     <div><i class="fa-solid fa-shop"></i></div>
                     <div><span>Quản Lí Sản Phẩm</span></div>
                 </div>
-                <div class="side_item">
+                <div class="side_item" data-route="/bills">
                     <div><i class="fa-solid fa-truck-fast"></i></div>
                     <div><span>Quản Lí Đơn Hàng</span></div>
                 </div>
-                <div class="side_item" >
+                <div class="side_item" data-route="/goods-receipts">
                     <div><i class="fa-solid fa-pen"></i></div>
                     <div><span>Quản Lí Phiếu Nhập</span></div>
                 </div>
                 <div class="side_item">
                     <div><i class="fa-solid fa-user"></i></div>
-                    <div><span>Quản lí Khách Hàng</span></div>
+                    <div><span>Quản lí User</span></div>
                 </div>
                 <div class="side_item" >
                     <div><i class="fa-solid fa-user-group"></i></div>
@@ -61,6 +61,10 @@
                     <div><i class="fa-solid fa-home"></i></div>
                     <div><span>Trang Chủ</span></div>
                 </div>
+                <div class="side_item" data-route="/">
+                    <div><i class="fa-solid fa-home"></i></div>
+                    <div><span>Trang Chủ</span></div>
+                </div>
             </div>
         </div>
 
@@ -68,7 +72,7 @@
         <div class="content-container">
             <!-- Thanh công cụ -->
             
-            <div class="Mange_client">
+            <div class="Mange_client" >
                 <div class="admin_home">
                     <h4>Chào Mừng Đến Với Trang Quản Trị</h4>
                 </div>
@@ -77,6 +81,29 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="../../public/admin/js/Product.js"></script>
+    <script src="/admin/js/router.js"></script> <!-- Đường dẫn tuyệt đối -->
+    <script src="/admin/js/Product.js"></script>
+    <script src="/admin/js/goodsReceipt.js"></script>
+    <script src="/admin/js/bill.js"></script>
+
+    <!-- Script xử lý chung -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Xử lý click menu
+        document.querySelectorAll('.side_item').forEach(item => {
+            item.addEventListener('click', function() {
+                const route = this.getAttribute('data-route');
+                if (route && window.router) {
+                    router.navigate(route);
+                }
+            });
+        });
+
+        // Đăng ký global handlers (nếu cần)
+        if (window.handleProduct) router.registerHandler('handleProduct', handleProduct);
+        if (window.handleBill) router.registerHandler('handleBill', handleBill);
+        if (window.handleGoodsReceipt) router.registerHandler('handleGoodsReceipt', handleGoodsReceipt);
+    });
+    </script>
 </body>
 </html>
