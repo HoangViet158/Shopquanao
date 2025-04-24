@@ -1,5 +1,5 @@
 <?php 
-require_once ('../../config/connect.php');
+require_once(__DIR__ . "/../../config/connect.php");   // lấy đường đẫn tuyệt đối chứ tương đối làm 1 hồi lỗi mẹ tùm lum
 class statistic_model {
     private $database = null;
     public function __construct(){

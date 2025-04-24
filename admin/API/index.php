@@ -1,11 +1,15 @@
 <?php
-require_once('../../config/connect.php');
+require_once(__DIR__ . '/../../config/connect.php');
 $db = new Database();
 $con = $db->connection();
 
-require_once('../Controller/category_Controller.php');
-require_once('../Controller/promotion_Controller.php');
-require_once('../Controller/product_Controller.php');
+require_once(__DIR__ . '/../Controller/category_Controller.php');
+require_once(__DIR__ . '/../Controller/promotion_Controller.php');
+require_once(__DIR__ . '/../Controller/product_Controller.php');
+require_once(__DIR__ . '/../Controller/goodsReceipt_Controller.php');
+require_once(__DIR__ . '/../Controller/bill_Controller.php');
+$billController=new bill_Controller();
+$goodReceiptController=new goodsReceipt_Controller();
 $type = isset($_GET['type']) ? $_GET['type'] : null;
 $productController = new product_Controller();
 $categoryController = new category_Controller();
@@ -40,13 +44,13 @@ switch ($type) {
             );
 
             if ($maSP && !empty($_FILES['image'])) {
-                $uploadDir = '../../upload/products/';
+                $uploadDir = __DIR__ . '/../../upload/products/';
                 foreach ($_FILES['image']['tmp_name'] as $key => $tmpName) {
                     $fileName = uniqid() . '_' . basename($_FILES['image']['name'][$key]);
                     $targetPath = $uploadDir . $fileName;
 
                     if (move_uploaded_file($tmpName, $targetPath)) {
-                        $productController->addProductImage($maSP, 'upload/products/' . $fileName);
+                        $productController->addProductImage($maSP, '/upload/products/' . $fileName);
                     }
                 }
             }
@@ -55,7 +59,62 @@ switch ($type) {
         }
         break;
 
-
+        case 'addGoodReceipt':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                try {
+                    $data = [
+                        'MaNCC' => $_POST['MaNCC'] ?? null,
+                        'TongTien' => $_POST['TongTien'] ?? 0,
+                        'ProfitPercentage' => $_POST['ProfitPercentage'] ?? 0,
+                        'products' => []
+                    ];
+        
+                    if (isset($_POST['products'])) {
+                        $data['products'] = json_decode($_POST['products'], true);
+                        if ($data['products'] === null) {
+                            throw new Exception("Lỗi parse products");
+                        }
+                    }
+        
+                    $result = $goodReceiptController->addGoodReceipt($data);
+                    echo $result; // Không cần json_encode thêm nữa
+        
+                } catch (Exception $e) {
+                    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                }
+            }
+            break;
+        
+            
+        case 'getProductDiscount':
+            if (isset($_GET['MaSP'])) {
+                $productId = (int)$_GET['MaSP'];
+                $discount = $goodReceiptController->getProductDiscount($productId);
+                echo json_encode(['discount' => $discount]);
+            }
+            break;
+    
+        case 'getProductDiscount':
+            if (isset($_GET['MaSP'])) {
+                $productId = (int)$_GET['MaSP'];
+                $sql = "SELECT km.giaTriKM 
+                        FROM sanpham sp 
+                        JOIN khuyenmai km ON sp.MaKM = km.MaKM 
+                        WHERE sp.MaSP = ?";
+                $stmt = $db->prepare($sql);
+                $stmt->bind_param("i", $productId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                $discount = 0;
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $discount = $row['giaTriKM'];
+                }
+                
+                echo json_encode(['discount' => (float)$discount]);
+            }
+            break;
     case 'getAllCategories':
         echo json_encode($categoryController->getAllCategories());
         break;
@@ -70,7 +129,7 @@ switch ($type) {
         }
         break;
 
-        case 'updateProduct':
+    case 'updateProduct':
             $MaSP = $_POST['MaSP'];
             $productData = [
                 'TenSP' => $_POST['TenSP'],
@@ -82,7 +141,13 @@ switch ($type) {
             $deletedImages = $_POST['deletedImages'] ?? [];
             $newImages = [];
             if (!empty($_FILES['newImages'])) {
-                $uploadDir = '../../upload/products/';
+                $uploadDir = __DIR__ . '/../../upload/products/';
+                
+                // Tạo thư mục nếu chưa tồn tại
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
                 $fileCount = count($_FILES['newImages']['name']);
                 for ($i = 0; $i < $fileCount; $i++) {
                     if ($_FILES['newImages']['error'][$i] === UPLOAD_ERR_OK) {
@@ -90,15 +155,71 @@ switch ($type) {
                         $targetPath = $uploadDir . $fileName;
                         
                         if (move_uploaded_file($_FILES['newImages']['tmp_name'][$i], $targetPath)) {
-                            $relativePath = 'upload/products/' . $fileName;
+                            $relativePath = '/upload/products/' . $fileName;
                             $newImages[] = $relativePath;
-                            $productController->addProductImage($MaSP, $relativePath);
+                        } else {
+                            error_log("Upload failed: " . print_r(error_get_last(), true));
                         }
                     }
                 }
             }
             
+            
             $result = $productController->updateProduct($MaSP, $productData, $deletedImages, $newImages);
+            $result['debug'] = [
+                'newImages' => $newImages,
+                'fileCount' => isset($_FILES['newImages']) ? count($_FILES['newImages']['name']) : 0,
+            ];
+            
+            
             echo json_encode($result);
+            
             break;
-}
+    case 'deleteProduct':
+                if (isset($_GET['MaSP'])) {
+                    $productId = $_GET['MaSP']; 
+                    $result = $productController->deleteProduct($productId);
+                    echo json_encode([
+                        'success' => $result,
+                        'message' => $result ? 'Xóa thành công' : 'Xóa thất bại'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Thiếu tham số MaSP'
+                    ]);
+                }
+                break;
+    case 'searchProducts':
+        if (isset($_GET['search'])) {
+            $searchTerm = $_GET['search'];
+            $products = $productController->searchByIdOrTenSP($searchTerm);
+            echo json_encode($products);
+        } else {
+            echo json_encode([]); // Trả về mảng rỗng nếu không có từ khóa tìm kiếm
+        }
+        break;
+    case 'loadGoodsReceiptList':
+        echo json_encode($goodReceiptController->getAllGoodsReceipt());
+        break;
+    case 'getGoodReceiptDetail':
+        $Detail=$_GET['MaPN'];
+        echo json_encode($goodReceiptController->getAllGoodsReceiptDetail($Detail));
+        break;
+    case 'getAllTenSP':
+        echo json_encode($goodReceiptController->getAllTenSP());
+        break;
+    case 'getAllSize':
+        echo json_encode($goodReceiptController->getAllSize());    
+        break;
+    case 'getAllProvider':
+        echo json_encode($goodReceiptController->getAllProvider());
+        break;
+    case 'getAllBill':
+        echo json_encode($billController->getAllBill());
+        break;
+    case 'getAllBillDetail':
+        $Detail=$_GET['MaHD'];
+        echo json_encode($billController->getAllBillDetail($Detail));
+        break;
+}       

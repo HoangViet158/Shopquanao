@@ -1,6 +1,6 @@
 <?php
-require_once("../../config/connect.php");
-require_once("../../admin/Model/category_Model.php");
+require_once(__DIR__ . "/../../config/connect.php");
+require_once(__DIR__ . "/../../admin/Model/category_Model.php");
 class category_Controller{
     private $category_Model=null;
     public function __construct()

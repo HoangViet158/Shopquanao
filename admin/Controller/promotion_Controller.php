@@ -1,6 +1,6 @@
 <?php
-require_once("../../config/connect.php");
-require_once("../../admin/Model/promotion_Model.php");
+require_once(__DIR__ . "/../../config/connect.php");
+require_once(__DIR__ . "/../../admin/Model/promotion_Model.php");
 class promotion_Controller{
     private $promotion_model=null;
     public function __construct()

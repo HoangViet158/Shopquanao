@@ -1,6 +1,6 @@
 <?php 
-require_once('../Model/product_Model.php');
-require_once('../../config/connect.php');
+require_once(__DIR__ . '/../Model/product_Model.php');
+require_once(__DIR__ . '/../../config/connect.php');
 class product_Controller{
     
     private $product_model = null;
@@ -49,7 +49,12 @@ class product_Controller{
     
         return ['success' => true, 'message' => 'Cập nhật sản phẩm thành công'];
     }
-    
+    public function deleteProduct($MaSP) {
+        return $this->product_model->deleteProduct($MaSP);
+    }
+    public function searchByIdOrTenSP($keyword) {
+        return $this->product_model->searchByIdOrTenSP($keyword);
+    }
 }
 
 ?>
