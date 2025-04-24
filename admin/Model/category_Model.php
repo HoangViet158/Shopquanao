@@ -1,5 +1,5 @@
 <?php
-require_once('../../config/connect.php');
+require_once(__DIR__ . '/../../config/connect.php');
 class category_Model{
     private $database=null;
     public function __construct()

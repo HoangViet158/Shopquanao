@@ -1,4 +1,37 @@
 let selectedImages = []
+let selectedNewImages=[]
+if (typeof router !== 'undefined') {
+  
+  router.registerHandler('handleProduct', handleProduct);
+  router.registerHandler('handleAddProduct', handleAddProduct);
+  router.registerHandler('handleEditProduct',handleEditProduct)
+  router.registerHandler('handleDeleteProduct',handleDeleteProduct)
+  router.registerHandler('handleSearch',handleSearch)
+}
+function handleEditProduct(){
+  $('#editProductModal').modal('show')
+}
+function handleDeleteProduct(){
+
+}
+function handleSearch(){
+
+}
+function handleAddProduct() {
+  handleProduct();
+  setTimeout(() => {
+    $('#addProductModal').modal('show');
+  }, 100);
+}
+// để chuyển lại router lúc mà thành công hoặc đóng modal thì chuyển router lại về /
+// ctrl f tìm dòng này router.navigate('/products'); k chắc đúng logic k nữa mà thôi kệ đi=))
+function openAddProductModal() {
+  if (window.router) {
+      router.navigate('/products/add');
+  } else {
+      $('#addProductModal').modal('show');
+  }
+}
 function handleProduct() {
   const Mange_client = document.getElementsByClassName("Mange_client")[0]
   const ProductOut = `
@@ -6,11 +39,11 @@ function handleProduct() {
     <div class="toolbar mb-3">
       <div class="input-group" style="width:300px;">
         <input type="text" class="form-control" placeholder="Tìm kiếm......">
-        <button class="btn "style="background-color: #89CFF0; border-color: #89CFF0; color: black;" type="button">
+        <button class="btn "style="background-color: #89CFF0; border-color: #89CFF0; color: black;" type="button" onClick="searchProduct()">
           <i class="fas fa-search"></i>
         </button>
       </div>
-      <button class="btn" style="background-color: #89CFF0; border-color: #89CFF0; color: black;" data-bs-toggle="modal" data-bs-target="#addProductModal">
+      <button class="btn" style="background-color: #89CFF0; border-color: #89CFF0; color: black;"  onclick="openAddProductModal()">
       <i class="fas fa-plus"></i>
         <span>Thêm mới</span>
       </button>
@@ -91,7 +124,7 @@ function handleProduct() {
             <div class="mb-3">
               <label class="form-label">Ảnh sản phẩm</label>
               <div id="editImagePreview" class="d-flex flex-wrap gap-2 mb-2"></div>
-              <input class="form-control" type="file" id="editProductImage" multiple accept="image/*">
+              <input class="form-control" type="file" id="editProductImage" name="newImages[]" multiple accept="image/*">
               <small class="text-muted">Chọn ảnh mới để thay thế (nếu cần)</small>
             </div>
           </form>
@@ -167,13 +200,60 @@ function handleProduct() {
   </div>
   `
   Mange_client.innerHTML = ProductOut
-
+  $('#addProductModal').on('hidden.bs.modal', function () {
+    if (window.router) {
+      router.navigate('/products');
+    } 
+  });
+  $('#editProductModal').on('hidden.bs.modal',()=>{
+    if (window.router) {
+      router.navigate('/products');
+    } 
+  })
   loadProductData()
   loadCategoriesAndPromotions()
 }
+function searchProduct() {
+  const searchValue = document.querySelector(".input-group input").value.trim();
+  
+  if (searchValue === "") {
+    loadProductData();
+    if (window.router) {
+      router.navigate('/products');
+    }
+    return;
+  }
+
+  // Cập nhật URL khi tìm kiếm
+  if (window.router) {
+    router.navigate(`/products/search?search=${encodeURIComponent(searchValue)}`);
+  } else {
+    window.history.pushState({}, '', `/products/search?search=${encodeURIComponent(searchValue)}`);
+  }
+
+  $.ajax({
+    url: `/api/index.php?type=searchProducts&search=${encodeURIComponent(searchValue)}`,
+    type: "GET",
+    dataType: "json",
+    success: (data) => {
+      const tableBody = $("#productTableBody");
+      tableBody.empty();
+      
+      if (data.length === 0) {
+        tableBody.append('<tr><td colspan="8" class="text-center py-4">Không tìm thấy sản phẩm nào!</td></tr>');
+      } else {
+        renderProductTable(data);
+      }
+    },
+    error: (xhr, status, error) => {
+      console.error("Lỗi khi tìm kiếm:", error);
+      alert("Không thể tìm kiếm sản phẩm!");
+    }
+  });
+}
 function loadProductData() {
   $.ajax({
-    url: "../../admin/api/index.php?type=getAllProducts",
+    url: "/api/index.php?type=getAllProducts",
     type: "GET",
     dataType: "json",
     success: (data) => {
@@ -187,7 +267,7 @@ function loadProductData() {
 }
 function loadCategoriesAndPromotions() {
   $.ajax({
-    url: "../../admin/API/index.php?type=getAllCategories",
+    url: "/api/index.php?type=getAllCategories",
     type: "GET",
     dataType: "json",
     success: (data) => {
@@ -198,7 +278,7 @@ function loadCategoriesAndPromotions() {
     },
   })
   $.ajax({
-    url: "../../admin/API/index.php?type=getAllPromotions",
+    url: "/api/index.php?type=getAllPromotions",
     type: "GET",
     dataType: "json",
     success: (data) => {
@@ -209,12 +289,11 @@ function loadCategoriesAndPromotions() {
     },
   })
   $("#productImage").change(function () {
-    const preview = $("#imagePreview")
-    const newFiles = Array.from(this.files)
-
+    const preview = $("#imagePreview");
+    const newFiles = Array.from(this.files);
     // Cộng dồn ảnh mới vào danh sách cũ
-    selectedImages = selectedImages.concat(newFiles)
-    preview.empty()
+    selectedImages = selectedImages.concat(newFiles);
+    preview.empty();
 
     selectedImages.forEach((file, index) => {
       const reader = new FileReader()
@@ -228,28 +307,29 @@ function loadCategoriesAndPromotions() {
           </div>
         `)
       }
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(file);
     })
   })
-  $("#editProductImage").change(function () {
-    const preview = $("#editImagePreview")
-    const files = Array.from(this.files)
-
-    files.forEach((file, index) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        preview.append(`
-          <div class="position-relative" style="width:100px; height:100px;">
-            <img src="${e.target.result}" class="img-thumbnail" 
-                 style="width:100%;height:100%; object-fit: cover;">
-            <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
-                    onclick="removeNewImage(this)"></button>
-          </div>
-        `)
-      }
-      reader.readAsDataURL(file)
-    })
-  })
+  $('#editProductImage').change(function() {
+      const newFiles = Array.from(this.files);
+      selectedNewImages = selectedNewImages.concat(newFiles); // Cộng dồn file mới vào mảng
+      const preview = $('#editImagePreview');
+      
+      newFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.append(`
+            <div class="position-relative" style="width:100px; height:100px;">
+              <img src="${e.target.result}" class="img-thumbnail" 
+                   style="width:100%;height:100%; object-fit: cover;">
+              <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
+                      onclick="removeImagePreview(${selectedNewImages.length - newFiles.length + index})"></button>
+            </div>
+          `);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
 }
 function removeImagePreview(index) {
   selectedImages.splice(index, 1)
@@ -326,7 +406,7 @@ function submitProductForm() {
   })
 
   $.ajax({
-    url: "../../admin/API/index.php?type=addProduct",
+    url: "/api/index.php?type=addProduct",
     type: "POST",
     data: formData,
     contentType: false,
@@ -359,7 +439,7 @@ function renderProductTable(products) {
           <tr>
               <td>${product.MaSP}</td>
               <td>${product.TenSP}</td>
-              <td><img src="../../${product.Anh[0]}" alt="Ảnh" width="60" height="60" style="object-fit: cover; border-radius: 5px;"></td>
+              <td><img src="${product.Anh[0]}" alt="Ảnh" width="60" height="60" style="object-fit: cover; border-radius: 5px;"></td>
               <td>${product.DanhMuc.TenDM}</td>
               <td>${formatCurrency(product.GiaBan)}</td>
               <td class="${product.SoLuong <= 0 ? "text-danger" : ""}">${product.SoLuong}</td>
@@ -377,21 +457,60 @@ function renderProductTable(products) {
     tableBody.append(row)
   })
 }
+function deleteProduct(productId) {
+  if (window.router) {
+    router.navigate('/products/delete');
+  } 
+  if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+    const url = `/api/index.php?type=deleteProduct&MaSP=${productId}`;
+    
+    $.ajax({
+      url: url,
+      type: "GET", // vì dữ liệu được gửi qua URL
+      dataType: "json",
+      success: (response) => {
+        if (response.success) {
+          alert("Xóa sản phẩm thành công!");
+          if (window.router) {
+            router.navigate('/products');
+          } 
+          loadProductData();
+        } else {
+          alert("Lỗi: " + response.message);
+        }
+      },
+      error: (xhr, status, error) => {
+        alert("Lỗi khi xóa sản phẩm: " + error);
+        console.log(xhr.responseText);
+      },
+    });
+  }else{
+    if(window.router){
+      router.navigate('/products')
+    }
+  }
+}
+
 function showEditForm(productId) {
+  if (window.router) {
+    router.navigate('/products/edit');
+} else {
+    $('#addProductModal').modal('show');
+}
   // dùng when vs then để load đồng thời danh sách danh mục, khuyến mãi và thông tin sản phẩm
   $.when(
     $.ajax({
-      url: "../../admin/api/index.php?type=getAllCategories",
+      url: "/api/index.php?type=getAllCategories",
       type: "GET",
       dataType: "json",
     }),
     $.ajax({
-      url: "../../admin/api/index.php?type=getAllPromotions",
+      url: "/api/index.php?type=getAllPromotions",
       type: "GET",
       dataType: "json",
     }),
     $.ajax({
-      url: `../../admin/api/index.php?type=getProductById&id=${productId}`,
+      url: `/api/index.php?type=getProductById&id=${productId}`,
       type: "GET",
       dataType: "json",
     }),
@@ -424,14 +543,12 @@ function showEditForm(productId) {
       product.Anh.forEach((image) => {
         preview.append(`
     <div class="position-relative" style="width:100px; height:100px;">
-      <img src="../../${image.Url}" class="img-thumbnail" style="width:100%;height:100%; object-fit: cover;">
+      <img src="${image.Url}" class="img-thumbnail" style="width:100%;height:100%; object-fit: cover;">
       <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
               onclick="removeEditImage('${image.MaAnh}')" data-image-id="${image.MaAnh}"></button>
     </div>
   `)
       })
-
-      // Hiển thị modal
       $("#editProductModal").modal("show")
     })
     .fail((xhr, status, error) => {
@@ -440,30 +557,33 @@ function showEditForm(productId) {
 }
 
 function updateProduct() {
-  const productId = $("#editMaSP").val()
+  const productId = $("#editMaSP").val();
   if (!productId) {
-    alert("Không tìm thấy ID sản phẩm!")
-    return
+    alert("Không tìm thấy ID sản phẩm!");
+    return;
   }
 
-  const formData = new FormData()
-  formData.append("MaSP", productId)
-  formData.append("TenSP", $("#editProductName").val())
-  formData.append("MaDM", $("#editProductCategory").val())
-  formData.append("MaKM", $("#editProductPromotion").val() || "null")
-  formData.append("GioiTinh", $("#editProductGender").val())
-  formData.append("MoTa", $("#editProductDescription").val())
-  const files = $('#editProductImage')[0].files;
-  for (let i = 0; i < files.length; i++) {
-    formData.append('newImages[]', files[i]); 
-  }
+  const formData = new FormData();
+  formData.append("MaSP", productId);
+  formData.append("TenSP", $("#editProductName").val());
+  formData.append("MaDM", $("#editProductCategory").val());
+  formData.append("MaKM", $("#editProductPromotion").val() || "null");
+  formData.append("GioiTinh", $("#editProductGender").val());
+  formData.append("MoTa", $("#editProductDescription").val());
+
+  // Thêm ảnh mới từ danh sách đã chọn
+  selectedNewImages.forEach((file) => {
+    formData.append('newImages[]', file);
+  });
+
+  // Thêm ảnh cần xóa
   const deletedImages = $('#editProductForm').data('deletedImages') || [];
   deletedImages.forEach(id => {
     formData.append('deletedImages[]', id);
   });
 
   $.ajax({
-    url: "../../admin/api/index.php?type=updateProduct",
+    url: "/api/index.php?type=updateProduct",
     type: "POST",
     data: formData,
     contentType: false,
@@ -471,17 +591,19 @@ function updateProduct() {
     dataType: "json",
     success: (response) => {
       if (response.success) {
-        alert("Cập nhật sản phẩm thành công!")
-        $("#editProductModal").modal("hide")
-        loadProductData()
+        alert("Cập nhật sản phẩm thành công!");
+        $("#editProductModal").modal("hide");
+        loadProductData();
+        // Reset sau khi thành công
+        selectedNewImages = [];
       } else {
-        alert("Lỗi: " + (response.message || "Không thể cập nhật sản phẩm"))
+        alert("Lỗi: " + (response.message || "Không thể cập nhật sản phẩm"));
       }
     },
     error: (xhr, status, error) => {
-      alert("Lỗi khi cập nhật: " + error)
+      alert("Lỗi khi cập nhật: " + error);
     },
-  })
+  });
 }
 function removeEditImage(imageId) {
   if (confirm("Bạn có chắc muốn xóa ảnh này?")) {
