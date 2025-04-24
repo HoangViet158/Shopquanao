@@ -1,6 +1,6 @@
 <?php
-require_once("../../config/connect.php");
-require_once("../../admin/Model/goodsReceipt_Model.php");
+require_once(__DIR__ . "/../../config/connect.php");
+require_once(__DIR__ . "/../../admin/Model/goodsReceipt_Model.php");
 class goodsReceipt_Controller{
     private $goodsReceiptModel=null;
     public function __construct()

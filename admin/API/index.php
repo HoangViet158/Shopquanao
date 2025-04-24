@@ -1,13 +1,13 @@
 <?php
-require_once('../../config/connect.php');
+require_once(__DIR__ . '/../../config/connect.php');
 $db = new Database();
 $con = $db->connection();
 
-require_once('../Controller/category_Controller.php');
-require_once('../Controller/promotion_Controller.php');
-require_once('../Controller/product_Controller.php');
-require_once('../Controller/goodsReceipt_Controller.php');
-require_once('../Controller/bill_Controller.php');
+require_once(__DIR__ . '/../Controller/category_Controller.php');
+require_once(__DIR__ . '/../Controller/promotion_Controller.php');
+require_once(__DIR__ . '/../Controller/product_Controller.php');
+require_once(__DIR__ . '/../Controller/goodsReceipt_Controller.php');
+require_once(__DIR__ . '/../Controller/bill_Controller.php');
 $billController=new bill_Controller();
 $goodReceiptController=new goodsReceipt_Controller();
 $type = isset($_GET['type']) ? $_GET['type'] : null;
@@ -44,13 +44,13 @@ switch ($type) {
             );
 
             if ($maSP && !empty($_FILES['image'])) {
-                $uploadDir = '../../upload/products/';
+                $uploadDir = __DIR__ . '/../../upload/products/';
                 foreach ($_FILES['image']['tmp_name'] as $key => $tmpName) {
                     $fileName = uniqid() . '_' . basename($_FILES['image']['name'][$key]);
                     $targetPath = $uploadDir . $fileName;
 
                     if (move_uploaded_file($tmpName, $targetPath)) {
-                        $productController->addProductImage($maSP, 'upload/products/' . $fileName);
+                        $productController->addProductImage($maSP, '/upload/products/' . $fileName);
                     }
                 }
             }
@@ -141,16 +141,24 @@ switch ($type) {
             $deletedImages = $_POST['deletedImages'] ?? [];
             $newImages = [];
             if (!empty($_FILES['newImages'])) {
-                $uploadDir = '../../upload/products/';
+                $uploadDir = __DIR__ . '/../../upload/products/';
+                
+                // Tạo thư mục nếu chưa tồn tại
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
                 $fileCount = count($_FILES['newImages']['name']);
                 for ($i = 0; $i < $fileCount; $i++) {
                     if ($_FILES['newImages']['error'][$i] === UPLOAD_ERR_OK) {
                         $fileName = uniqid() . '_' . basename($_FILES['newImages']['name'][$i]);
                         $targetPath = $uploadDir . $fileName;
-            
+                        
                         if (move_uploaded_file($_FILES['newImages']['tmp_name'][$i], $targetPath)) {
-                            $relativePath = 'upload/products/' . $fileName;
+                            $relativePath = '/upload/products/' . $fileName;
                             $newImages[] = $relativePath;
+                        } else {
+                            error_log("Upload failed: " . print_r(error_get_last(), true));
                         }
                     }
                 }

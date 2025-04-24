@@ -1,5 +1,37 @@
 let selectedImages = []
 let selectedNewImages=[]
+if (typeof router !== 'undefined') {
+  
+  router.registerHandler('handleProduct', handleProduct);
+  router.registerHandler('handleAddProduct', handleAddProduct);
+  router.registerHandler('handleEditProduct',handleEditProduct)
+  router.registerHandler('handleDeleteProduct',handleDeleteProduct)
+  router.registerHandler('handleSearch',handleSearch)
+}
+function handleEditProduct(){
+  $('#editProductModal').modal('show')
+}
+function handleDeleteProduct(){
+
+}
+function handleSearch(){
+
+}
+function handleAddProduct() {
+  handleProduct();
+  setTimeout(() => {
+    $('#addProductModal').modal('show');
+  }, 100);
+}
+// để chuyển lại router lúc mà thành công hoặc đóng modal thì chuyển router lại về /
+// ctrl f tìm dòng này router.navigate('/products'); k chắc đúng logic k nữa mà thôi kệ đi=))
+function openAddProductModal() {
+  if (window.router) {
+      router.navigate('/products/add');
+  } else {
+      $('#addProductModal').modal('show');
+  }
+}
 function handleProduct() {
   const Mange_client = document.getElementsByClassName("Mange_client")[0]
   const ProductOut = `
@@ -11,7 +43,7 @@ function handleProduct() {
           <i class="fas fa-search"></i>
         </button>
       </div>
-      <button class="btn" style="background-color: #89CFF0; border-color: #89CFF0; color: black;" data-bs-toggle="modal" data-bs-target="#addProductModal">
+      <button class="btn" style="background-color: #89CFF0; border-color: #89CFF0; color: black;"  onclick="openAddProductModal()">
       <i class="fas fa-plus"></i>
         <span>Thêm mới</span>
       </button>
@@ -168,41 +200,60 @@ function handleProduct() {
   </div>
   `
   Mange_client.innerHTML = ProductOut
-
+  $('#addProductModal').on('hidden.bs.modal', function () {
+    if (window.router) {
+      router.navigate('/products');
+    } 
+  });
+  $('#editProductModal').on('hidden.bs.modal',()=>{
+    if (window.router) {
+      router.navigate('/products');
+    } 
+  })
   loadProductData()
   loadCategoriesAndPromotions()
 }
 function searchProduct() {
-  const searchValue = document.querySelector(".input-group input").value.trim()
+  const searchValue = document.querySelector(".input-group input").value.trim();
+  
   if (searchValue === "") {
-    loadProductData()
-    return
+    loadProductData();
+    if (window.router) {
+      router.navigate('/products');
+    }
+    return;
   }
+
+  // Cập nhật URL khi tìm kiếm
+  if (window.router) {
+    router.navigate(`/products/search?search=${encodeURIComponent(searchValue)}`);
+  } else {
+    window.history.pushState({}, '', `/products/search?search=${encodeURIComponent(searchValue)}`);
+  }
+
   $.ajax({
-    url: "../../admin/api/index.php?type=searchProducts",
+    url: `/api/index.php?type=searchProducts&search=${encodeURIComponent(searchValue)}`,
     type: "GET",
-    data: { search: searchValue },
     dataType: "json",
     success: (data) => {
-      const tableBody = $("#productTableBody")
-      tableBody.empty()
+      const tableBody = $("#productTableBody");
+      tableBody.empty();
+      
       if (data.length === 0) {
-        tableBody.append('<tr><td colspan="8" class="text-center py-4">Không tìm thấy sản phẩm nào!</td></tr>')
-        return
-      }
-      else{
+        tableBody.append('<tr><td colspan="8" class="text-center py-4">Không tìm thấy sản phẩm nào!</td></tr>');
+      } else {
         renderProductTable(data);
       }
     },
     error: (xhr, status, error) => {
-      console.error("Lỗi khi tìm kiếm:", error)
-      alert("Không thể tìm kiếm sản phẩm!")
-    },
-  })
+      console.error("Lỗi khi tìm kiếm:", error);
+      alert("Không thể tìm kiếm sản phẩm!");
+    }
+  });
 }
 function loadProductData() {
   $.ajax({
-    url: "../../admin/api/index.php?type=getAllProducts",
+    url: "/api/index.php?type=getAllProducts",
     type: "GET",
     dataType: "json",
     success: (data) => {
@@ -216,7 +267,7 @@ function loadProductData() {
 }
 function loadCategoriesAndPromotions() {
   $.ajax({
-    url: "../../admin/API/index.php?type=getAllCategories",
+    url: "/api/index.php?type=getAllCategories",
     type: "GET",
     dataType: "json",
     success: (data) => {
@@ -227,7 +278,7 @@ function loadCategoriesAndPromotions() {
     },
   })
   $.ajax({
-    url: "../../admin/API/index.php?type=getAllPromotions",
+    url: "/api/index.php?type=getAllPromotions",
     type: "GET",
     dataType: "json",
     success: (data) => {
@@ -355,7 +406,7 @@ function submitProductForm() {
   })
 
   $.ajax({
-    url: "../../admin/API/index.php?type=addProduct",
+    url: "/api/index.php?type=addProduct",
     type: "POST",
     data: formData,
     contentType: false,
@@ -388,7 +439,7 @@ function renderProductTable(products) {
           <tr>
               <td>${product.MaSP}</td>
               <td>${product.TenSP}</td>
-              <td><img src="../../${product.Anh[0]}" alt="Ảnh" width="60" height="60" style="object-fit: cover; border-radius: 5px;"></td>
+              <td><img src="${product.Anh[0]}" alt="Ảnh" width="60" height="60" style="object-fit: cover; border-radius: 5px;"></td>
               <td>${product.DanhMuc.TenDM}</td>
               <td>${formatCurrency(product.GiaBan)}</td>
               <td class="${product.SoLuong <= 0 ? "text-danger" : ""}">${product.SoLuong}</td>
@@ -407,8 +458,11 @@ function renderProductTable(products) {
   })
 }
 function deleteProduct(productId) {
+  if (window.router) {
+    router.navigate('/products/delete');
+  } 
   if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-    const url = `../../admin/api/index.php?type=deleteProduct&MaSP=${productId}`;
+    const url = `/api/index.php?type=deleteProduct&MaSP=${productId}`;
     
     $.ajax({
       url: url,
@@ -417,6 +471,9 @@ function deleteProduct(productId) {
       success: (response) => {
         if (response.success) {
           alert("Xóa sản phẩm thành công!");
+          if (window.router) {
+            router.navigate('/products');
+          } 
           loadProductData();
         } else {
           alert("Lỗi: " + response.message);
@@ -427,24 +484,33 @@ function deleteProduct(productId) {
         console.log(xhr.responseText);
       },
     });
+  }else{
+    if(window.router){
+      router.navigate('/products')
+    }
   }
 }
 
 function showEditForm(productId) {
+  if (window.router) {
+    router.navigate('/products/edit');
+} else {
+    $('#addProductModal').modal('show');
+}
   // dùng when vs then để load đồng thời danh sách danh mục, khuyến mãi và thông tin sản phẩm
   $.when(
     $.ajax({
-      url: "../../admin/api/index.php?type=getAllCategories",
+      url: "/api/index.php?type=getAllCategories",
       type: "GET",
       dataType: "json",
     }),
     $.ajax({
-      url: "../../admin/api/index.php?type=getAllPromotions",
+      url: "/api/index.php?type=getAllPromotions",
       type: "GET",
       dataType: "json",
     }),
     $.ajax({
-      url: `../../admin/api/index.php?type=getProductById&id=${productId}`,
+      url: `/api/index.php?type=getProductById&id=${productId}`,
       type: "GET",
       dataType: "json",
     }),
@@ -477,7 +543,7 @@ function showEditForm(productId) {
       product.Anh.forEach((image) => {
         preview.append(`
     <div class="position-relative" style="width:100px; height:100px;">
-      <img src="../../${image.Url}" class="img-thumbnail" style="width:100%;height:100%; object-fit: cover;">
+      <img src="${image.Url}" class="img-thumbnail" style="width:100%;height:100%; object-fit: cover;">
       <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
               onclick="removeEditImage('${image.MaAnh}')" data-image-id="${image.MaAnh}"></button>
     </div>
@@ -517,7 +583,7 @@ function updateProduct() {
   });
 
   $.ajax({
-    url: "../../admin/api/index.php?type=updateProduct",
+    url: "/api/index.php?type=updateProduct",
     type: "POST",
     data: formData,
     contentType: false,

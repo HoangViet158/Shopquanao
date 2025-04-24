@@ -188,7 +188,7 @@ async function calculateSuggestedPrices() {
 for (const productId in productsGrouped) {
     try {
         const response = await $.ajax({
-            url: `../../admin/api/index.php?type=getProductDiscount&MaSP=${productId}&t=${Date.now()}`,
+            url: `/api/index.php?type=getProductDiscount&MaSP=${productId}&t=${Date.now()}`,
             method: 'GET',
             dataType: 'json'
         });
@@ -379,7 +379,7 @@ function calculateTotalPayment(){
 }
 function loadProductOptions(row){
     $.ajax({
-        url:'../../admin/api/index.php?type=getAllTenSP',
+        url:'/api/index.php?type=getAllTenSP',
         method:'GET',
         dataType:'json',
         success: function(data){
@@ -398,7 +398,7 @@ function loadProductOptions(row){
 }
 function loadSizeOptions(row){
     $.ajax({
-        url:'../../admin/api/index.php?type=getAllSize',
+        url:'/api/index.php?type=getAllSize',
         method:'GET',
         dataType:'json',
         success: function(data){
@@ -417,7 +417,7 @@ function loadSizeOptions(row){
 }
 function showAddGoodReceiptForm(){
     $.ajax({
-        url:'../../admin/api/index.php?type=getAllProvider',
+        url:'/api/index.php?type=getAllProvider',
         method:'GET',
         dataType:'json',
         success: function(data){
@@ -441,7 +441,7 @@ function showAddGoodReceiptForm(){
 }
 function loadGoodsReceiptList(){
     $.ajax({
-        url:'../../admin/api/index.php?type=loadGoodsReceiptList',
+        url:'/api/index.php?type=loadGoodsReceiptList',
         method:'GET',
         dataType:'json',
         success: (data) =>{
@@ -526,7 +526,7 @@ function showGoodsReceiptDetailList(maPN){
     loadGoodsReceiptDetailList(maPN)
 }
 function loadGoodsReceiptDetailList(maPN){
-    const url=`../../admin/api/index.php?type=getGoodReceiptDetail&MaPN=${maPN}`
+    const url=`/api/index.php?type=getGoodReceiptDetail&MaPN=${maPN}`
     $.ajax({
         url:url,
         method:'GET',
@@ -639,7 +639,7 @@ function submitGoodReceiptForm(){
     };
     
     $.ajax({
-        url: '../../admin/api/index.php?type=addGoodReceipt',
+        url: '/api/index.php?type=addGoodReceipt',
         method: 'POST',
         dataType: 'json',
         data: {
@@ -659,3 +659,4 @@ function submitGoodReceiptForm(){
         }
     });
 }
+// 

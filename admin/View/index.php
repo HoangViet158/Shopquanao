@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../../public/admin/css/index.css" />
+    <link rel="stylesheet" href="../admin/css/index.css" />
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -19,7 +19,7 @@
         <div class="sidebar-container">
             <div class="admin-sidebar-header">
                 
-                    <img class="admin-avatar" src="../../upload/products/logoadmin.jpg" alt="Admin Avatar" />
+                    <img class="admin-avatar" src="/upload/products/logoadmin.jpg" alt="Admin Avatar" />
                
                 <div class="admin-sidebar-info">
                     <span class="admin-sidebar-name">admin</span>
@@ -81,10 +81,10 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/admin/js/router.js"></script> <!-- Đường dẫn tuyệt đối -->
-    <script src="/admin/js/Product.js"></script>
-    <script src="/admin/js/goodsReceipt.js"></script>
-    <script src="/admin/js/bill.js"></script>
+    <script src="../admin/js/router.js"></script>
+<script src="../admin/js/Product.js"></script>
+<script src="../admin/js/goodsReceipt.js"></script>
+<script src="../admin/js/bill.js"></script>
 
     <!-- Script xử lý chung -->
     <script>
@@ -103,6 +103,9 @@
         if (window.handleProduct) router.registerHandler('handleProduct', handleProduct);
         if (window.handleBill) router.registerHandler('handleBill', handleBill);
         if (window.handleGoodsReceipt) router.registerHandler('handleGoodsReceipt', handleGoodsReceipt);
+        if (window.router) {
+        router.init();
+    }
     });
     </script>
 </body>

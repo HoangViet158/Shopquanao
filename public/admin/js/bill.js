@@ -63,16 +63,6 @@ function handleBill() {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><strong>Khách hàng:</strong> <span id="customerName"></span></p>
-                            <p><strong>Địa chỉ:</strong> <span id="customerAddress"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Ngày đặt:</strong> <span id="orderDate"></span></p>
-                            <p><strong>Trạng thái:</strong> <span id="orderStatus"></span></p>
-                        </div>
-                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -87,12 +77,7 @@ function handleBill() {
                             <tbody id="billDetailList">
                                 <!-- Chi tiết hóa đơn sẽ được load ở đây -->
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4" class="text-end"><strong>Tổng cộng:</strong></td>
-                                    <td><span id="billTotal"></span></td>
-                                </tr>
-                            </tfoot>
+                            
                         </table>
                     </div>
                     <div class="status-control mt-3">
@@ -115,55 +100,21 @@ function handleBill() {
     `;
     Mange_client.innerHTML = Bill;
     loadBillList();
-    loadLocationOptions();
+    // loadLocationOptions();
 }
-
-// Hàm xử lý routing
-function handleRouting() {
-    const path = window.location.pathname;
-    const searchParams = new URLSearchParams(window.location.search);
-    
-    // Xử lý khi có query params (filter)
-    if (path.includes('/bills') && searchParams.toString()) {
-        const status = searchParams.get('status');
-        const fromDate = searchParams.get('from');
-        const toDate = searchParams.get('to');
-        const location = searchParams.get('location');
-        
-        if (status) $('#statusFilter').val(status);
-        if (fromDate) $('#fromDate').val(fromDate);
-        if (toDate) $('#toDate').val(toDate);
-        if (location) $('#locationFilter').val(location);
-        
-        filterBills();
-    }
-    // Xử lý khi xem chi tiết hóa đơn
-    else if (path.includes('/bills/')) {
-        const billId = path.split('/bills/')[1];
-        showBillDetail(billId);
-    }
-    // Mặc định load danh sách
-    else {
-        loadBillList();
-    }
-}
-
-// Thêm sự kiện popstate để xử lý khi người dùng nhấn back/forward
-window.addEventListener('popstate', function(event) {
-    handleRouting();
-});
 
 function loadBillList() {
+    const apiUrl = '/api/index.php?type=getAllBill';
     $.ajax({
-        url: '../../admin/api/index.php?type=getAllBill',
+        url: apiUrl,
+
         method: 'GET',
         dataType: 'json',
         success: (data) => {
             renderBillList(data);
-            // Cập nhật URL khi load danh sách
-            history.pushState({}, '', '/bills');
         },
         error: (error) => {
+            console.log(apiUrl)
             console.error("Lỗi khi tải danh sách hóa đơn: " + error);
         }
     });
@@ -202,34 +153,49 @@ function renderBillList(data) {
 }
 
 function showBillDetail(billId) {
+    console.log('Loading bill detail for ID:', billId);
     if (window.router) {
-        router.navigate(`/bills/${billId}`);
+        router.navigate(`/bills/${billId}`); // Chuyển URL
+    } else {
+        console.error('Router not initialized');
     }
-    $.ajax({
-        url: `../../admin/api/index.php?type=getAllBillDetail&MaHD=${billId}`,
-        method: 'GET',
-        dataType: 'json',
-        success: (detailData) => {
-            // Lấy thông tin chung của hóa đơn
-            $.ajax({
-                url: `../../admin/api/index.php?type=getAllBill`,
-                method: 'GET',
-                dataType: 'json',
-                success: (billData) => {
-                    const bill = billData.find(b => b.MaHD == billId);
-                    if (bill) {
-                        renderBillDetail(bill, detailData);
-                        $('#billDetailModal').modal('show');
-                    }
-                }
-            });
-        },
-        error: (error) => {
-            console.error("Lỗi khi tải chi tiết hóa đơn: " + error);
-        }
-    });
-}
+    // Kiểm tra billId hợp lệ
+    if (!billId || isNaN(billId)) {
+        console.error('Invalid bill ID');
+        return;
+    }
 
+    // Hiển thị loading state
+    $('#billDetailList').html('<tr><td colspan="5" class="text-center">Đang tải...</td></tr>');
+
+    try {
+        $.ajax({
+            url: `/api/index.php?type=getAllBillDetail&MaHD=${billId}`,
+            method: 'GET',
+            dataType: 'json',
+            success: (detailData) => {
+                // console.log('Detail data received:', detailData);
+                $.ajax({
+                    url: '/api/index.php?type=getAllBill',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: (billData) => {
+                        // console.log('Bill data received:', billData);
+                        const bill = billData.find(b => b.MaHD == billId);
+                        if (bill) {
+                            renderBillDetail(bill, detailData);
+                            $('#billDetailModal').modal('show');
+                        }
+                    },
+                    error: (err) => console.error('Error loading bill:', err)
+                });
+            },
+            error: (err) => console.error('Error loading details:', err)
+        });
+    } catch (error) {
+        console.error('Unexpected error:', error);
+    }
+}
 function renderBillDetail(bill, details) {
     $('#billIdHeader').text(bill.MaHD);
     // $('#customerName').text(bill.khachhang.TenKH);
@@ -257,102 +223,7 @@ function renderBillDetail(bill, details) {
         `;
         detailTable.append(row);
     });
-    
-    // $('#billTotal').text(formatCurrency(total));
 }
-
-
-function updateBillStatus() {
-    const billId = $('#billIdHeader').text();
-    const newStatus = $('#statusChange').val();
-    
-    // Kiểm tra trạng thái hiện tại
-    const currentStatus = parseInt($('#statusChange').val());
-    
-    // Kiểm tra cập nhật ngược
-    if (newStatus < currentStatus) {
-        alert('Không thể cập nhật ngược trạng thái đơn hàng!');
-        return;
-    }
-    
-    $.ajax({
-        url: '../../admin/api/index.php?type=updateBillStatus',
-        method: 'POST',
-        data: {
-            MaHD: billId,
-            TrangThai: newStatus
-        },
-        success: (response) => {
-            alert('Cập nhật trạng thái thành công!');
-            $('#billDetailModal').modal('hide');
-            loadBillList();
-            // Quay lại URL danh sách sau khi cập nhật
-            history.pushState({}, '', '/bills');
-        },
-        error: (error) => {
-            console.error("Lỗi khi cập nhật trạng thái: " + error);
-            alert('Có lỗi xảy ra khi cập nhật trạng thái!');
-        }
-    });
-}
-
-function filterBills() {
-    const status = $('#statusFilter').val();
-    const fromDate = $('#fromDate').val();
-    const toDate = $('#toDate').val();
-    const location = $('#locationFilter').val();
-    
-    // Tạo query params
-    const queryParams = new URLSearchParams();
-    if (status) queryParams.set('status', status);
-    if (fromDate) queryParams.set('from', fromDate);
-    if (toDate) queryParams.set('to', toDate);
-    if (location) queryParams.set('location', location);
-    
-    // Cập nhật URL với query params
-    history.pushState({ filter: true }, '', `/bills?${queryParams.toString()}`);
-    
-    $.ajax({
-        url: '../../admin/api/index.php?type=getAllBill',
-        method: 'GET',
-        dataType: 'json',
-        success: (data) => {
-            let filteredData = data;
-            
-            if (status !== "") {
-                filteredData = filteredData.filter(bill => bill.TrangThai == status);
-            }
-            
-            if (fromDate) {
-                const from = new Date(fromDate);
-                filteredData = filteredData.filter(bill => {
-                    const billDate = new Date(bill.ThoiGian);
-                    return billDate >= from;
-                });
-            }
-            
-            if (toDate) {
-                const to = new Date(toDate);
-                filteredData = filteredData.filter(bill => {
-                    const billDate = new Date(bill.ThoiGian);
-                    return billDate <= to;
-                });
-            }
-            
-            if (location !== "") {
-                filteredData = filteredData.filter(bill => {
-                    return bill.taikhoan.DiaChi.includes(location);
-                });
-            }
-            
-            renderBillList(filteredData);
-        },
-        error: (error) => {
-            console.error("Lỗi khi lọc hóa đơn: " + error);
-        }
-    });
-}
-
 function loadLocationOptions() {
     const districts = ["Quận 1", "Quận 2", "Quận 3", "Quận 4", "Quận 5", "Quận 6", "Quận 7", "Quận 8", 
                       "Quận 9", "Quận 10", "Quận 11", "Quận 12", "Tân Bình", "Bình Thạnh", "Gò Vấp", "Phú Nhuận"];
@@ -393,13 +264,15 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 }
 document.addEventListener('DOMContentLoaded', () => {
+    
     // Đăng ký hàm xử lý
     if (typeof router !== 'undefined') {
         router.registerHandler('handleBill', handleBill);
         
         // Hoặc đăng ký trực tiếp route nếu cần custom
         router.addRoute('/bills/:id', null, (params) => {
-            handleBill();
+            console.log('Route triggered for bill ID:', params.id);
+            // handleBill();
             showBillDetail(params.id);
         });
     }

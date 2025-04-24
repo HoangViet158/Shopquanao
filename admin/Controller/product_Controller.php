@@ -1,6 +1,6 @@
 <?php 
-require_once('../Model/product_Model.php');
-require_once('../../config/connect.php');
+require_once(__DIR__ . '/../Model/product_Model.php');
+require_once(__DIR__ . '/../../config/connect.php');
 class product_Controller{
     
     private $product_model = null;

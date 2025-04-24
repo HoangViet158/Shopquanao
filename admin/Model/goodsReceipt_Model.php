@@ -1,5 +1,5 @@
 <?php
-require_once("../../config/connect.php");
+require_once(__DIR__ . "/../../config/connect.php");
 class goodsReceipt_Model{
     private $database=null;
     function __construct()

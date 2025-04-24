@@ -1,6 +1,6 @@
 <?php
-require_once("../../config/connect.php");
-require_once("../../admin/Model/bill_Model.php");
+require_once(__DIR__ . "/../../config/connect.php");
+require_once(__DIR__ . "/../../admin/Model/bill_Model.php");
 class bill_Controller{
     private $billModel=null;
     public function __construct()

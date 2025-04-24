@@ -1,6 +1,6 @@
 <?php 
-require_once('../Model/statistic_Model.php');
-require_once('../../config/connect.php');
+require_once(__DIR__ . '/../Model/statistic_Model.php');
+require_once(__DIR__ . '/../../config/connect.php');
 class statistic_Controller{
     
     private $statistic_model = null;
