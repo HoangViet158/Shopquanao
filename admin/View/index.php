@@ -1,13 +1,14 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8" />
+    <base href="/admin/">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../admin/css/index.css" />
+    <link rel="stylesheet" href="/admin/css/index.css" />
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -80,15 +81,22 @@
         </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="../admin/js/router.js"></script>
-<script src="../admin/js/Product.js"></script>
-<script src="../admin/js/goodsReceipt.js"></script>
-<script src="../admin/js/bill.js"></script>
 
     <!-- Script xử lý chung -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/admin/js/router.js"></script>
+    <script src="/admin/js/Product.js"></script>
+    <script src="/admin/js/goodsReceipt.js"></script>
+    <script src="/admin/js/bill.js"></script>
+
     <script>
+    // Khởi tạo router sau khi tất cả script đã load
     document.addEventListener('DOMContentLoaded', () => {
+        if (!window.router) {
+            window.router = new Router();
+            router.init();
+        }
+
         // Xử lý click menu
         document.querySelectorAll('.side_item').forEach(item => {
             item.addEventListener('click', function() {
@@ -99,13 +107,14 @@
             });
         });
 
-        // Đăng ký global handlers (nếu cần)
-        if (window.handleProduct) router.registerHandler('handleProduct', handleProduct);
-        if (window.handleBill) router.registerHandler('handleBill', handleBill);
-        if (window.handleGoodsReceipt) router.registerHandler('handleGoodsReceipt', handleGoodsReceipt);
-        if (window.router) {
-        router.init();
-    }
+        // Tự động mở modal nếu URL chứa /add
+        if (window.location.pathname.includes('/products/add')) {
+            setTimeout(() => {
+                if (typeof handleAddProduct === 'function') {
+                    handleAddProduct();
+                }
+            }, 300);
+        }
     });
     </script>
 </body>

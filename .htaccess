@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Bỏ qua các file thật (ảnh, css, js)
+    RewriteCond %{REQUEST_URI} \.(css|js|jpg|png|gif)$ [NC]
+    RewriteRule ^ - [L]
+    
+    # Chuyển mọi request admin tới file index.php trong admin/view
+    RewriteRule ^admin/(.*)$ /admin/view/index.php [L]
+</IfModule>

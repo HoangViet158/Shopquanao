@@ -1,28 +1,40 @@
 let selectedImages = []
 let selectedNewImages=[]
-if (typeof router !== 'undefined') {
-  
-  router.registerHandler('handleProduct', handleProduct);
-  router.registerHandler('handleAddProduct', handleAddProduct);
-  router.registerHandler('handleEditProduct',handleEditProduct)
+window.handleAddProduct = function() {
+  if (!window.router) {
+    console.error('Router chưa được khởi tạo');
+    return;
+  }
+  handleProduct();
+  setTimeout(() => {
+    $('#addProductModal').modal('show');
+  }, 100);
+}
+window.handleEditProduct = function() {
+  if (!window.router) {
+    console.error('Router chưa được khởi tạo');
+    return;
+  }
+  handleProduct();
+  setTimeout(() => {
+    $('#editProductModal').modal('show');
+  }, 100);
+}
+if (window.router) {
+    router.registerHandler('handleEditProduct',handleEditProduct)
   router.registerHandler('handleDeleteProduct',handleDeleteProduct)
   router.registerHandler('handleSearch',handleSearch)
+  router.registerHandler('handleProduct', handleProduct);
+  router.registerHandler('handleAddProduct', handleAddProduct);
 }
-function handleEditProduct(){
-  $('#editProductModal').modal('show')
-}
+
 function handleDeleteProduct(){
 
 }
 function handleSearch(){
 
 }
-function handleAddProduct() {
-  handleProduct();
-  setTimeout(() => {
-    $('#addProductModal').modal('show');
-  }, 100);
-}
+
 // để chuyển lại router lúc mà thành công hoặc đóng modal thì chuyển router lại về /
 // ctrl f tìm dòng này router.navigate('/products'); k chắc đúng logic k nữa mà thôi kệ đi=))
 function openAddProductModal() {

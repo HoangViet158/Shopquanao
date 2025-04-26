@@ -64,8 +64,15 @@ class Router {
         history.pushState({}, '', this.basePath + path);
         this.handleNavigation();
     }
-
+    registerGlobalHandlers() {
+        if (window.handleProduct) this.registerHandler('handleProduct', handleProduct);
+        if (window.handleBill) this.registerHandler('handleBill', handleBill);
+        if (window.handleGoodsReceipt) this.registerHandler('handleGoodsReceipt', handleGoodsReceipt);
+        if (window.handleAddProduct) this.registerHandler('handleAddProduct', handleAddProduct);
+      }
+    
     init() {
+        this.registerGlobalHandlers();
         window.addEventListener('popstate', () => this.handleNavigation());
 
         // muốn thêm router nào thì thêm ở đây rồi vô file js tạo đăng kí handler tương ứng, ex: file product.js
