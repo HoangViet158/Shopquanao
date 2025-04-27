@@ -11,38 +11,81 @@ class Router {
                 `;
             }
         };
+        this.isNavigating = false;
+        this.currentPath = '';
     }
 
     registerHandler(name, handler) {
-        this.defaultHandlers[name] = handler;
+        if (typeof handler === 'function') {
+            this.defaultHandlers[name] = handler;
+        } else {
+            console.error(`Handler "${name}" must be a function`);
+        }
     }
 
     addRoute(path, handlerName, customHandler = null) {
-        const handler = customHandler || (() => {
+        const handler = customHandler || ((params) => {
             const fn = this.defaultHandlers[handlerName];
             if (typeof fn === 'function') {
-                fn();
+                fn(params);
             } else {
-                console.error(`Handler "${handlerName}" chưa được đăng ký hoặc không phải là function.`);
+                console.error(`Handler "${handlerName}" is not registered or not a function`);
+                this.navigate('/'); // Fallback to home if handler is invalid
             }
         });
 
+        const regexPath = path.replace(/:\w+/g, '([^/]+)') + '(?:\\?([^#]*))?$';
+        
         this.routes.push({
             path,
             handler,
-            regex: new RegExp(`^${path.replace(/:\w+/g, '([^/]+)')}$`)
+            regex: new RegExp(`^${regexPath}`)
         });
     }
 
     handleNavigation() {
-        const path = window.location.pathname.replace(this.basePath, '') || '/';
+        if (this.isNavigating) return;
+        this.isNavigating = true;
 
-        const matchedRoute = this.routes.find(route => route.regex.test(path));
-        if (matchedRoute) {
-            const params = this.extractParams(matchedRoute.path, path);
-            matchedRoute.handler(params);
-        } else {
-            console.warn(`Không tìm thấy route tương ứng với path "${path}"`);
+        const path = window.location.pathname.replace(this.basePath, '') || '/';
+        const search = window.location.search;
+        this.currentPath = path + search;
+
+        try {
+            let matchedRoute = null;
+            let matchResult = null;
+
+            // Find matching route
+            for (const route of this.routes) {
+                matchResult = path.match(route.regex);
+                if (matchResult) {
+                    matchedRoute = route;
+                    break;
+                }
+            }
+
+            if (matchedRoute) {
+                const params = this.extractParams(matchedRoute.path, path);
+               
+                if (search) {
+                    const searchParams = new URLSearchParams(search);
+                    for (const [key, value] of searchParams.entries()) {
+                        params[key] = value;
+                    }
+                }
+    
+                matchedRoute.handler(params);
+            } else {
+                console.warn(`No route found for path "${path}"`);
+                if (path !== '/') {
+                    this.navigate('/', {}, true);
+                }
+            }
+        } catch (error) {
+            console.error('Navigation error:', error);
+            this.navigate('/', {}, true);
+        } finally {
+            this.isNavigating = false;
         }
     }
 
@@ -51,46 +94,87 @@ class Router {
         const routeParts = routePath.split('/');
         const pathParts = currentPath.split('/');
 
-        routeParts.forEach((part, i) => {
+        for (let i = 0; i < routeParts.length; i++) {
+            const part = routeParts[i];
             if (part.startsWith(':')) {
-                params[part.substring(1)] = pathParts[i];
+                params[part.substring(1)] = decodeURIComponent(pathParts[i]);
             }
-        });
+        }
 
         return params;
     }
 
-    navigate(path) {
-        history.pushState({}, '', this.basePath + path);
+    navigate(path, queryParams = {}, replace = false) {
+        // Build query string
+        const queryString = Object.entries(queryParams)
+            .filter(([_, value]) => value !== undefined && value !== null)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
+        let fullPath = this.basePath + path;
+        if (queryString) {
+            fullPath += `?${queryString}`;
+        }
+
+        if (window.location.pathname + window.location.search === fullPath) {
+            return;
+        }
+
+        if (replace) {
+            history.replaceState({}, '', fullPath);
+        } else {
+            history.pushState({}, '', fullPath);
+        }
         this.handleNavigation();
     }
+
     registerGlobalHandlers() {
-        if (window.handleProduct) this.registerHandler('handleProduct', handleProduct);
-        if (window.handleBill) this.registerHandler('handleBill', handleBill);
-        if (window.handleGoodsReceipt) this.registerHandler('handleGoodsReceipt', handleGoodsReceipt);
-        if (window.handleAddProduct) this.registerHandler('handleAddProduct', handleAddProduct);
-      }
-    
+        const handlers = [
+            'handleProduct', 'handleBill', 'handleGoodsReceipt',
+            'handleAddProduct', 'handleEditProduct', 
+            'handleDeleteProduct', 'handleSearch',
+            'handleAddGoodsReceipt', 'handleDetailGoodsReceipt',
+            'handleSearchGoodsReceipt'
+        ];
+
+        handlers.forEach(name => {
+            if (window[name] && typeof window[name] === 'function') {
+                this.registerHandler(name, window[name]);
+            }
+        });
+    }
+    // muốn thêm router thì làm các bước sau:
+    // 1. thêm route vào router.js trong hàm init() với cú pháp: this.addRoute('/path', 'handleName');
+    // 2. thêm hàm xử lý vào trong file js tương ứng với route đó
+    // 3. thêm hàm xử lý vào trong hàm registerGlobalHandlers() 
     init() {
         this.registerGlobalHandlers();
-        window.addEventListener('popstate', () => this.handleNavigation());
+        window.addEventListener('popstate', () => {
+            if (window.location.pathname + window.location.search !== this.currentPath) {
+                this.handleNavigation();
+            }
+        });
 
-        // muốn thêm router nào thì thêm ở đây rồi vô file js tạo đăng kí handler tương ứng, ex: file product.js
+        // Register routes
         this.addRoute('/', 'handleHome');
         this.addRoute('/products', 'handleProduct');
-        this.addRoute('/bills', 'handleBill');
-        this.addRoute('/goods-receipts', 'handleGoodsReceipt');
         this.addRoute('/products/add', 'handleAddProduct');
-        this.addRoute('/products/edit','handleEditProduct')
-        this.addRoute('/products/delete','handleDeleteProduct')
-        this.addRoute('/products/search','handleSearch');
-        // Nếu path không bắt đầu bằng /admin/, điều hướng về /
+        this.addRoute('/products/edit/:id', 'handleEditProduct');
+        this.addRoute('/products/delete/:id', 'handleDeleteProduct');
+        this.addRoute('/products/search', 'handleSearch');
+        this.addRoute('/bills', 'handleBill');
+        this.addRoute('/bills/detail/:id','handleBillDetail');
+        this.addRoute('/goods-receipts', 'handleGoodsReceipt');
+        this.addRoute('/goods-receipts/add', 'handleAddGoodsReceipt');
+        this.addRoute('/goods-receipts/detail/:id', 'handleDetailGoodsReceipt');
+        this.addRoute('/goods-receipts/search', 'handleSearchGoodsReceipt');
         if (!window.location.pathname.startsWith(this.basePath + '/')) {
-            history.replaceState({}, '', this.basePath + '/');
+            this.navigate('/', {}, true);
+            return;
         }
         this.handleNavigation();
     }
 }
+
 const router = new Router();
 window.router = router;
 if (document.readyState === 'loading') {

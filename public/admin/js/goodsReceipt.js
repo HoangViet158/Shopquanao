@@ -1,3 +1,15 @@
+window.handleAddGoodsReceipt= ()=>{
+    handleGoodsReceipt()
+   showAddGoodReceiptForm()
+}
+window.handleDetailGoodsReceipt= (maPN)=>{
+    console.log("mmmmmmmmmmmmmmm",maPN)
+    const receiptId = typeof maPN === 'object' ? maPN.id : maPN;
+    showGoodsReceiptDetailList(receiptId)
+}
+window.handleSearchGoodsReceipt=()=>{
+    searchReceipt()
+}
 function handleGoodsReceipt(){
     const Mange_client=document.getElementsByClassName("Mange_client")[0]
     const handleGoodsReceiptOut=`
@@ -5,11 +17,11 @@ function handleGoodsReceipt(){
         <div class="toolbar mb-3">
             <div class="input-group" style="width:300px;">
                 <input type="text" class="form-control" placeholder="Tìm kiếm">
-                <button class="btn" style="background-color:#89cff0; background-border:#89cff0;color:black;" onClick="searchProduct()">
+                <button class="btn" style="background-color:#89cff0; background-border:#89cff0;color:black;" onClick="searchReceipt()">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
-            <button class="btn" style="background-color:#89cff0; background-border:89cff0;color:black;" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="showAddGoodReceiptForm()">
+            <button class="btn" style="background-color:#89cff0; background-border:89cff0;color:black;"  data-bs-target="#addProductModal" onclick="showAddGoodReceiptForm()">
                 <i class="fas fa-plus"></i>
                 <span>Thêm mới</span>
             </button>
@@ -31,15 +43,7 @@ function handleGoodsReceipt(){
                         <tbody id="good-receipt-list"></tbody>
                     </table>
                 </div>
-                <nav aria-label="Page navigation" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
+                
             </div>
         </div>
         <!--phần thêm phiếu nhập-->
@@ -118,10 +122,13 @@ function handleGoodsReceipt(){
     Mange_client.innerHTML=handleGoodsReceiptOut;
     document.getElementById('profitPercentage').addEventListener('input', function() {
         calculateSuggestedPrices();
-        // Tính toán lại tổng tiền nếu cần
         calculateTotalPayment();
     });
     loadGoodsReceiptList()
+    $('#addProductModal').on('hidden.bs.modal', function () {
+        router.navigate('/goods-receipts', {}, true);
+})
+router.navigate('/goods-receipts', {}, true);
 }
 async function calculateSuggestedPrices() {
     const profitPercentage = parseFloat(document.getElementById('profitPercentage').value) || 0;
@@ -416,6 +423,11 @@ function loadSizeOptions(row){
     })
 }
 function showAddGoodReceiptForm(){
+    if (window.router) {
+        router.navigate(`/goods-receipts/add`);
+    } else {
+        $('#addProductModal').modal('show');
+    }
     $.ajax({
         url:'/api/index.php?type=getAllProvider',
         method:'GET',
@@ -477,7 +489,43 @@ function renderGoodsReceiptList(data){
         goodReceiptTable.append(row)
     })
 }
+function searchReceipt(){
+    const searchValue = document.querySelector(".input-group input").value.trim();
+  if (searchValue === "") {
+    loadGoodsReceiptList()
+    if (window.router) {
+      router.navigate('/goods-receipts');
+    }
+    return;
+  }
+
+  // Cập nhật URL khi tìm kiếm
+  if (window.router) {
+    router.navigate(`/goods-receipts/search?search=${encodeURIComponent(searchValue)}`);
+  }
+
+  $.ajax({
+    url: `/api/index.php?type=searchGoodReceipt&search=${encodeURIComponent(searchValue)}`,
+    type: "GET",
+    dataType: "json",
+    success: (data) => {
+      const tableBody = $("#good-receipt-list");
+      tableBody.empty();
+      
+      if (data.length === 0) {
+        tableBody.append('<tr><td colspan="8" class="text-center py-4">Không tìm thấy sản phẩm nào!</td></tr>');
+      } else {
+        renderGoodsReceiptList(data)
+      }
+    },
+    error: (xhr, status, error) => {
+      console.error("Lỗi khi tìm kiếm:", error);
+      alert("Không thể tìm kiếm sản phẩm!");
+    }
+  });
+}
 function showGoodsReceiptDetailList(maPN){
+    router.navigate(`/goods-receipts/detail/${maPN}`);
     const Mange_client=document.getElementsByClassName("Mange_client")[0]
     const receiptDetails=
     `
@@ -485,14 +533,13 @@ function showGoodsReceiptDetailList(maPN){
         <div class="toolbar mb-3">
             <div class="input-group" style="width:300px;">
                 <input type="text" class="form-control" placeholder="Tìm kiếm">
-                <button type="button" class="btn" style="background-color:#89cff0;background-border:#89cff0;color:black;">
+                <button class="btn" style="background-color:#89cff0; background-border:#89cff0;color:black;" onClick="searchReceipt()">
                     <i class="fas fa-search"></i>
-                </button> 
+                </button>
             </div>
-            <button type=button class="btn" style="background-color:#89cff0;background-border:#89cff0;color:black;" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                <i class="fas fa-plus">
-                    <span>Thêm mới</span>
-                </i>
+            <button class="btn" style="background-color:#89cff0; background-border:89cff0;color:black;"  data-bs-target="#addProductModal" onclick="showAddGoodReceiptForm()">
+                <i class="fas fa-plus"></i>
+                <span>Thêm mới</span>
             </button>
         </div>
         <div class="card shadow mb-4">
@@ -526,6 +573,9 @@ function showGoodsReceiptDetailList(maPN){
     loadGoodsReceiptDetailList(maPN)
 }
 function loadGoodsReceiptDetailList(maPN){
+    console.log(maPN)
+    
+    
     const url=`/api/index.php?type=getGoodReceiptDetail&MaPN=${maPN}`
     $.ajax({
         url:url,

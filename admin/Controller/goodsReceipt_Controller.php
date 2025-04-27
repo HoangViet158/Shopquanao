@@ -94,4 +94,7 @@ public function addGoodReceipt($data)
     public function getProductDiscount($MaSP) {
         return $this->goodsReceiptModel->getProductDiscount($MaSP);
     }
+    public function searchGoodsReceipt($keyword){
+        return $this->goodsReceiptModel->searchGoodsReceipt($keyword);
+    }
 }

@@ -8,8 +8,12 @@ class product_Controller{
         $this->product_model = new product_Model();
     }
 
-    public function getAllProducts(){
-       return $this->product_model->getAllProducts();
+    public function getAllProducts($page = 1, $perPage=10) {
+        // Đảm bảo $page và $perPage là số nguyên dương
+        $page = max(1, (int)$page);
+        $perPage = max(1, min(100, (int)$perPage)); // Giới hạn tối đa 100 sản phẩm/trang
+        
+        return $this->product_model->getAllProducts($page, $perPage);
     }
     public function AddProducts($MaKM,$MaDM,$tenSP,$Mota,$GioiTinh){
         return $this->product_model->AddProducts($MaKM,$MaDM,$tenSP,$Mota,$GioiTinh);
