@@ -234,4 +234,35 @@ switch ($type) {
             echo json_encode([]); // Trả về mảng rỗng nếu không có từ khóa tìm kiếm
         }
         break;
+
+        case 'updateBillStatus':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Nhận dữ liệu dạng form-data thay vì JSON
+                $billId = $_POST['MaHD'] ?? null;
+                $newStatus = $_POST['TrangThai'] ?? null;
+                
+                if (!$billId || !$newStatus) {
+                    echo json_encode(['success' => false, 'message' => 'Thiếu thông tin']);
+                    exit;
+                }
+                
+                $result = $billController->updateBillStatus($billId, $newStatus);
+                echo json_encode(['success' => $result]);
+            }
+            break;
+            case 'filterBills':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Nhận dữ liệu JSON
+                    $json = file_get_contents('php://input');
+                    $filters = json_decode($json, true);
+                    
+                    $status = $filters['status'] ?? null;
+                    $fromDate = $filters['fromDate'] ?? null;
+                    $toDate = $filters['toDate'] ?? null;
+                    $address = $filters['address'] ?? null;
+            
+                    $filteredBills = $billController->filterBills($status, $fromDate, $toDate, $address);
+                    echo json_encode($filteredBills);
+                }
+                break;
 }      

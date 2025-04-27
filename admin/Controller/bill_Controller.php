@@ -13,4 +13,10 @@ class bill_Controller{
     public function getAllBillDetail($MaHD){
         return $this->billModel->getAllBillDetail($MaHD);
     }
+    public function updateBillStatus($billId, $newStatus){
+        return $this->billModel->updateBillStatus($billId, $newStatus);
+    }
+    public function filterBills($status = null, $fromDate = null, $toDate = null, $address = null){
+        return $this->billModel->filterBills($status, $fromDate , $toDate, $address);
+    }
 }
