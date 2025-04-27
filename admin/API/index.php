@@ -17,7 +17,9 @@ $promotionController = new promotion_Controller();
 $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
-        $allProducts = $productController->getAllProducts();
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 1;  //đang test
+        $allProducts = $productController->getAllProducts($page, $perPage);
         echo json_encode($allProducts);
         break;
     case 'addProduct':
@@ -222,4 +224,14 @@ switch ($type) {
         $Detail=$_GET['MaHD'];
         echo json_encode($billController->getAllBillDetail($Detail));
         break;
-}       
+    case 'searchGoodReceipt':
+        if (isset($_GET['search'])) {
+            $searchTerm = $_GET['search'];
+            $goodReceipt=$goodReceiptController->searchGoodsReceipt($searchTerm);
+            echo json_encode($goodReceipt);
+        } else {
+            echo json_encode($_GET['search']);
+            echo json_encode([]); // Trả về mảng rỗng nếu không có từ khóa tìm kiếm
+        }
+        break;
+}      

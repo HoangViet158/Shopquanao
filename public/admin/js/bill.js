@@ -270,10 +270,10 @@ document.addEventListener('DOMContentLoaded', () => {
         router.registerHandler('handleBill', handleBill);
         
         // Hoặc đăng ký trực tiếp route nếu cần custom
-        router.addRoute('/bills/:id', null, (params) => {
-            console.log('Route triggered for bill ID:', params.id);
-            // handleBill();
-            showBillDetail(params.id);
-        });
+        // router.addRoute('/bills/:id', null, (params) => {
+        //     console.log('Route triggered for bill ID:', params.id);
+        //     // handleBill();
+        //     showBillDetail(params.id);
+        // });
     }
 });

@@ -1,28 +1,41 @@
 let selectedImages = []
 let selectedNewImages=[]
-if (typeof router !== 'undefined') {
-  
-  router.registerHandler('handleProduct', handleProduct);
-  router.registerHandler('handleAddProduct', handleAddProduct);
-  router.registerHandler('handleEditProduct',handleEditProduct)
-  router.registerHandler('handleDeleteProduct',handleDeleteProduct)
-  router.registerHandler('handleSearch',handleSearch)
-}
-function handleEditProduct(){
-  $('#editProductModal').modal('show')
-}
-function handleDeleteProduct(){
-
-}
-function handleSearch(){
-
-}
-function handleAddProduct() {
-  handleProduct();
+window.handleAddProduct = function() {
+  if (!window.router) {
+    console.error('Router chưa được khởi tạo');
+    return;
+  }
+  handleProduct(false);
   setTimeout(() => {
     $('#addProductModal').modal('show');
   }, 100);
 }
+window.handleEditProduct = function(params) {
+  handleProduct(false);
+  const productId = params.id;
+  showEditForm(productId);
+};
+window.handleDeleteProduct = function(params) {
+  handleProduct(true)
+  const productId = params.id;
+  // console.log(productId)
+  deleteProduct(productId)
+}
+window.handleSearch = function() {
+  const searchParams = new URLSearchParams(window.location.search);
+  console.log(searchParams.get('search'));
+  searchProduct()
+  }
+
+if (window.router) {
+    router.registerHandler('handleEditProduct',handleEditProduct)
+  router.registerHandler('handleDeleteProduct',handleDeleteProduct)
+  router.registerHandler('handleSearch',handleSearch)
+  router.registerHandler('handleProduct', handleProduct);
+  router.registerHandler('handleAddProduct', handleAddProduct);
+}
+
+
 // để chuyển lại router lúc mà thành công hoặc đóng modal thì chuyển router lại về /
 // ctrl f tìm dòng này router.navigate('/products'); k chắc đúng logic k nữa mà thôi kệ đi=))
 function openAddProductModal() {
@@ -32,7 +45,7 @@ function openAddProductModal() {
       $('#addProductModal').modal('show');
   }
 }
-function handleProduct() {
+function handleProduct(shouldLoadData = true) {
   const Mange_client = document.getElementsByClassName("Mange_client")[0]
   const ProductOut = `
   <div class="container-fluid">
@@ -67,15 +80,7 @@ function handleProduct() {
             <tbody id="productTableBody"></tbody>
           </table>
         </div>
-        <nav aria-label="Page navigation" class="mt-4">
-              <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-              </ul>
-            </nav>
+        <div class="pagination justify-content-center mt-3"></div>
       </div>
     </div>
     <!-- ... (phần sửa sản phẩm ... -->
@@ -202,20 +207,45 @@ function handleProduct() {
   Mange_client.innerHTML = ProductOut
   $('#addProductModal').on('hidden.bs.modal', function () {
     if (window.router) {
-      router.navigate('/products');
+      const urlParams = new URLSearchParams(window.location.search);
+      const page = urlParams.get('page') || 1;
+      router.navigate(`/products?page=${page}`);
     } 
+    selectedNewImages = [];
+    // $('#addProductModalForm').data
   });
   $('#editProductModal').on('hidden.bs.modal',()=>{
     if (window.router) {
-      router.navigate('/products');
+      const urlParams = new URLSearchParams(window.location.search);
+      const page = urlParams.get('page') || 1;
+      router.navigate(`/products?page=${page}`);
     } 
+    selectedNewImages = [];
+    $('#editProductForm').data('deletedImages', []);
   })
-  loadProductData()
-  loadCategoriesAndPromotions()
+  if (shouldLoadData) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(urlParams.get('page')) || 1;
+    loadProductData(initialPage);
+    loadCategoriesAndPromotions();
+  }
+  
+}
+window.addEventListener('popstate', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const page = parseInt(urlParams.get('page')) || 1;
+  
+  // Chỉ load data nếu đang ở route products
+  if (window.location.pathname.endsWith('/products')) {
+    loadProductData(page);
+  }
+});
+function getCurrentPage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return parseInt(urlParams.get('page')) || 1;
 }
 function searchProduct() {
   const searchValue = document.querySelector(".input-group input").value.trim();
-  
   if (searchValue === "") {
     loadProductData();
     if (window.router) {
@@ -227,8 +257,6 @@ function searchProduct() {
   // Cập nhật URL khi tìm kiếm
   if (window.router) {
     router.navigate(`/products/search?search=${encodeURIComponent(searchValue)}`);
-  } else {
-    window.history.pushState({}, '', `/products/search?search=${encodeURIComponent(searchValue)}`);
   }
 
   $.ajax({
@@ -251,19 +279,79 @@ function searchProduct() {
     }
   });
 }
-function loadProductData() {
+function loadProductData(page = 1) {
+  // Đảm bảo page là số
+  page = parseInt(page) || 1;
+  
   $.ajax({
-    url: "/api/index.php?type=getAllProducts",
+    url: `/api/index.php?type=getAllProducts&page=${page}`,
     type: "GET",
     dataType: "json",
     success: (data) => {
-      renderProductTable(data)
+      renderProductTable(data.products);
+      renderPagination(data.pagination);
+      
+      // Cập nhật URL
+      if (window.router) {
+        router.navigate(page > 1 ? `/products?page=${page}` : '/products');
+      } else {
+        window.history.pushState({}, '', 
+          page > 1 ? `/admin/products?page=${page}` : '/admin/products');
+      }
     },
     error: (xhr, status, error) => {
-      console.error("Lỗi khi tải dữ liệu:", error)
-      alert("Không thể tải dữ liệu sản phẩm!")
-    },
-  })
+      console.error("Lỗi khi tải dữ liệu:", error);
+    }
+  });
+}
+function renderPagination(pagination) {
+  if (pagination.total_pages <= 1) {
+    $('.pagination').empty();
+    return;
+  }
+  const paginationHtml = `
+    <ul class="pagination justify-content-center">
+      ${pagination.current_page > 1 ? 
+        `<li class="page-item">
+          <a class="page-link" href="#" data-page="${pagination.current_page - 1}">Trước</a>
+        </li>` : ''
+      }
+      
+      ${Array.from({length: pagination.total_pages}, (_, i) => {
+        const page = i + 1;
+        // Chỉ hiển thị một số trang gần trang hiện tại
+        if (Math.abs(page - pagination.current_page) <= 2 || 
+            page === 1 || 
+            page === pagination.total_pages) {
+          return `
+            <li class="page-item ${page === pagination.current_page ? 'active' : ''}">
+              <a class="page-link" href="#" data-page="${page}">${page}</a>
+            </li>
+          `;
+        }
+        // Hiển thị ... cho các trang bị ẩn
+        if (Math.abs(page - pagination.current_page) === 3) {
+          return `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        return '';
+      }).join('')}
+      
+      ${pagination.current_page < pagination.total_pages ? 
+        `<li class="page-item">
+          <a class="page-link" href="#" data-page="${pagination.current_page + 1}">Sau</a>
+        </li>` : ''
+      }
+    </ul>
+  `;
+  
+  $('.pagination').html(paginationHtml);
+  
+  // Gắn sự kiện click
+  $('.pagination').off('click', '.page-link').on('click', '.page-link', function(e) {
+    e.preventDefault();
+    const page = parseInt($(this).data('page')) || 1;
+    loadProductData(page);
+  });
 }
 function loadCategoriesAndPromotions() {
   $.ajax({
@@ -311,46 +399,55 @@ function loadCategoriesAndPromotions() {
     })
   })
   $('#editProductImage').change(function() {
-      const newFiles = Array.from(this.files);
-      selectedNewImages = selectedNewImages.concat(newFiles); // Cộng dồn file mới vào mảng
-      const preview = $('#editImagePreview');
+    const files = this.files;
+    const preview = $('#editImagePreview');
+    
+    // Thêm ảnh mới vào mảng selectedNewImages
+    Array.from(files).forEach(file => {
+      selectedNewImages.push(file);
       
-      newFiles.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.append(`
-            <div class="position-relative" style="width:100px; height:100px;">
-              <img src="${e.target.result}" class="img-thumbnail" 
-                   style="width:100%;height:100%; object-fit: cover;">
-              <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
-                      onclick="removeImagePreview(${selectedNewImages.length - newFiles.length + index})"></button>
-            </div>
-          `);
-        };
-        reader.readAsDataURL(file);
-      });
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Thêm thuộc tính data-temp-id để phân biệt ảnh mới
+        const tempId = 'temp_' + Math.random().toString(36).substr(2, 9);
+        preview.append(`
+          <div class="position-relative" style="width:100px; height:100px;">
+            <img src="${e.target.result}" class="img-thumbnail" 
+                 style="width:100%;height:100%; object-fit: cover;">
+            <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
+                    onclick="removeImage('${tempId}')" data-temp-id="${tempId}"></button>
+          </div>
+        `);
+      };
+      reader.readAsDataURL(file);
     });
+    
+    // Reset input file
+    // $(this).val('');
+  });
 }
 function removeImagePreview(index) {
-  selectedImages.splice(index, 1)
-  $("#productImage").val("")
-  $("#imagePreview").empty()
+  
+    selectedImages.splice(index, 1);
+    $("#productImage").val("");
+    $("#imagePreview").empty();
 
-  selectedImages.forEach((file, i) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      $("#imagePreview").append(`
-        <div class="position-relative" style="width:100px; height:100px;">
-          <img src="${e.target.result}" class="img-thumbnail" 
-               style="width:100%;height:100%; object-fit: cover;">
-          <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
-                  onclick="removeImagePreview(${i})"></button>
-        </div>
-      `)
-    }
-    reader.readAsDataURL(file)
-  })
-}
+    selectedImages.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        $("#imagePreview").append(`
+          <div class="position-relative" style="width:100px; height:100px;">
+            <img src="${e.target.result}" class="img-thumbnail" 
+                 style="width:100%;height:100%; object-fit: cover;">
+            <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
+                    onclick="removeImagePreview(${i})"></button>
+          </div>
+        `);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
 
 function submitProductForm() {
   $(".is-invalid").removeClass("is-invalid")
@@ -458,42 +555,49 @@ function renderProductTable(products) {
   })
 }
 function deleteProduct(productId) {
-  if (window.router) {
-    router.navigate('/products/delete');
-  } 
-  if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-    const url = `/api/index.php?type=deleteProduct&MaSP=${productId}`;
+  if (window.router && window.location.pathname.includes('/delete/')) {
     
-    $.ajax({
-      url: url,
-      type: "GET", // vì dữ liệu được gửi qua URL
-      dataType: "json",
-      success: (response) => {
-        if (response.success) {
-          alert("Xóa sản phẩm thành công!");
-          if (window.router) {
-            router.navigate('/products');
-          } 
-          loadProductData();
-        } else {
-          alert("Lỗi: " + response.message);
-        }
-      },
-      error: (xhr, status, error) => {
-        alert("Lỗi khi xóa sản phẩm: " + error);
-        console.log(xhr.responseText);
-      },
-    });
-  }else{
-    if(window.router){
-      router.navigate('/products')
-    }
+    return;
   }
+  if (window.router) {
+    router.navigate(`/products/delete/${productId}`);
+  }
+  
+  const confirmDelete = confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
+  if (!confirmDelete) {
+    if (window.router) {
+      router.navigate('/products');
+    }
+    return;
+  }
+
+  const url = `/api/index.php?type=deleteProduct&MaSP=${productId}`;
+  
+  $.ajax({
+    url: url,
+    type: "GET",
+    dataType: "json",
+    success: (response) => {
+      if (response.success) {
+        alert("Xóa sản phẩm thành công!");
+        if (window.router) {
+          router.navigate('/products');
+        } 
+        loadProductData();
+      } else {
+        alert("Lỗi: " + response.message);
+      }
+    },
+    error: (xhr, status, error) => {
+      alert("Lỗi khi xóa sản phẩm: " + error);
+      console.log(xhr.responseText);
+    },
+  });
 }
 
 function showEditForm(productId) {
   if (window.router) {
-    router.navigate('/products/edit');
+    router.navigate(`/products/edit/${productId}`);
 } else {
     $('#addProductModal').modal('show');
 }
@@ -538,17 +642,22 @@ function showEditForm(productId) {
       promotionSelect.val(product.MaKM || "")
 
       // Hiển thị ảnh hiện tại
-      const preview = $("#editImagePreview")
-      preview.empty()
-      product.Anh.forEach((image) => {
-        preview.append(`
-    <div class="position-relative" style="width:100px; height:100px;">
-      <img src="${image.Url}" class="img-thumbnail" style="width:100%;height:100%; object-fit: cover;">
-      <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
-              onclick="removeEditImage('${image.MaAnh}')" data-image-id="${image.MaAnh}"></button>
-    </div>
-  `)
-      })
+      const preview = $("#editImagePreview");
+  preview.empty();
+  
+  // Reset danh sách ảnh mới và ảnh xóa
+  selectedNewImages = [];
+  $('#editProductForm').data('deletedImages', []);
+  
+  product.Anh.forEach((image) => {
+    preview.append(`
+      <div class="position-relative" style="width:100px; height:100px;">
+        <img src="${image.Url}" class="img-thumbnail" style="width:100%;height:100%; object-fit: cover;">
+        <button type="button" class="btn-close position-absolute top-0 end-0 bg-white" 
+                onclick="removeImage('${image.MaAnh}')"></button>
+      </div>
+    `);
+  });
       $("#editProductModal").modal("show")
     })
     .fail((xhr, status, error) => {
@@ -605,17 +714,28 @@ function updateProduct() {
     },
   });
 }
-function removeEditImage(imageId) {
+function removeImage(id) {
   if (confirm("Bạn có chắc muốn xóa ảnh này?")) {
-    const deletedImages = $("#editProductForm").data("deletedImages") || []
-    if (!deletedImages.includes(imageId)) {
-      deletedImages.push(imageId)
-      $("#editProductForm").data("deletedImages", deletedImages)
+    if (id.startsWith('temp_')) {
+      // Xóa ảnh mới (không có ID thật)
+      const index = selectedNewImages.findIndex((_, i) => 
+        $(`button[data-temp-id="${id}"]`).length > 0
+      );
+      if (index !== -1) {
+        selectedNewImages.splice(index, 1);
+      }
+      $('#editProductImage').val('');
+      $(`button[onclick*="${id}"]`).parent().remove();
+      
+    } else {
+      // Xóa ảnh cũ (có ID)
+      const deletedImages = $('#editProductForm').data('deletedImages') || [];
+      deletedImages.push(id);
+      $('#editProductForm').data('deletedImages', deletedImages);
+      $(`button[onclick*="${id}"]`).parent().hide();
     }
-    $(`button[onclick*="${imageId}"]`).parent().remove()
   }
 }
-
 function formatCurrency(amount) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
 }
