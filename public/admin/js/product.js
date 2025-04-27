@@ -5,13 +5,12 @@ window.handleAddProduct = function() {
     console.error('Router chưa được khởi tạo');
     return;
   }
-  handleProduct(false);
+
   setTimeout(() => {
     $('#addProductModal').modal('show');
   }, 100);
 }
 window.handleEditProduct = function(params) {
-  handleProduct(false);
   const productId = params.id;
   showEditForm(productId);
 };
@@ -26,15 +25,6 @@ window.handleSearch = function() {
   console.log(searchParams.get('search'));
   searchProduct()
   }
-
-if (window.router) {
-    router.registerHandler('handleEditProduct',handleEditProduct)
-  router.registerHandler('handleDeleteProduct',handleDeleteProduct)
-  router.registerHandler('handleSearch',handleSearch)
-  router.registerHandler('handleProduct', handleProduct);
-  router.registerHandler('handleAddProduct', handleAddProduct);
-}
-
 
 // để chuyển lại router lúc mà thành công hoặc đóng modal thì chuyển router lại về /
 // ctrl f tìm dòng này router.navigate('/products'); k chắc đúng logic k nữa mà thôi kệ đi=))

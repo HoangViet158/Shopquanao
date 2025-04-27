@@ -1,3 +1,12 @@
+window.handleBillDetail=(MaHD)=>{
+    handleBill()
+    const billId=typeof MaHD==='object'? MaHD.id : MaHD
+    showBillDetail(billId)
+}
+window.handleBillStatus = (params) => {
+    handleBill()
+    updateBillStatus(params.id);
+};
 function handleBill() {
     const Mange_client = document.getElementsByClassName('Mange_client')[0];
     const Bill = `
@@ -23,10 +32,10 @@ function handleBill() {
                             <input type="date" class="form-control" id="toDate" onchange="filterBills()">
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select" id="locationFilter" onchange="filterBills()">
-                                <option value="">Tất cả địa điểm</option>
-                                <!-- Các option quận/huyện sẽ được thêm bằng JS -->
-                            </select>
+                            <input type="text" class="form-control" id="addressFilter" placeholder="Nhập địa chỉ">
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary w-100" onclick="filterBills()">Lọc</button>
                         </div>
                     </div>
                 </div>
@@ -97,27 +106,120 @@ function handleBill() {
             </div>
         </div>
     </div>
+    <!-- Modal cập nhật trạng thái -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cập nhật trạng thái hóa đơn #<span id="updateBillId"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="statusAlert" class="alert alert-warning d-none">
+                    Không thể cập nhật hóa đơn đã kết thúc
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Trạng thái hiện tại: <span id="currentStatus"></span></label>
+                </div>
+                <div class="mb-3">
+                    <label for="newStatus" class="form-label">Chọn trạng thái mới:</label>
+                    <select class="form-select" id="newStatus">
+                        <option value="0">Chưa xác nhận</option>
+                        <option value="1">Đã xác nhận</option>
+                        <option value="2">Đã giao thành công</option>
+                        <option value="3">Đã hủy</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmUpdateBtn" onclick="confirmUpdateStatus()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
     `;
     Mange_client.innerHTML = Bill;
     loadBillList();
-    // loadLocationOptions();
+    $("#billDetailModal").on('hidden.bs.modal', ()=>{
+        router.navigate('/bills',{},true)
+    })
+    $("#updateStatusModal").on('hidden.bs.modal', ()=>{
+        router.navigate('/bills',{},true)
+    })
 }
+function filterBills() {
+    const status = $('#statusFilter').val();
+    const fromDate = $('#fromDate').val();
+    const toDate = $('#toDate').val();
+    const address = $('#addressFilter').val().trim();
 
-function loadBillList() {
-    const apiUrl = '/api/index.php?type=getAllBill';
+    // Validate
+    if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+        alert('Ngày bắt đầu phải nhỏ hơn ngày kết thúc');
+        return;
+    }
+
+    // Tạo object filter
+    const filters = {};
+    if (status !== '') filters.status = status;
+    if (fromDate) filters.fromDate = fromDate;
+    if (toDate) filters.toDate = toDate;
+    if (address) filters.address = address;
     $.ajax({
-        url: apiUrl,
-
-        method: 'GET',
+        url: '/api/index.php?type=filterBills',
+        method: 'POST',  
+        data: JSON.stringify(filters),
+        contentType: 'application/json',
         dataType: 'json',
         success: (data) => {
-            renderBillList(data);
+            if (data && data.length > 0) {
+                renderBillList(data);
+                // Update URL
+                if (window.router) {
+                    const queryString = new URLSearchParams(filters).toString();
+                    router.navigate(`/bills?${queryString}`, {}, true);
+                }
+            } else {
+                $('#billList').html('<tr><td colspan="7" class="text-center py-4">Không tìm thấy hóa đơn nào phù hợp</td></tr>');
+            }
         },
         error: (error) => {
-            console.log(apiUrl)
-            console.error("Lỗi khi tải danh sách hóa đơn: " + error);
+            console.error('Lỗi khi lọc hóa đơn:', error);
+            alert('Lỗi khi lọc hóa đơn');
         }
     });
+}
+function loadBillList() {
+    // Lấy các tham số từ URL nếu có
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    const fromDate = urlParams.get('fromDate');
+    const toDate = urlParams.get('toDate');
+    const address = urlParams.get('address');
+
+    if (status || fromDate || toDate || address) {
+        // Đặt giá trị cho các filter
+        if (status) $('#statusFilter').val(status);
+        if (fromDate) $('#fromDate').val(fromDate);
+        if (toDate) $('#toDate').val(toDate);
+        if (address) $('#addressFilter').val(address);
+    
+        filterBills();
+    } else {
+
+        $.ajax({
+            url: '/api/index.php?type=getAllBill',
+            method: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                renderBillList(data);
+            },
+            error: (error) => {
+                console.error("Lỗi khi tải danh sách hóa đơn: " + error);
+            }
+        });
+    }
 }
 
 function renderBillList(data) {
@@ -142,8 +244,11 @@ function renderBillList(data) {
             <td><span class="badge ${statusClass}">${statusText}</span></td>
             <td>${bill.taikhoan.DiaChi}</td>
             <td>
-                <button class="btn btn-sm btn-primary" onclick="showBillDetail(${bill.MaHD})">
-                    <i class="fas fa-eye"></i> Xem chi tiết
+                <button class="btn btn-sm btn-outline-success me-2" onclick="updateBillStatus(${bill.MaHD})">
+                      <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" onclick="showBillDetail(${bill.MaHD})">
+                      <i class="fas fa-eye"></i>
                 </button>
             </td>
         </tr>
@@ -151,11 +256,67 @@ function renderBillList(data) {
         billTable.append(row);
     });
 }
+function updateBillStatus(billId) {
+    if (window.router) {
+        router.navigate(`/bills/updateStatus/${billId}`);
+    }
+    
+    // Hiển thị modal cập nhật trạng thái
+    $('#updateBillId').text(billId);
+    
+    // Lấy thông tin hóa đơn hiện tại
+    $.ajax({
+        url: `/api/index.php?type=getAllBillDetail&MaHD=${billId}`,
+        method: 'GET',
+        dataType: 'json',
+        success: (bill) => {
+            if ([2, 3].includes(parseInt(bill[0].TrangThai))) {
+                alert('Không thể chỉnh sửa hóa đơn đã giao thành công hoặc đã hủy');
+                return;
+            }
+            console.log(bill[0].TrangThai)
+            $('#currentStatus').text(getStatusText(bill[0].TrangThai));
+            $('#newStatus').val(bill[0].TrangThai);
+            $('#updateStatusModal').modal('show');
+        },
+        error: (error) => {
+            console.error('Lỗi khi lấy thông tin hóa đơn:', error);
+            alert('Không thể lấy thông tin hóa đơn');
+        }
+    });
+}
 
+function confirmUpdateStatus() {
+    const billId = $('#updateBillId').text();
+    const newStatus = $('#newStatus').val();
+    if ([2, 3].includes(parseInt($('#currentStatus').data('status')))) {
+        alert('Không thể cập nhật hóa đơn đã kết thúc');
+        return;
+    }
+    $.ajax({
+        url: '/api/index.php?type=updateBillStatus',
+        method: 'POST',
+        data: {
+            MaHD: billId,
+            TrangThai: newStatus
+        },
+        dataType: 'json',
+        success: (response) => {
+            alert('Cập nhật trạng thái thành công!');
+            $('#updateStatusModal').modal('hide');
+            loadBillList();
+            router.navigate('/bills'); 
+        },
+        error: (error) => {
+            console.error('Lỗi khi cập nhật:', error);
+            alert('Cập nhật trạng thái thất bại!');
+        }
+    });
+}
 function showBillDetail(billId) {
     console.log('Loading bill detail for ID:', billId);
     if (window.router) {
-        router.navigate(`/bills/${billId}`); // Chuyển URL
+        router.navigate(`/bills/detail/${billId}`); 
     } else {
         console.error('Router not initialized');
     }
@@ -165,9 +326,8 @@ function showBillDetail(billId) {
         return;
     }
 
-    // Hiển thị loading state
     $('#billDetailList').html('<tr><td colspan="5" class="text-center">Đang tải...</td></tr>');
-
+    $('.status-control').hide();
     try {
         $.ajax({
             url: `/api/index.php?type=getAllBillDetail&MaHD=${billId}`,
@@ -224,19 +384,17 @@ function renderBillDetail(bill, details) {
         detailTable.append(row);
     });
 }
-function loadLocationOptions() {
-    const districts = ["Quận 1", "Quận 2", "Quận 3", "Quận 4", "Quận 5", "Quận 6", "Quận 7", "Quận 8", 
-                      "Quận 9", "Quận 10", "Quận 11", "Quận 12", "Tân Bình", "Bình Thạnh", "Gò Vấp", "Phú Nhuận"];
-    
-    const select = $('#locationFilter');
-    districts.forEach(district => {
-        select.append(`<option value="${district}">${district}</option>`);
-    });
-}
-
 // Các hàm hỗ trợ
 function getStatusText(status) {
-    switch (parseInt(status)) {
+    console.log(status)
+    const statusNum = Number(status);
+    console.log(statusNum)
+    if (isNaN(statusNum)) {
+        console.error('Trạng thái không hợp lệ:', status);
+        return "Không xác định";
+    }
+
+    switch (statusNum) {
         case 0: return "Chưa xác nhận";
         case 1: return "Đã xác nhận";
         case 2: return "Đã giao thành công";
@@ -244,7 +402,6 @@ function getStatusText(status) {
         default: return "Không xác định";
     }
 }
-
 function getStatusClass(status) {
     switch (parseInt(status)) {
         case 0: return "bg-secondary";
@@ -263,17 +420,3 @@ function formatDate(dateString) {
 function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 }
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // Đăng ký hàm xử lý
-    if (typeof router !== 'undefined') {
-        router.registerHandler('handleBill', handleBill);
-        
-        // Hoặc đăng ký trực tiếp route nếu cần custom
-        // router.addRoute('/bills/:id', null, (params) => {
-        //     console.log('Route triggered for bill ID:', params.id);
-        //     // handleBill();
-        //     showBillDetail(params.id);
-        // });
-    }
-});

@@ -133,7 +133,8 @@ class Router {
             'handleAddProduct', 'handleEditProduct', 
             'handleDeleteProduct', 'handleSearch',
             'handleAddGoodsReceipt', 'handleDetailGoodsReceipt',
-            'handleSearchGoodsReceipt'
+            'handleSearchGoodsReceipt','handleBillSearch','handleBillDetail',
+            'handleBillStatus'
         ];
 
         handlers.forEach(name => {
@@ -163,6 +164,8 @@ class Router {
         this.addRoute('/products/search', 'handleSearch');
         this.addRoute('/bills', 'handleBill');
         this.addRoute('/bills/detail/:id','handleBillDetail');
+        this.addRoute('/bills/updateStatus/:id','handleBillStatus');
+        this.addRoute('bills/search','handleBillSearch');
         this.addRoute('/goods-receipts', 'handleGoodsReceipt');
         this.addRoute('/goods-receipts/add', 'handleAddGoodsReceipt');
         this.addRoute('/goods-receipts/detail/:id', 'handleDetailGoodsReceipt');
