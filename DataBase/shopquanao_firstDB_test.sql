@@ -16,7 +16,7 @@
 
 
 -- Dumping database structure for shopaoquan
-CREATE DATABASE IF NOT EXISTS `shopaoquan` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `shopaoquan` ;
 USE `shopaoquan`;
 
 -- Dumping structure for table shopaoquan.anh
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `anh` (
   PRIMARY KEY (`MaAnh`),
   KEY `fk_anh_sp` (`MaSP`),
   CONSTRAINT `fk_anh_sp` FOREIGN KEY (`MaSP`) REFERENCES `sanpham` (`MaSP`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.anh: ~0 rows (approximately)
 DELETE FROM `anh`;
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `chitiet_quyen_cn` (
   KEY `fk_pq_cn` (`MaCTQ`),
   CONSTRAINT `fk_pq_cn` FOREIGN KEY (`MaCTQ`) REFERENCES `chucnang` (`MaCTQ`),
   CONSTRAINT `fk_pq_quyen` FOREIGN KEY (`MaQuyen`) REFERENCES `quyen` (`MaQuyen`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.chitiet_quyen_cn: ~0 rows (approximately)
 DELETE FROM `chitiet_quyen_cn`;
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `chucnang` (
   `MaCTQ` int NOT NULL AUTO_INCREMENT,
   `Chuc nang` varchar(255) NOT NULL,
   PRIMARY KEY (`MaCTQ`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.chucnang: ~0 rows (approximately)
 DELETE FROM `chucnang`;
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `cthoadon` (
   CONSTRAINT `fk_cthoadon_hd` FOREIGN KEY (`MaHD`) REFERENCES `hoadon` (`MaHD`),
   CONSTRAINT `fk_cthoadon_sp` FOREIGN KEY (`MaSP`) REFERENCES `sanpham` (`MaSP`),
   CONSTRAINT `fk_cthoadon_sp_size` FOREIGN KEY (`MaSP`, `MaSize`) REFERENCES `size_sanpham` (`MaSP`, `MaSize`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.cthoadon: ~0 rows (approximately)
 DELETE FROM `cthoadon`;
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `ctphieunhap` (
   CONSTRAINT `fk_ctphieunhap_pn` FOREIGN KEY (`MaPN`) REFERENCES `phieunhap` (`MaPN`),
   CONSTRAINT `fk_ctphieunhap_sp` FOREIGN KEY (`MaSP`) REFERENCES `sanpham` (`MaSP`),
   CONSTRAINT `fk_ctphieunhap_sp_size` FOREIGN KEY (`MaSP`, `MaSize`) REFERENCES `size_sanpham` (`MaSP`, `MaSize`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.ctphieunhap: ~0 rows (approximately)
 DELETE FROM `ctphieunhap`;
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `danhmuc` (
   `TenDM` varchar(200) DEFAULT NULL,
   `TrangThai` int DEFAULT NULL,
   PRIMARY KEY (`MaDM`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.danhmuc: ~0 rows (approximately)
 DELETE FROM `danhmuc`;
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `hoadon` (
   PRIMARY KEY (`MaHD`),
   KEY `fk_hoadon_taikhoan` (`MaTK`),
   CONSTRAINT `fk_hoadon_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.hoadon: ~0 rows (approximately)
 DELETE FROM `hoadon`;
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `khuyenmai` (
   `NgayKetThuc` datetime DEFAULT NULL,
   `giaTriKM` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`MaKM`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.khuyenmai: ~0 rows (approximately)
 DELETE FROM `khuyenmai`;
@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS `loai` (
   `MaLoai` int NOT NULL AUTO_INCREMENT,
   `TenLoai` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`MaLoai`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.loai: ~0 rows (approximately)
 DELETE FROM `loai`;
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `nguoidung` (
   KEY `fk_loai_nguoidung` (`MaLoai`),
   CONSTRAINT `fk_loai_nguoidung` FOREIGN KEY (`MaLoai`) REFERENCES `loai` (`MaLoai`),
   CONSTRAINT `fk_nguoidung_taikhoan` FOREIGN KEY (`MaNguoiDung`) REFERENCES `taikhoan` (`MaTK`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.nguoidung: ~0 rows (approximately)
 DELETE FROM `nguoidung`;
@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `nhacungcap` (
   `TenNCC` varchar(255) NOT NULL,
   `TrangThai` int DEFAULT NULL,
   PRIMARY KEY (`MaNCC`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.nhacungcap: ~0 rows (approximately)
 DELETE FROM `nhacungcap`;
@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `phieunhap` (
   KEY `fk_phieunhap_taikhoan` (`MaTK`),
   CONSTRAINT `fk_phieunhap_ncc` FOREIGN KEY (`MaNCC`) REFERENCES `nhacungcap` (`MaNCC`),
   CONSTRAINT `fk_phieunhap_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.phieunhap: ~0 rows (approximately)
 DELETE FROM `phieunhap`;
@@ -269,7 +269,7 @@ CREATE TABLE IF NOT EXISTS `quyen` (
   `TenQuyen` varchar(255) NOT NULL,
   `TrangThai` int NOT NULL,
   PRIMARY KEY (`MaQuyen`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.quyen: ~0 rows (approximately)
 DELETE FROM `quyen`;
@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS `sanpham` (
   KEY `fk_sanpham_km` (`MaKM`),
   CONSTRAINT `fk_sanpham_danhmuc` FOREIGN KEY (`MaDM`) REFERENCES `danhmuc` (`MaDM`),
   CONSTRAINT `fk_sanpham_km` FOREIGN KEY (`MaKM`) REFERENCES `khuyenmai` (`MaKM`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.sanpham: ~0 rows (approximately)
 DELETE FROM `sanpham`;
@@ -315,7 +315,7 @@ CREATE TABLE IF NOT EXISTS `size` (
   `MaSize` int NOT NULL AUTO_INCREMENT,
   `TenSize` varchar(50) NOT NULL,
   PRIMARY KEY (`MaSize`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.size: ~0 rows (approximately)
 DELETE FROM `size`;
@@ -335,7 +335,7 @@ CREATE TABLE IF NOT EXISTS `size_sanpham` (
   KEY `fk_sizesp_size` (`MaSize`),
   CONSTRAINT `fk_sizesp_size` FOREIGN KEY (`MaSize`) REFERENCES `size` (`MaSize`),
   CONSTRAINT `fk_sizesp_sp` FOREIGN KEY (`MaSP`) REFERENCES `sanpham` (`MaSP`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.size_sanpham: ~0 rows (approximately)
 DELETE FROM `size_sanpham`;
@@ -374,7 +374,7 @@ CREATE TABLE IF NOT EXISTS `taikhoan` (
   PRIMARY KEY (`MaTK`),
   KEY `fk_taikhoan_quyen` (`MaQuyen`),
   CONSTRAINT `fk_taikhoan_quyen` FOREIGN KEY (`MaQuyen`) REFERENCES `quyen` (`MaQuyen`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table shopaoquan.taikhoan: ~0 rows (approximately)
 DELETE FROM `taikhoan`;

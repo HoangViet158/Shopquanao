@@ -173,3 +173,48 @@ body {
         width: 150px;
     }
 }
+
+.table-custom {
+    width: 800px;         /* chiều rộng cố định */
+    max-width: 100%;      /* không rộng quá container */
+    margin: 0 auto;       /* canh giữa */
+}
+
+/* css cho bang chi tiet hoa don */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    position: relative; /* Đảm bảo close được căn ở góc phải */
+}
+
+.modal-header {
+    text-align: center; /* Căn giữa tiêu đề */
+    font-size: 20px;
+    margin-bottom: 15px; /* Khoảng cách giữa tiêu đề và nội dung */
+}
+
+.close {
+    position: absolute; /* Đặt vị trí tuyệt đối */
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+

@@ -2,18 +2,21 @@
 require_once(__DIR__ . '/../../config/connect.php');
 $db = new Database();
 $con = $db->connection();
-
+require_once(__DIR__ . '/../Controller/statistic_Controller.php');
 require_once(__DIR__ . '/../Controller/category_Controller.php');
 require_once(__DIR__ . '/../Controller/promotion_Controller.php');
 require_once(__DIR__ . '/../Controller/product_Controller.php');
 require_once(__DIR__ . '/../Controller/goodsReceipt_Controller.php');
 require_once(__DIR__ . '/../Controller/bill_Controller.php');
+require_once(__DIR__ . '/../Controller/user_Controller.php');
 $billController=new bill_Controller();
 $goodReceiptController=new goodsReceipt_Controller();
 $type = isset($_GET['type']) ? $_GET['type'] : null;
 $productController = new product_Controller();
 $categoryController = new category_Controller();
 $promotionController = new promotion_Controller();
+$statisticConTroller = new statistic_Controller();
+$userController = new user_Controller();
 $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
@@ -221,5 +224,97 @@ switch ($type) {
     case 'getAllBillDetail':
         $Detail=$_GET['MaHD'];
         echo json_encode($billController->getAllBillDetail($Detail));
+        break;
+    case 'top5users':
+        $start = new DateTime($_GET['daystart'] ?? '2024-01-01');
+        $end   = new DateTime($_GET['dayend'] ?? 'now');
+        $topUsers = $statisticConTroller->getTopUserCost($start, $end);
+        
+        if ($topUsers) {
+            $result = [];
+            while ($row = $topUsers->fetch_assoc()) {
+                $result[] = $row;
+            }
+            header('Content-Type: application/json'); // ✅ Đảm bảo kiểu JSON
+            echo json_encode($result);
+        } else {
+            header('Content-Type: application/json'); // ✅ Đảm bảo kiểu JSON
+            echo json_encode(['error' => 'Không có dữ liệu top 5 người dùng']);
+        }
+        break;
+    case 'loadInvoices':
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+        $start = new DateTime($_GET['daystart'] ?? '2024-01-01');
+        $end   = new DateTime($_GET['dayend'] ?? 'now');
+        $id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+
+        $result =  $statisticConTroller->getInvoices($limit, $offset, $start, $end, $id);
+        if ($result) {
+            $invoices = [];
+            while ($row = $result->fetch_assoc()){
+                $invoices[] = $row;
+            }
+            header('Content-Type: application/json');
+            echo json_encode($invoices);
+        }
+        break;
+    case 'monthlyRevenue':
+        $date  = isset($_GET['date']);
+        header('Content-Type: application/json'); 
+        $statisticConTroller->monthly_revenue($date);
+        break;
+    case 'totalInvoices':
+        $start = new DateTime($_GET['daystart'] ?? '2024-01-01');
+        $end   = new DateTime($_GET['dayend'] ?? 'now');
+        $id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+        $result = $statisticConTroller->total_invoices($start,$end,$id);
+        $row = $result->fetch_assoc();
+        header('Content-Type: application/json');
+        echo json_encode($row);
+        break;
+    case 'getUser':
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+        $search = !empty($_GET['search']) ? (string)$_GET['search'] : "";
+        $result = $userController->getUser($limit,$offset,$search);
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+    
+        header('Content-Type: application/json');
+        echo json_encode($users);
+        break;
+    case 'getTotalUser':
+        $search = !empty($_GET['search']) ? (string)$_GET['search'] : "";
+        $result = $userController->getTotalUser($search);
+        $row = $result->fetch_assoc();
+        header('Content-Type: application/json');
+        echo json_encode($row);
+        break;
+    case 'addUser':
+        // Đọc toàn bộ raw POST body
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+    
+        $TenTK   = $data['TenTK']   ?? '';
+        $MatKhau = $data['MatKhau'] ?? '';
+        $Email   = $data['Email']   ?? '';
+        $DiaChi  = $data['DiaChi']  ?? '';
+        $MaLoai  = (int)($data['MaLoai'] ?? 1);
+        $MaQuyen = (int)($data['MaQuyen'] ?? 3);
+    
+        $success = $userController->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $success]);
+        exit;
+        break;
+    case 'getUserById':
+        $id = $isset($_GET['id']) ? (int)$_GET['id'] : null;
+        $result = $userController->getUserById($id);
+        $row = $result->fetch_assoc();
+        header('Content-Type: application/json');
+        echo json_encode($row);
         break;
 }       
