@@ -16,7 +16,9 @@
 
 
 -- Dumping database structure for shopaoquan
-CREATE DATABASE IF NOT EXISTS `shopaoquan` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `shopaoquan`
+  DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 USE `shopaoquan`;
 
 -- Dumping structure for table shopaoquan.anh
