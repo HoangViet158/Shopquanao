@@ -37,12 +37,9 @@ if (in_array($ext, $static_extensions)) {
 
 // Xử lý API requests
 if (strpos($request_uri, '/api/') === 0) {
-    require ROOT_PATH . '/admin/API/index.php';
-    exit;
-}
-if (strpos($request_uri, '/admin/') === 0) {
-    require ROOT_PATH . '/admin/View/index.php';
+    require ROOT_PATH . '/index.php';
     exit;
 }
 //  Route mặc định
-require ROOT_PATH . '/admin/View/index.php';
+//require ROOT_PATH . '/admin/View/index.php';
+require ROOT_PATH . '/index.php';
