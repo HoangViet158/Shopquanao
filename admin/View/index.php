@@ -1,4 +1,4 @@
-<html lang="en">
+<!-- <html lang="en">
 
 <head>
 <meta charset="UTF-8" />
@@ -27,7 +27,7 @@
                 </div>
             </div>
             
-            <!-- Menu sidebar -->
+            Menu sidebar
             <div class="content_side">
                 <div class="side_item" data-route="/products">
                     <div><i class="fa-solid fa-shop"></i></div>
@@ -68,9 +68,9 @@
             </div>
         </div>
 
-        <!-- Phần nội dung chính -->
+        Phần nội dung chính
         <div class="content-container">
-            <!-- Thanh công cụ -->
+            Thanh công cụ
             
             <div class="Mange_client" >
                 <div class="admin_home">
@@ -87,7 +87,7 @@
     <script src="../../public/admin/js/bill.js"></script>
     <script src="../../public/admin/js/statistic.js"></script>
 
-    <!-- Script xử lý chung -->
+    Script xử lý chung
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // Xử lý click menu
@@ -110,4 +110,4 @@
     });
     </script>
 </body>
-</html>
+</html> -->
