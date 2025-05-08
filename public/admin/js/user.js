@@ -221,8 +221,39 @@ const addUserClose  = document.getElementById('addUserClose');
 const addUserForm   = document.getElementById('addUserForm');
 
 // Hàm mở modal
-function openAddUserModal() {
-  addUserModal.style.display = 'block';
+async function openAddUserModal() {
+  const types = await getAllType();
+    const selectType = document.getElementById('addUserType');
+    selectType.innerHTML = '';
+    types.forEach(type => {
+        const option = document.createElement("option");
+        option.value = type.MaLoai;
+        option.textContent = type.TenLoai;
+        // if (id && id == type.MaLoai) {
+        //     option.selected = true;
+        // }
+        if(type.MaLoai != 3){
+            selectType.appendChild(option)
+        }
+    })
+
+    listPermission = await getAllPermission();
+    const selectPermission = document.getElementById('permission');
+    selectPermission.innerHTML = '';
+    listPermission.forEach(permission => {
+        const option = document.createElement("option");
+        option.value = permission.MaQuyen;
+        option.textContent = permission.TenQuyen;
+        // if (id && id == permission.MaQuyen){
+        //     option.selected = true;
+        // }
+        if(permission.MaQuyen != 1){
+            selectPermission.appendChild(option);
+        }
+    });
+
+    addUserModal.style.display = 'block';
+
 }
 
 // Khi bấm nút ×, hỏi xác nhận rồi mới đóng
@@ -382,7 +413,7 @@ async function openEditUser(id) {
         //   console.log(permission)
         //   getAllPermission();
       const permissionSelection = await getAllPermission();
-      renderEditPermission(permissionSelection, user.MaQuyen);
+      await renderEditPermission(permissionSelection, user.MaQuyen);
       await renderEditType(user.MaLoai);
 
       document.getElementById('editUserId').value  = user.MaNguoiDung;

@@ -19,7 +19,7 @@
                 <button type="submit" name="login" class="btn btn-danger "> Đăng nhập </button>
                 </div>
                 <div class="d-flex justify-content-center align-items-center">
-                     Chưa có tài khoản? <a href="/register" class="text-dark"><strong> Đăng ký </strong></a>
+                     Chưa có tài khoản? <a href="register.php" class="text-dark"><strong> Đăng ký </strong></a>
                 </div>
                 </div>
             </form>

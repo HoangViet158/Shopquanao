@@ -59,16 +59,16 @@
                     </div>
                     <div class="col-sm-6">
                     <label class="form-label">Loại tài khoản</label>
-                    <select name="MaLoai" class="form-select">
-                        <option value="1">Khách hàng</option>
+                    <select id="addUserType" name="MaLoai" class="form-select">
+                        <!-- <option value="1">Khách hàng</option>
                         <option value="2">Nhân viên</option>
-                        <option value="3">Quản trị viên</option>
+                        <option value="3">Quản trị viên</option> -->
                     </select>
                     </div>
                     <div class="col-sm-6">
                     <label class="form-label">Quyền</label>
                     <select id="permission" name="MaQuyen" class="form-select">
-                        <option value="1">Khách hàng</option>
+                        <!-- <option value="1">Khách hàng</option> -->
                         <!-- Populate options here -->
                     </select>
                     </div>
