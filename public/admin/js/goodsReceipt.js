@@ -31,15 +31,7 @@ function handleGoodsReceipt(){
                         <tbody id="good-receipt-list"></tbody>
                     </table>
                 </div>
-                <nav aria-label="Page navigation" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
+                
             </div>
         </div>
         <!--phần thêm phiếu nhập-->
@@ -188,7 +180,7 @@ async function calculateSuggestedPrices() {
 for (const productId in productsGrouped) {
     try {
         const response = await $.ajax({
-            url: `/api/index.php?type=getProductDiscount&MaSP=${productId}&t=${Date.now()}`,
+            url: `../../admin/API/index.php?type=getProductDiscount&MaSP=${productId}&t=${Date.now()}`,
             method: 'GET',
             dataType: 'json'
         });
@@ -379,7 +371,7 @@ function calculateTotalPayment(){
 }
 function loadProductOptions(row){
     $.ajax({
-        url:'/api/index.php?type=getAllTenSP',
+        url:'../../admin/API/index.php?type=getAllTenSP',
         method:'GET',
         dataType:'json',
         success: function(data){
@@ -398,7 +390,7 @@ function loadProductOptions(row){
 }
 function loadSizeOptions(row){
     $.ajax({
-        url:'/api/index.php?type=getAllSize',
+        url:'../../admin/API/index.php?type=getAllSize',
         method:'GET',
         dataType:'json',
         success: function(data){
@@ -417,7 +409,7 @@ function loadSizeOptions(row){
 }
 function showAddGoodReceiptForm(){
     $.ajax({
-        url:'/api/index.php?type=getAllProvider',
+        url:'../../admin/API/index.php?type=getAllProvider',
         method:'GET',
         dataType:'json',
         success: function(data){
@@ -441,7 +433,7 @@ function showAddGoodReceiptForm(){
 }
 function loadGoodsReceiptList(){
     $.ajax({
-        url:'/api/index.php?type=loadGoodsReceiptList',
+        url:'../../admin/API/index.php?type=loadGoodsReceiptList',
         method:'GET',
         dataType:'json',
         success: (data) =>{
@@ -526,7 +518,7 @@ function showGoodsReceiptDetailList(maPN){
     loadGoodsReceiptDetailList(maPN)
 }
 function loadGoodsReceiptDetailList(maPN){
-    const url=`/api/index.php?type=getGoodReceiptDetail&MaPN=${maPN}`
+    const url=`../../admin/API/index.php?type=getGoodReceiptDetail&MaPN=${maPN}`
     $.ajax({
         url:url,
         method:'GET',
@@ -639,7 +631,7 @@ function submitGoodReceiptForm(){
     };
     
     $.ajax({
-        url: '/api/index.php?type=addGoodReceipt',
+        url: '../../admin/API/index.php?type=addGoodReceipt',
         method: 'POST',
         dataType: 'json',
         data: {
@@ -660,3 +652,4 @@ function submitGoodReceiptForm(){
     });
 }
 // 
+handleGoodsReceipt()

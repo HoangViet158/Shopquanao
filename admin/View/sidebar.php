@@ -1,7 +1,7 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,29 +22,37 @@
     <div class="main-container">
         <div class="sidebar-container">
             <div class="admin-sidebar-header">
-                
-                    <img class="admin-avatar" src="../../upload/products/logoadmin.jpg" alt="Admin Avatar" />
-               
+
+                <img class="admin-avatar" src="../../upload/products/logoadmin.jpg" alt="Admin Avatar" />
+
                 <div class="admin-sidebar-info">
                     <span class="admin-sidebar-name">admin</span>
                     <span class="admin-sidebar-email">admin@gmail.com</span>
                 </div>
             </div>
-            
+
             <!-- Menu sidebar -->
             <div class="content_side">
-                <div class="side_item" onclick="handleProduct()">
-                    <div><i class="fa-solid fa-shop"></i></div>
-                    <div><span>Quản Lí Sản Phẩm</span></div>
-                </div>
-                <div class="side_item">
-                    <div><i class="fa-solid fa-truck-fast"></i></div>
-                    <div><span>Quản Lí Đơn Hàng</span></div>
-                </div>
-                <div class="side_item" >
-                    <div><i class="fa-solid fa-pen"></i></div>
-                    <div><span>Quản Lí Phiếu Nhập</span></div>
-                </div>
+                <a href="product.php" style="text-decoration: none;">
+                    <div class="side_item">
+                        <div><i class="fa-solid fa-shop"></i></div>
+                        <div><span>Quản Lí Sản Phẩm</span></div>
+                    </div>
+                </a>
+                <a href="bill.php" style="text-decoration: none;">
+                    <div class="side_item">
+                        <div><i class="fa-solid fa-truck-fast"></i></div>
+                        <div><span>Quản Lí Đơn Hàng</span></div>
+                    </div>
+                </a>
+                
+                <a href="goodReceipt.php" style="text-decoration: none;">
+                    <div class="side_item">
+                        <div><i class="fa-solid fa-pen"></i></div>
+                        <div><span>Quản Lí Phiếu Nhập</span></div>
+                    </div>
+                </a>
+
                 <a href="user.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-user"></i></div>
@@ -52,27 +60,31 @@
                     </div>
                 </a>
                 <a href="permission.php" style="text-decoration: none;">
-                    <div class="side_item" >
+                    <div class="side_item">
                         <div><i class="fa-solid fa-user-group"></i></div>
-                        <div><p>Quản Lí Quyền</p></div>
+                        <div>
+                            <p>Quản Lí Quyền</p>
+                        </div>
                     </div>
                 </a>
-                
-                <div class="side_item" >
+
+                <div class="side_item">
                     <div><i class="fa-solid fa-money-bill-wave"></i></div>
-                    <div><p>Khuyến Mãi</p></div>
+                    <div>
+                        <p>Khuyến Mãi</p>
+                    </div>
                 </div>
                 <a href="statistic.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-chart-simple"></i></div>
-                        <div><p>Thống Kê</p></div>
+                        <div>
+                            <p>Thống Kê</p>
+                        </div>
                     </div>
                 </a>
-                <div class="side_item" >
+                <div class="side_item">
                     <div><i class="fa-solid fa-home"></i></div>
                     <div><span>Trang Chủ</span></div>
                 </div>
             </div>
         </div>
-
-     

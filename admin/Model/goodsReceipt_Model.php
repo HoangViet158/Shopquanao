@@ -198,5 +198,43 @@ class goodsReceipt_Model{
         }
         return 0;
     }
+    public function searchGoodsReceipt($keyword){
+        $sql="select * from phieunhap
+        inner join taikhoan on phieunhap.MaTK=taikhoan.MaTK
+        inner join nhacungcap on phieunhap.MaNCC=nhacungcap.MaNCC
+        where LOWER(taikhoan.TenTK) COLLATE utf8mb4_bin LIKE '%$keyword%' or lower(nhacungcap.TenNCC) collate utf8mb4_bin like '%$keyword%'
+         and phieunhap.TrangThai=1";
+        $result=$this->database->execute($sql);
+        $data=array();
+        if($result->num_rows>0){
+            while($row=$result->fetch_assoc()){
+                $MaPN=$row['MaPN'];
+                $taikhoan=array(
+                    'MaTK' => $row['MaTK'],
+                    'TenTK' => $row['TenTK']
+                );
+                $nhacungcap=array(
+                    'MaNCC' => $row['MaNCC'],
+                    'TenNCC' =>$row['TenNCC']
+                );
+                $ThanhToan=$row['ThanhToan'];
+                $ThoiGian=$row['ThoiGian'];
+                $data[]=array(
+                    'MaPN' =>$MaPN,
+                    'taikhoan'=>$taikhoan,
+                    'nhacungcap' => $nhacungcap,
+                    'ThanhToan' => $ThanhToan,
+                    'ThoiGian' => $ThoiGian,
+                );
+            }
+        }
+        return $data;
+    }
+    // public function searchGoodsReceiptDetail($MaPN,$keyword){
+    //     $sql="select * from ctphieunhap
+    //     inner join sanpham on sanpham.MaSP=ctphieunhap.MaSP
+    //     inner join size on size.MaSize=ctphieunhap.MaSize
+    //     where MaPN=$MaPN and lower(sanpham.TenSP) collate utf8mb4_bin like '%$keyword%' ";
+    // }
 }
 ?>

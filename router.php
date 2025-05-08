@@ -1,5 +1,5 @@
-<?php
-define('ROOT_PATH', __DIR__);
+
+<!-- define('ROOT_PATH', __DIR__);
 
 // Xử lý request
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -45,4 +45,4 @@ if (strpos($request_uri, '/admin/') === 0) {
     exit;
 }
 //  Route mặc định
-require ROOT_PATH . '/admin/View/index.php';
+require ROOT_PATH . '/admin/View/index.php'; -->

@@ -13,8 +13,8 @@ require_once(__DIR__ . '/../Controller/goodsReceipt_Controller.php');
 require_once(__DIR__ . '/../Controller/bill_Controller.php');
 require_once(__DIR__ . '/../Controller/user_Controller.php');
 
-$billController=new bill_Controller();
-$goodReceiptController=new goodsReceipt_Controller();
+$billController = new bill_Controller();
+$goodReceiptController = new goodsReceipt_Controller();
 $type = isset($_GET['type']) ? $_GET['type'] : null;
 $productController = new product_Controller();
 $categoryController = new category_Controller();
@@ -26,7 +26,7 @@ $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 1;  //đang test
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 5;  //đang test
         $allProducts = $productController->getAllProducts($page, $perPage);
         echo json_encode($allProducts);
         break;
@@ -69,62 +69,62 @@ switch ($type) {
         }
         break;
 
-        case 'addGoodReceipt':
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                try {
-                    $data = [
-                        'MaNCC' => $_POST['MaNCC'] ?? null,
-                        'TongTien' => $_POST['TongTien'] ?? 0,
-                        'ProfitPercentage' => $_POST['ProfitPercentage'] ?? 0,
-                        'products' => []
-                    ];
-        
-                    if (isset($_POST['products'])) {
-                        $data['products'] = json_decode($_POST['products'], true);
-                        if ($data['products'] === null) {
-                            throw new Exception("Lỗi parse products");
-                        }
+    case 'addGoodReceipt':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $data = [
+                    'MaNCC' => $_POST['MaNCC'] ?? null,
+                    'TongTien' => $_POST['TongTien'] ?? 0,
+                    'ProfitPercentage' => $_POST['ProfitPercentage'] ?? 0,
+                    'products' => []
+                ];
+
+                if (isset($_POST['products'])) {
+                    $data['products'] = json_decode($_POST['products'], true);
+                    if ($data['products'] === null) {
+                        throw new Exception("Lỗi parse products");
                     }
-        
-                    $result = $goodReceiptController->addGoodReceipt($data);
-                    echo $result; // Không cần json_encode thêm nữa
-        
-                } catch (Exception $e) {
-                    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
                 }
+
+                $result = $goodReceiptController->addGoodReceipt($data);
+                echo $result; // Không cần json_encode thêm nữa
+
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             }
-            break;
-        
-            
-        case 'getProductDiscount':
-            if (isset($_GET['MaSP'])) {
-                $productId = (int)$_GET['MaSP'];
-                $discount = $goodReceiptController->getProductDiscount($productId);
-                echo json_encode(['discount' => $discount]);
-            }
-            break;
-    
-        case 'getProductDiscount':
-            if (isset($_GET['MaSP'])) {
-                $productId = (int)$_GET['MaSP'];
-                $sql = "SELECT km.giaTriKM 
+        }
+        break;
+
+
+    case 'getProductDiscount':
+        if (isset($_GET['MaSP'])) {
+            $productId = (int)$_GET['MaSP'];
+            $discount = $goodReceiptController->getProductDiscount($productId);
+            echo json_encode(['discount' => $discount]);
+        }
+        break;
+
+    case 'getProductDiscount':
+        if (isset($_GET['MaSP'])) {
+            $productId = (int)$_GET['MaSP'];
+            $sql = "SELECT km.giaTriKM 
                         FROM sanpham sp 
                         JOIN khuyenmai km ON sp.MaKM = km.MaKM 
                         WHERE sp.MaSP = ?";
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("i", $productId);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                
-                $discount = 0;
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    $discount = $row['giaTriKM'];
-                }
-                
-                echo json_encode(['discount' => (float)$discount]);
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $discount = 0;
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $discount = $row['giaTriKM'];
             }
-            break;
+
+            echo json_encode(['discount' => (float)$discount]);
+        }
+        break;
     case 'getAllCategories':
         echo json_encode($categoryController->getAllCategories());
         break;
@@ -140,66 +140,66 @@ switch ($type) {
         break;
 
     case 'updateProduct':
-            $MaSP = $_POST['MaSP'];
-            $productData = [
-                'TenSP' => $_POST['TenSP'],
-                'MaDM' => $_POST['MaDM'],
-                'MaKM' => ($_POST['MaKM'] === 'null') ? NULL : $_POST['MaKM'],
-                'GioiTinh' => $_POST['GioiTinh'],
-                'MoTa' => $_POST['MoTa']
-            ];
-            $deletedImages = $_POST['deletedImages'] ?? [];
-            $newImages = [];
-            if (!empty($_FILES['newImages'])) {
-                $uploadDir = __DIR__ . '/../../upload/products/';
-                
-                // Tạo thư mục nếu chưa tồn tại
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
-                
-                $fileCount = count($_FILES['newImages']['name']);
-                for ($i = 0; $i < $fileCount; $i++) {
-                    if ($_FILES['newImages']['error'][$i] === UPLOAD_ERR_OK) {
-                        $fileName = uniqid() . '_' . basename($_FILES['newImages']['name'][$i]);
-                        $targetPath = $uploadDir . $fileName;
-                        
-                        if (move_uploaded_file($_FILES['newImages']['tmp_name'][$i], $targetPath)) {
-                            $relativePath = '/upload/products/' . $fileName;
-                            $newImages[] = $relativePath;
-                        } else {
-                            error_log("Upload failed: " . print_r(error_get_last(), true));
-                        }
+        $MaSP = $_POST['MaSP'];
+        $productData = [
+            'TenSP' => $_POST['TenSP'],
+            'MaDM' => $_POST['MaDM'],
+            'MaKM' => ($_POST['MaKM'] === 'null') ? NULL : $_POST['MaKM'],
+            'GioiTinh' => $_POST['GioiTinh'],
+            'MoTa' => $_POST['MoTa']
+        ];
+        $deletedImages = $_POST['deletedImages'] ?? [];
+        $newImages = [];
+        if (!empty($_FILES['newImages'])) {
+            $uploadDir = __DIR__ . '/../../upload/products/';
+
+            // Tạo thư mục nếu chưa tồn tại
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $fileCount = count($_FILES['newImages']['name']);
+            for ($i = 0; $i < $fileCount; $i++) {
+                if ($_FILES['newImages']['error'][$i] === UPLOAD_ERR_OK) {
+                    $fileName = uniqid() . '_' . basename($_FILES['newImages']['name'][$i]);
+                    $targetPath = $uploadDir . $fileName;
+
+                    if (move_uploaded_file($_FILES['newImages']['tmp_name'][$i], $targetPath)) {
+                        $relativePath = '/upload/products/' . $fileName;
+                        $newImages[] = $relativePath;
+                    } else {
+                        error_log("Upload failed: " . print_r(error_get_last(), true));
                     }
                 }
             }
-            
-            
-            $result = $productController->updateProduct($MaSP, $productData, $deletedImages, $newImages);
-            $result['debug'] = [
-                'newImages' => $newImages,
-                'fileCount' => isset($_FILES['newImages']) ? count($_FILES['newImages']['name']) : 0,
-            ];
-            
-            
-            echo json_encode($result);
-            
-            break;
+        }
+
+
+        $result = $productController->updateProduct($MaSP, $productData, $deletedImages, $newImages);
+        $result['debug'] = [
+            'newImages' => $newImages,
+            'fileCount' => isset($_FILES['newImages']) ? count($_FILES['newImages']['name']) : 0,
+        ];
+
+
+        echo json_encode($result);
+
+        break;
     case 'deleteProduct':
-                if (isset($_GET['MaSP'])) {
-                    $productId = $_GET['MaSP']; 
-                    $result = $productController->deleteProduct($productId);
-                    echo json_encode([
-                        'success' => $result,
-                        'message' => $result ? 'Xóa thành công' : 'Xóa thất bại'
-                    ]);
-                } else {
-                    echo json_encode([
-                        'success' => false,
-                        'message' => 'Thiếu tham số MaSP'
-                    ]);
-                }
-                break;
+        if (isset($_GET['MaSP'])) {
+            $productId = $_GET['MaSP'];
+            $result = $productController->deleteProduct($productId);
+            echo json_encode([
+                'success' => $result,
+                'message' => $result ? 'Xóa thành công' : 'Xóa thất bại'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Thiếu tham số MaSP'
+            ]);
+        }
+        break;
     case 'searchProducts':
         if (isset($_GET['search'])) {
             $searchTerm = $_GET['search'];
@@ -213,14 +213,14 @@ switch ($type) {
         echo json_encode($goodReceiptController->getAllGoodsReceipt());
         break;
     case 'getGoodReceiptDetail':
-        $Detail=$_GET['MaPN'];
+        $Detail = $_GET['MaPN'];
         echo json_encode($goodReceiptController->getAllGoodsReceiptDetail($Detail));
         break;
     case 'getAllTenSP':
         echo json_encode($goodReceiptController->getAllTenSP());
         break;
     case 'getAllSize':
-        echo json_encode($goodReceiptController->getAllSize());    
+        echo json_encode($goodReceiptController->getAllSize());
         break;
     case 'getAllProvider':
         echo json_encode($goodReceiptController->getAllProvider());
@@ -229,13 +229,13 @@ switch ($type) {
         echo json_encode($billController->getAllBill());
         break;
     case 'getAllBillDetail':
-        $Detail=$_GET['MaHD'];
+        $Detail = $_GET['MaHD'];
         echo json_encode($billController->getAllBillDetail($Detail));
         break;
     case 'searchGoodReceipt':
         if (isset($_GET['search'])) {
             $searchTerm = $_GET['search'];
-            $goodReceipt=$goodReceiptController->searchGoodsReceipt($searchTerm);
+            $goodReceipt = $goodReceiptController->searchGoodsReceipt($searchTerm);
             echo json_encode($goodReceipt);
         } else {
             echo json_encode($_GET['search']);
@@ -243,41 +243,41 @@ switch ($type) {
         }
         break;
 
-        case 'updateBillStatus':
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                // Nhận dữ liệu dạng form-data thay vì JSON
-                $billId = $_POST['MaHD'] ?? null;
-                $newStatus = $_POST['TrangThai'] ?? null;
-                
-                if (!$billId || !$newStatus) {
-                    echo json_encode(['success' => false, 'message' => 'Thiếu thông tin']);
-                    exit;
-                }
-                
-                $result = $billController->updateBillStatus($billId, $newStatus);
-                echo json_encode(['success' => $result]);
+    case 'updateBillStatus':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Nhận dữ liệu dạng form-data thay vì JSON
+            $billId = $_POST['MaHD'] ?? null;
+            $newStatus = $_POST['TrangThai'] ?? null;
+
+            if (!$billId || !$newStatus) {
+                echo json_encode(['success' => false, 'message' => 'Thiếu thông tin']);
+                exit;
             }
-            break;
-            case 'filterBills':
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    // Nhận dữ liệu JSON
-                    $json = file_get_contents('php://input');
-                    $filters = json_decode($json, true);
-                    
-                    $status = $filters['status'] ?? null;
-                    $fromDate = $filters['fromDate'] ?? null;
-                    $toDate = $filters['toDate'] ?? null;
-                    $address = $filters['address'] ?? null;
-            
-                    $filteredBills = $billController->filterBills($status, $fromDate, $toDate, $address);
-                    echo json_encode($filteredBills);
-                }
-                break;
+
+            $result = $billController->updateBillStatus($billId, $newStatus);
+            echo json_encode(['success' => $result]);
+        }
+        break;
+    case 'filterBills':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Nhận dữ liệu JSON
+            $json = file_get_contents('php://input');
+            $filters = json_decode($json, true);
+
+            $status = $filters['status'] ?? null;
+            $fromDate = $filters['fromDate'] ?? null;
+            $toDate = $filters['toDate'] ?? null;
+            $address = $filters['address'] ?? null;
+
+            $filteredBills = $billController->filterBills($status, $fromDate, $toDate, $address);
+            echo json_encode($filteredBills);
+        }
+        break;
     case 'top5users':
         $start = new DateTime($_GET['daystart'] ?? '2024-01-01');
         $end   = new DateTime($_GET['dayend'] ?? 'now');
         $topUsers = $statisticConTroller->getTopUserCost($start, $end);
-        
+
         if ($topUsers) {
             $result = [];
             while ($row = $topUsers->fetch_assoc()) {
@@ -300,7 +300,7 @@ switch ($type) {
         $result =  $statisticConTroller->getInvoices($limit, $offset, $start, $end, $id);
         if ($result) {
             $invoices = [];
-            while ($row = $result->fetch_assoc()){
+            while ($row = $result->fetch_assoc()) {
                 $invoices[] = $row;
             }
             header('Content-Type: application/json');
@@ -309,14 +309,14 @@ switch ($type) {
         break;
     case 'monthlyRevenue':
         $date  = isset($_GET['date']);
-        header('Content-Type: application/json'); 
+        header('Content-Type: application/json');
         $statisticConTroller->monthly_revenue($date);
         break;
     case 'totalInvoices':
         $start = new DateTime($_GET['daystart'] ?? '2024-01-01');
         $end   = new DateTime($_GET['dayend'] ?? 'now');
         $id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
-        $result = $statisticConTroller->total_invoices($start,$end,$id);
+        $result = $statisticConTroller->total_invoices($start, $end, $id);
         $row = $result->fetch_assoc();
         header('Content-Type: application/json');
         echo json_encode($row);
@@ -325,12 +325,12 @@ switch ($type) {
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
         $search = !empty($_GET['search']) ? (string)$_GET['search'] : "";
-        $result = $userController->getUser($limit,$offset,$search);
+        $result = $userController->getUser($limit, $offset, $search);
         $users = [];
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
         }
-    
+
         header('Content-Type: application/json');
         echo json_encode($users);
         break;
@@ -345,14 +345,14 @@ switch ($type) {
         // Đọc toàn bộ raw POST body
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
-    
+
         $TenTK   = $data['TenTK']   ?? '';
         $MatKhau = $data['MatKhau'] ?? '';
         $Email   = $data['Email']   ?? '';
         $DiaChi  = $data['DiaChi']  ?? '';
         $MaLoai  = (int)($data['MaLoai'] ?? 1);
         $MaQuyen = (int)($data['MaQuyen'] ?? 3);
-    
+
         $success = $userController->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
@@ -368,7 +368,7 @@ switch ($type) {
     case 'getAllPermission':
         $result = $permissionController->getAllPermission();
         $perrmission = [];
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $perrmission[] = $row;
         }
         header('Content-Type: application/json');
@@ -385,15 +385,15 @@ switch ($type) {
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
 
-        $MaTK = (int)$data['MaNguoiDung'] ?? NULL;     
+        $MaTK = (int)$data['MaNguoiDung'] ?? NULL;
         $TenTK   = $data['TenTK']   ?? '';
         $MatKhau = $data['MatKhau'] ?? '';
         $Email   = $data['Email']   ?? '';
         $DiaChi  = $data['DiaChi']  ?? '';
         $MaLoai  = (int)($data['MaLoai'] ?? 1);
         $MaQuyen = (int)($data['MaQuyen'] ?? 3);
-        
-        $success = $userController->editUser($MaTK, $TenTK, $MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen);
+
+        $success = $userController->editUser($MaTK, $TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
         exit;
@@ -401,7 +401,7 @@ switch ($type) {
     case 'getAllType':
         $result = $permissionController->getAllType();
         $type = [];
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $type[] = $row;
         }
         header('Content-Type: application/json');
@@ -417,7 +417,7 @@ switch ($type) {
     case 'lockUser':
         $id = isset($_GET['id']) ? (int)$_GET['id'] : NULL;
         $trangThai = isset($_GET['trangthai'])  ? (int)$_GET['trangthai'] : NULL;
-        $result = $userController->deleteUser($trangThai,$id);;
+        $result = $userController->deleteUser($trangThai, $id);;
         header('Content-Type: application/json');
         echo json_encode(['success' => $result]);
         break;
@@ -438,7 +438,7 @@ switch ($type) {
         echo json_encode(['success' => $result]);
         break;
     case 'isPermissionInUse':
-        $id = isset($_GET[id]) ? (int)$_GET['id'] : NULL;
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : NULL;
         $result = $permissionController->isPermissionInUse($id);
         header('Content-Type: application/json');
         echo json_encode($result);
@@ -446,7 +446,7 @@ switch ($type) {
     case 'getAllFunction':
         $result = $permissionController->getAllFunction();
         $functionlist = [];
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $functionlist[] = $row;
         }
         header('Content-Type: application/json');
@@ -457,7 +457,7 @@ switch ($type) {
         $MaCTQ = isset($_GET['mactq']) ? (int)$_GET['mactq'] : NULL;
         $actions = [];
         $result = $permissionController->getAction($MaQuyen, $MaCTQ);
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $actions[] = $row;
         }
         header('Content-type: application/json');
@@ -466,7 +466,7 @@ switch ($type) {
         break;
     case 'editPermission':
         $json = file_get_contents('php://input');
-        $data = json_decode($json, true);  
+        $data = json_decode($json, true);
 
 
         $MaQuyen = isset($data['maquyen']) ? (int)$data['maquyen'] : NULL;
@@ -477,4 +477,4 @@ switch ($type) {
         header('Content-type: application/json');
         echo json_encode(["success" => $result]);
         break;
-}     
+}
