@@ -1,7 +1,10 @@
 <?php
+// require_once(__DIR__ . '/../../config/connect.php');
 require_once(__DIR__ . '/../../config/connect.php');
+
 $db = new Database();
 $con = $db->connection();
+require_once(__DIR__ . '/../Controller/permission_Controller.php');
 require_once(__DIR__ . '/../Controller/statistic_Controller.php');
 require_once(__DIR__ . '/../Controller/category_Controller.php');
 require_once(__DIR__ . '/../Controller/promotion_Controller.php');
@@ -9,6 +12,7 @@ require_once(__DIR__ . '/../Controller/product_Controller.php');
 require_once(__DIR__ . '/../Controller/goodsReceipt_Controller.php');
 require_once(__DIR__ . '/../Controller/bill_Controller.php');
 require_once(__DIR__ . '/../Controller/user_Controller.php');
+
 $billController=new bill_Controller();
 $goodReceiptController=new goodsReceipt_Controller();
 $type = isset($_GET['type']) ? $_GET['type'] : null;
@@ -17,10 +21,13 @@ $categoryController = new category_Controller();
 $promotionController = new promotion_Controller();
 $statisticConTroller = new statistic_Controller();
 $userController = new user_Controller();
+$permissionController = new permission_Controller();
 $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
-        $allProducts = $productController->getAllProducts();
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 1;  //đang test
+        $allProducts = $productController->getAllProducts($page, $perPage);
         echo json_encode($allProducts);
         break;
     case 'addProduct':
@@ -225,6 +232,47 @@ switch ($type) {
         $Detail=$_GET['MaHD'];
         echo json_encode($billController->getAllBillDetail($Detail));
         break;
+    case 'searchGoodReceipt':
+        if (isset($_GET['search'])) {
+            $searchTerm = $_GET['search'];
+            $goodReceipt=$goodReceiptController->searchGoodsReceipt($searchTerm);
+            echo json_encode($goodReceipt);
+        } else {
+            echo json_encode($_GET['search']);
+            echo json_encode([]); // Trả về mảng rỗng nếu không có từ khóa tìm kiếm
+        }
+        break;
+
+        case 'updateBillStatus':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Nhận dữ liệu dạng form-data thay vì JSON
+                $billId = $_POST['MaHD'] ?? null;
+                $newStatus = $_POST['TrangThai'] ?? null;
+                
+                if (!$billId || !$newStatus) {
+                    echo json_encode(['success' => false, 'message' => 'Thiếu thông tin']);
+                    exit;
+                }
+                
+                $result = $billController->updateBillStatus($billId, $newStatus);
+                echo json_encode(['success' => $result]);
+            }
+            break;
+            case 'filterBills':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Nhận dữ liệu JSON
+                    $json = file_get_contents('php://input');
+                    $filters = json_decode($json, true);
+                    
+                    $status = $filters['status'] ?? null;
+                    $fromDate = $filters['fromDate'] ?? null;
+                    $toDate = $filters['toDate'] ?? null;
+                    $address = $filters['address'] ?? null;
+            
+                    $filteredBills = $billController->filterBills($status, $fromDate, $toDate, $address);
+                    echo json_encode($filteredBills);
+                }
+                break;
     case 'top5users':
         $start = new DateTime($_GET['daystart'] ?? '2024-01-01');
         $end   = new DateTime($_GET['dayend'] ?? 'now');
@@ -311,10 +359,122 @@ switch ($type) {
         exit;
         break;
     case 'getUserById':
-        $id = $isset($_GET['id']) ? (int)$_GET['id'] : null;
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
         $result = $userController->getUserById($id);
         $row = $result->fetch_assoc();
         header('Content-Type: application/json');
         echo json_encode($row);
         break;
-}       
+    case 'getAllPermission':
+        $result = $permissionController->getAllPermission();
+        $perrmission = [];
+        while ($row = $result->fetch_assoc()){
+            $perrmission[] = $row;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($perrmission);
+        break;
+    case 'getPermissionById':
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+        $result = $permissionController->getPermissionById($id);
+        $row = $result->fetch_assoc();
+        header('Content-Type: application/json');
+        echo json_encode($row);
+        break;
+    case 'updateUser':
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        $MaTK = (int)$data['MaNguoiDung'] ?? NULL;     
+        $TenTK   = $data['TenTK']   ?? '';
+        $MatKhau = $data['MatKhau'] ?? '';
+        $Email   = $data['Email']   ?? '';
+        $DiaChi  = $data['DiaChi']  ?? '';
+        $MaLoai  = (int)($data['MaLoai'] ?? 1);
+        $MaQuyen = (int)($data['MaQuyen'] ?? 3);
+        
+        $success = $userController->editUser($MaTK, $TenTK, $MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $success]);
+        exit;
+        break;
+    case 'getAllType':
+        $result = $permissionController->getAllType();
+        $type = [];
+        while ($row = $result->fetch_assoc()){
+            $type[] = $row;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($type);
+        break;
+    case 'getTypeById':
+        $id = isset($_GET['id']) ? (int)($_GET['id']) : NULL;
+        $result = $permissionController->getTypeById($id);
+        $row = $result->fetch_assoc();
+        header('Content-Type: application/json');
+        echo json_encode($row);
+        break;
+    case 'lockUser':
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : NULL;
+        $trangThai = isset($_GET['trangthai'])  ? (int)$_GET['trangthai'] : NULL;
+        $result = $userController->deleteUser($trangThai,$id);;
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $result]);
+        break;
+    case 'addPermission':
+        $json = file_get_contents('php://input');
+        $permission = json_decode($json, true);
+
+        $tenQuyen = $permission['tenQuyen'] ?? '';
+        $success = $permissionController->addPermission($tenQuyen);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $success]);
+        exit;
+        break;
+    case 'deletePermission':
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : NULL;
+        $result = $permissionController->deletePermission($id);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $result]);
+        break;
+    case 'isPermissionInUse':
+        $id = isset($_GET[id]) ? (int)$_GET['id'] : NULL;
+        $result = $permissionController->isPermissionInUse($id);
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        break;
+    case 'getAllFunction':
+        $result = $permissionController->getAllFunction();
+        $functionlist = [];
+        while ($row = $result->fetch_assoc()){
+            $functionlist[] = $row;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($functionlist);
+        break;
+    case 'getAction':
+        $MaQuyen = isset($_GET['maquyen']) ? (int)$_GET['maquyen'] : NULL;
+        $MaCTQ = isset($_GET['mactq']) ? (int)$_GET['mactq'] : NULL;
+        $actions = [];
+        $result = $permissionController->getAction($MaQuyen, $MaCTQ);
+        while ($row = $result->fetch_assoc()){
+            $actions[] = $row;
+        }
+        header('Content-type: application/json');
+        echo json_encode($actions);
+        exit;
+        break;
+    case 'editPermission':
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);  
+
+
+        $MaQuyen = isset($data['maquyen']) ? (int)$data['maquyen'] : NULL;
+        $MaCTQ = isset($data['mactq']) ? (int)$data['mactq'] : NULL;
+        $action = isset($data['hanhdong']) ? $data['hanhdong'] : "";
+
+        $result = $permissionController->editPermissionDetail($MaQuyen, $MaCTQ, $action);
+        header('Content-type: application/json');
+        echo json_encode(["success" => $result]);
+        break;
+}     

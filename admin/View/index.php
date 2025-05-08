@@ -53,11 +53,9 @@
                     <div><i class="fa-solid fa-money-bill-wave"></i></div>
                     <div><p>Khuyến Mãi</p></div>
                 </div>
-                <div class="side_item" >
-                    <a href="/Web2/admin/view/statistic.php">
-                        <div><i class="fa-solid fa-chart-simple"></i></div>
-                        <div><p>Thống Kê</p></div>
-                    </a>
+                <div class="side_item" data-route="/statistic">
+                    <div><i class="fa-solid fa-chart-simple"></i></div>
+                    <div><p>Thống Kê</p></div>
                 </div>
                 <div class="side_item" >
                     <div><i class="fa-solid fa-home"></i></div>
@@ -87,6 +85,7 @@
     <script src="../../public/admin/js/Product.js"></script>
     <script src="../../public/admin/js/goodsReceipt.js"></script>
     <script src="../../public/admin/js/bill.js"></script>
+    <script src="../../public/admin/js/statistic.js"></script>
 
     <!-- Script xử lý chung -->
     <script>

@@ -1,15 +1,15 @@
 <?php 
-require_once ('../../config/connect.php');
+require_once(__DIR__ . "/../../config/connect.php"); 
 class user_model {
     private $database = null;
     public function __construct(){
         $this->database = new Database();
     }
-    public function getUSer($limit,$offset,$search){
+    public function getUser($limit,$offset,$search){
         $sql = "SELECT nguoidung.MaNguoiDung, 
                         nguoidung.DiaChi, 
                         nguoidung.Email, 
-                        nguoidung.TrangThai,
+                        taikhoan.TrangThai,
                         nguoidung.MaLoai,
                         taikhoan.TenTK,
                         taikhoan.NgayTaoTK, 
@@ -30,10 +30,11 @@ class user_model {
         $sql = "SELECT nguoidung.MaNguoiDung, 
                         nguoidung.DiaChi, 
                         nguoidung.Email, 
-                        nguoidung.TrangThai,
+                        taikhoan.TrangThai,
                         nguoidung.MaLoai,
                         taikhoan.TenTK,
                         taikhoan.NgayTaoTK, 
+                        taikhoan.MatKhau,
                         taikhoan.MaQuyen   
                 FROM nguoidung 
                 JOIN taikhoan ON nguoidung.MaNguoiDung = taikhoan.MaTK
@@ -43,6 +44,18 @@ class user_model {
         $stmt->bind_param('i',$id);
         $stmt->execute();
         return $stmt->get_result();
+    }
+
+    public function getPasswordById($id){
+        $sql = "SELECT taikhoan.MatKhau
+                FROM nguoidung 
+                JOIN taikhoan ON nguoidung.MaNguoiDung = taikhoan.MaTK
+                WHERE taikhoan.MaTK = ?";
+
+        $stmt = $this->database->connection()->prepare($sql);
+        $stmt->bind_param('i',$id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
     }
 
     // Tổng số lượng user
@@ -78,39 +91,24 @@ class user_model {
     }
 
     // Sửa user
-    public function editUser($MaTK, $TenTK, $DiaChi, $Email, $MaLoai, $MaQuyen) {
-        $stmt =  $this->database->connection()->prepare("UPDATE taikhoan SET TenTK = ?, MaQuyen = ? WHERE MaTK = ?");
-        $stmt->bind_param('sii', $TenTK, $MaLoai, $MaTK);
+    public function editUser($MaTK, $TenTK, $MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen) {
+        $stmt =  $this->database->connection()->prepare("UPDATE taikhoan SET TenTK = ?,MatKhau = ?,MaQuyen = ? WHERE MaTK = ?");
+        $stmt->bind_param('ssii', $TenTK,$MatKhau['MatKhau'] ,$MaQuyen, $MaTK);
         $stmt->execute();
 
         $stmt = $this->database->connection()->prepare("UPDATE nguoidung SET DiaChi = ?, Email = ?, MaLoai = ? WHERE MaNguoiDung = ?");
-        $stmt2->bind_param('ssii', $DiaChi, $Email, $MaLoai, $MaTK);
-        $stmt2->execute();
+        $stmt->bind_param('ssii', $DiaChi, $Email, $MaLoai, $MaTK);
+        $stmt->execute();
 
         return true;
     }
 
     // Xóa user
-    public function deleteUser($MaTK) {
-       $stmt = $this->database->connection()->prepare("SELECT COUNT(*) FROM hoadon WHERE MaTK = ?");
-        $check->bind_param('i', $MaTK);
-        $check->execute();
-        $check->bind_result($total);
-        $check->fetch();
-        $check->close();
-
-        if ($total > 0) {
-            return false;
-        }
-
-        $stmt = $this->database->connection()->prepare("DELETE FROM nguoidung WHERE MaNguoiDung = ?");
-        $stmt1->bind_param('i', $MaTK);
-        $stmt1->execute();
-
-        $stmt2 = $this->database->prepare("DELETE FROM taikhoan WHERE MaTK = ?");
-        $stmt2->bind_param('i', $MaTK);
-        $stmt2->execute();
-
+    public function deleteUser($TrangThai,$MaTK) {
+        $sql = "UPDATE taikhoan SET TrangThai = ? WHERE MaTK = ?";
+        $stmt = $this->database->connection()->prepare($sql);
+        $stmt->bind_param('ii',$TrangThai,$MaTK);
+        $stmt->execute();
         return true;
     }
 }

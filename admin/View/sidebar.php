@@ -12,6 +12,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </head>
 
@@ -43,22 +45,29 @@
                     <div><i class="fa-solid fa-pen"></i></div>
                     <div><span>Quản Lí Phiếu Nhập</span></div>
                 </div>
-                <div class="side_item">
-                    <div><i class="fa-solid fa-user"></i></div>
-                    <div><span>Quản lí Khách Hàng</span></div>
-                </div>
-                <div class="side_item" >
-                    <div><i class="fa-solid fa-user-group"></i></div>
-                    <div><p>Quản Lí Quyền</p></div>
-                </div>
+                <a href="user.php" style="text-decoration: none;">
+                    <div class="side_item">
+                        <div><i class="fa-solid fa-user"></i></div>
+                        <div><span>Quản lí Khách Hàng</span></div>
+                    </div>
+                </a>
+                <a href="permission.php" style="text-decoration: none;">
+                    <div class="side_item" >
+                        <div><i class="fa-solid fa-user-group"></i></div>
+                        <div><p>Quản Lí Quyền</p></div>
+                    </div>
+                </a>
+                
                 <div class="side_item" >
                     <div><i class="fa-solid fa-money-bill-wave"></i></div>
                     <div><p>Khuyến Mãi</p></div>
                 </div>
-                <div class="side_item" data-page="./statistic.php">
-                    <div><i class="fa-solid fa-chart-simple"></i></div>
-                    <div><p>Thống Kê</p></div>
-                </div>
+                <a href="statistic.php" style="text-decoration: none;">
+                    <div class="side_item">
+                        <div><i class="fa-solid fa-chart-simple"></i></div>
+                        <div><p>Thống Kê</p></div>
+                    </div>
+                </a>
                 <div class="side_item" >
                     <div><i class="fa-solid fa-home"></i></div>
                     <div><span>Trang Chủ</span></div>

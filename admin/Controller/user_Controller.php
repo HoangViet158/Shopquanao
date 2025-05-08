@@ -8,8 +8,8 @@ class user_Controller{
     public function __construct(){
         $this->user_model = new user_model();
     }
-    public function getUSer($limit,$offset,$search){
-        return $this->user_model->getUSer($limit,$offset,$search);
+    public function getUser($limit,$offset,$search){
+        return $this->user_model->getUser($limit,$offset,$search);
     }
 
     public function getUserById($id){
@@ -23,11 +23,18 @@ class user_Controller{
         return $this->user_model->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
     }
 
-    public function editUser($MaTK, $TenTK, $DiaChi, $Email, $MaLoai, $MaQuyen) {
-        return $this->user_model->editUser($MaTK, $TenTK, $DiaChi, $Email, $MaLoai, $MaQuyen);
+    public function editUser($MaTK, $TenTK,$MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen) {
+        if (!empty(trim($MatKhau))) {
+            // Có mật khẩu mới: hash và cập nhật
+            $hashedPassword = password_hash($MatKhau, PASSWORD_DEFAULT);
+        } else {
+            // Không nhập gì → dùng lại mật khẩu cũ từ DB
+            $hashedPassword = $this->user_model->getPasswordById($MaTK);
+        }
+        return $this->user_model->editUser($MaTK, $TenTK, $hashedPassword ,$DiaChi, $Email, $MaLoai, $MaQuyen);
     }
 
-    public function deleteUser($MaTK) {
-        return $this->user_model->deleteUser($MaTK);
+    public function deleteUser($TrangThai,$MaTK) {
+        return $this->user_model->deleteUser($TrangThai,$MaTK);
     }
 }

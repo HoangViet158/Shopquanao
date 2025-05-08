@@ -9,7 +9,7 @@ class user_Controller{
     }
 
     public function getUserByUsername($username){
-        return $this->user_model->getUserByUsername($username)
+        return $this->user_model->getUserByUsername($username);
     }
 }
     
