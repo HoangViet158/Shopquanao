@@ -1,42 +1,36 @@
-<?php require_once "../../user/View/header.php" ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Cửa hàng quần áo</title>
+</head>
+<body>
+    <div class="container">
+        <div class="image-section"></div>
+        <div class="register-section">
+            <h2>Đăng ký tài khoản</h2>
+            <div class="form-container">
+                <form action="#" method="POST">
+                    <label for="fullname">Họ và tên</label>
+                    <input type="text" id="fullname" name="fullname" required>
 
-<div class="container my-5">
-    <div id="log-in">
-        <img src="../../upload/products/imgmainlogin.jpg" alt="Hình ảnh">
-        <div>
-            <h2  class="text-center"> Đăng ký </h2>
-            <form action="/log-in" method="POST">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Tên Người Dùng</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên người dùng " required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <label for="confirm_password">Nhập lại mật khẩu</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+
+                    <button type="submit" class="register-btn">Đăng ký</button>
+                </form>
+                <div class="login-link">
+                    Đã có tài khoản? <a href="login.php">Đăng nhập</a>
                 </div>
-                <div class="mb-3">
-                    <label for="fullname" class="form-label">Họ và tên</label>
-                    <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Nhập họ và tên" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="text" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password-confirm" class="form-label">Mật khẩu</label>
-                    <input type="text" class="form-control" id="password-confirm" name="password-confirm" placeholder="Nhập lại mật khẩu" required>
-                </div>
-                <div>
-                <div class="d-flex justify-content-center align-items-center mb-2">
-                <button type="submit" name="register" class="btn btn-danger "> Đăng ký </button>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
-                     Đã có tài khoản? <a href="/login" class="text-dark"><strong> Đăng nhập </strong></a>
-                </div>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
-
-<?php require_once "../../user/View/footer.php" ?>
+</body>
+</html>
