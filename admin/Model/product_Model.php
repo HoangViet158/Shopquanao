@@ -8,25 +8,26 @@ class product_Model
     {
         $this->database = new Database();
     }
-    public function getAllProducts($page = 1, $perPage = 10) {
+    public function getAllProducts($page = 1, $perPage = 10)
+    {
         $page = (int)$page;
-    $perPage = (int)$perPage;
+        $perPage = (int)$perPage;
         // Tính toán offset
         $offset = ($page - 1) * $perPage;
-        
+
         // Lấy tổng số sản phẩm (để tính tổng số trang)
         $countSql = "SELECT COUNT(*) as total FROM sanpham WHERE TrangThai = 1";
         $countResult = $this->database->execute($countSql);
         $totalProducts = $countResult->fetch_assoc()['total'];
         $totalPages = ceil($totalProducts / $perPage);
-    
+
         // Lấy dữ liệu sản phẩm với phân trang
         $sql = "SELECT * FROM sanpham 
                 LEFT JOIN khuyenmai ON sanpham.MaKM = khuyenmai.MaKM
                 LEFT JOIN danhmuc ON sanpham.MaDM = danhmuc.MaDM
                 WHERE sanpham.TrangThai = 1
                 LIMIT $perPage OFFSET $offset";
-    
+
         $result = $this->database->execute($sql);
         $data = array(
             'products' => array(),
@@ -37,7 +38,7 @@ class product_Model
                 'per_page' => (int)$perPage
             )
         );
-    
+
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $maSP = $row['MaSP'];
@@ -49,7 +50,7 @@ class product_Model
                         $anh[] = $row_anh['Url'];
                     }
                 }
-    
+
                 $khuyenmai = array(
                     'MaKM' => $row['MaKM'],
                     'TenKM' => $row['TenKM'] ?? 'Không có',
@@ -58,7 +59,7 @@ class product_Model
                     'MaDM' => $row['MaDM'],
                     'TenDM' => $row['TenDM'] ?? 'Không có',
                 );
-    
+
                 $data['products'][] = array(
                     'MaSP' => $row['MaSP'],
                     'TenSP' => $row['TenSP'],
@@ -72,7 +73,7 @@ class product_Model
                 );
             }
         }
-    
+
         return $data;
     }
     // public function getLastIdSP(){
@@ -187,18 +188,18 @@ class product_Model
         return $images;
     }
 
-    public function updateProductInfo($MaSP, $TenSP, $MaDM, $MaKM, $GioiTinh, $MoTa)
+    public function updateProductInfo($MaSP, $TenSP, $MaDM, $GioiTinh, $MoTa)
     {
         $sql = "UPDATE sanpham SET 
                 TenSP = ?, 
                 MaDM = ?, 
-                MaKM = ?, 
+                
                 GioiTinh = ?, 
                 MoTa = ?
                 WHERE MaSP = ?";
 
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param("sisisi", $TenSP, $MaDM, $MaKM, $GioiTinh, $MoTa, $MaSP);
+        $stmt->bind_param("siisi", $TenSP, $MaDM,  $GioiTinh, $MoTa, $MaSP);
         $result = $stmt->execute();
         $stmt->close();
 
