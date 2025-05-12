@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../css/style.css">
-     <!-- Gọi file JavaScript kiểm tra form -->
-    <script src="../js/validate_register.js"></script>
     <title>Cửa hàng quần áo</title>
 </head>
 <body>
@@ -14,7 +12,7 @@
         <div class="register-section">
             <h2>Đăng ký tài khoản</h2>
             <div class="form-container">
-                <form id="registerForm" action="#" method="POST">
+                <form id="registerForm" action="../../user/controller/register_process.php" method="POST">
                     <label for="fullname">Họ và tên</label>
                     <input type="text" id="fullname" name="fullname" required>
 
@@ -32,12 +30,13 @@
                     <button type="submit" class="register-btn">Đăng ký</button>
                 </form>
                 <div class="login-link">
-                    Đã có tài khoản? <a href="login.php">Đăng nhập</a>
+                    Đã có tài khoản? <a href="/login.php">Đăng nhập</a>
                 </div>
             </div>
         </div>
     </div>
 
-   
+    <!-- Gọi JavaScript kt đăng ký -->
+    <script src="../js/validate_register.js"></script>
 </body>
 </html>

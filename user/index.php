@@ -9,7 +9,7 @@
 <body>
         <?php
             //include("View/login.php");
-            include("View/register.php");
+            include("View/login.php");
        ?>
 </body>
 </html>
