@@ -21,10 +21,8 @@
                 <div class="d-flex justify-content-center align-items-center">
                      Chưa có tài khoản? <a href="register.php" class="text-dark"><strong> Đăng ký </strong></a>
                 </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-
-<?php require_once "../../user/View/footer.php" ?>
+</body>
+</html>

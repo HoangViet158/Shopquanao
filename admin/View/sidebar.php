@@ -67,13 +67,15 @@
                         </div>
                     </div>
                 </a>
-
-                <div class="side_item">
-                    <div><i class="fa-solid fa-money-bill-wave"></i></div>
-                    <div>
-                        <p>Khuyến Mãi</p>
+                <a href="promotion.php" style="text-decoration: none;">
+                    <div class="side_item">
+                        <div><i class="fa-solid fa-money-bill-wave"></i></div>
+                        <div>
+                            <p>Khuyến Mãi</p>
+                        </div>
                     </div>
-                </div>
+                </a>
+                
                 <a href="statistic.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-chart-simple"></i></div>

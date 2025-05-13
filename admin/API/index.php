@@ -477,4 +477,61 @@ switch ($type) {
         header('Content-type: application/json');
         echo json_encode(["success" => $result]);
         break;
+    case 'addAndApplyPromotion':
+        $name = $_POST['name'] ?? '';
+        $value = $_POST['value'] ?? 0;
+        $startDate = $_POST['startDate'] ?? '';
+        $endDate = $_POST['endDate'] ?? '';
+        $products = $_POST['products'] ?? [];
+
+        // Nếu là JSON string hoặc dạng sai, cố gắng decode
+        if (!is_array($products)) {
+            $products = json_decode($products, true);
+            if (!is_array($products)) $products = [];
+        }
+
+        $result = $promotionController->addAndApplyPromotion($name, $value, $startDate, $endDate, $products);
+        echo json_encode($result);
+        break;
+    case 'checkPromotionProfit':
+        $productId = $_GET['productId'];
+        $discount = $_GET['discount'] ?? 0;
+        $result = $promotionController->checkPromotionProfit($productId, $discount);
+        echo json_encode($result);
+        break;
+    case 'getAllProductsForPromotion':
+        $result = $promotionController->getAllProducts();
+        echo json_encode($result);
+        break;
+    case 'updatePromotion':
+    $promotionId = $_POST['id'] ?? 0;
+    $name = $_POST['name'] ?? '';
+    $value = $_POST['value'] ?? 0;
+    $startDate = $_POST['startDate'] ?? '';
+    $endDate = $_POST['endDate'] ?? '';
+    $status = $_POST['status'] ?? 0;
+    $products = $_POST['products'] ?? [];
+
+    if (!is_array($products)) {
+        $products = json_decode($products, true);
+        if (!is_array($products)) $products = [];
+    }
+
+    $result = $promotionController->updateAndApplyPromotion(
+        $promotionId, $name, $value, $startDate, $endDate, $status, $products
+    );
+    echo json_encode($result);
+    break;
+
+case 'getPromotionDetail':
+    $id = $_GET['id'] ?? 0;
+    $result = $promotionController->getPromotionDetail($id);
+    echo json_encode($result);
+    break;
+
+case 'deletePromotion':
+    $id = $_POST['id'] ?? 0;
+    $result = $promotionController->deletePromotion($id);
+    echo json_encode($result);
+    break;
 }

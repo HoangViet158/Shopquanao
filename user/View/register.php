@@ -33,10 +33,8 @@
                 <div class="d-flex justify-content-center align-items-center">
                      Đã có tài khoản? <a href="login.php" class="text-dark"><strong> Đăng nhập </strong></a>
                 </div>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
+</body>
 
-<?php require_once "../../user/View/footer.php" ?>
+</html>
