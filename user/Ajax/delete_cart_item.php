@@ -1,4 +1,5 @@
 <?php
+// Ajax/delete_cart_item.php
 include_once('../../config/connect.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,12 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ss", $maSP, $maSize);
 
-        echo $stmt->execute() ? "Đã xoá sản phẩm" : "Lỗi khi xoá";
+        if ($stmt->execute()) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
 
         $stmt->close();
         $conn->close();
     } else {
-        echo "Thiếu dữ liệu";
+        echo 'Thiếu dữ liệu';
     }
 }
 ?>

@@ -1,3 +1,4 @@
+<!-- View/cart.php -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
