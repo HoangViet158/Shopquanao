@@ -26,7 +26,7 @@ $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 5;  //đang test
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 6;  //đang test
         $allProducts = $productController->getAllProducts($page, $perPage);
         echo json_encode($allProducts);
         break;
