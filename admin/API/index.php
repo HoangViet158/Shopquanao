@@ -504,34 +504,44 @@ switch ($type) {
         echo json_encode($result);
         break;
     case 'updatePromotion':
-    $promotionId = $_POST['id'] ?? 0;
-    $name = $_POST['name'] ?? '';
-    $value = $_POST['value'] ?? 0;
-    $startDate = $_POST['startDate'] ?? '';
-    $endDate = $_POST['endDate'] ?? '';
-    $status = $_POST['status'] ?? 0;
-    $products = $_POST['products'] ?? [];
+        $promotionId = $_POST['id'] ?? 0;
+        $name = $_POST['name'] ?? '';
+        $value = $_POST['value'] ?? 0;
+        $startDate = $_POST['startDate'] ?? '';
+        $endDate = $_POST['endDate'] ?? '';
+        $status = $_POST['status'] ?? 0;
+        $products = $_POST['products'] ?? [];
 
-    if (!is_array($products)) {
-        $products = json_decode($products, true);
-        if (!is_array($products)) $products = [];
-    }
+        if (!is_array($products)) {
+            $products = json_decode($products, true);
+            if (!is_array($products)) $products = [];
+        }
 
-    $result = $promotionController->updateAndApplyPromotion(
-        $promotionId, $name, $value, $startDate, $endDate, $status, $products
-    );
-    echo json_encode($result);
-    break;
+        $result = $promotionController->updateAndApplyPromotion(
+            $promotionId,
+            $name,
+            $value,
+            $startDate,
+            $endDate,
+            $status,
+            $products
+        );
+        echo json_encode($result);
+        break;
 
-case 'getPromotionDetail':
-    $id = $_GET['id'] ?? 0;
-    $result = $promotionController->getPromotionDetail($id);
-    echo json_encode($result);
-    break;
+    case 'getPromotionDetail':
+        $id = $_GET['id'] ?? 0;
+        $result = $promotionController->getPromotionDetail($id);
+        echo json_encode($result);
+        break;
 
-case 'deletePromotion':
-    $id = $_POST['id'] ?? 0;
-    $result = $promotionController->deletePromotion($id);
-    echo json_encode($result);
-    break;
+    case 'deletePromotion':
+        $id = $_POST['id'] ?? 0;
+        $result = $promotionController->deletePromotion($id);
+        echo json_encode($result);
+        break;
+    case 'calculateSuggestedPrices':
+        $data = json_decode(file_get_contents('php://input'), true);
+        echo json_encode($goodReceiptController->calculateSuggestedPrices($data));
+        break;
 }
