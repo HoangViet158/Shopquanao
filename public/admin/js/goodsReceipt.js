@@ -110,11 +110,11 @@ function handleGoodsReceipt(){
     Mange_client.innerHTML=handleGoodsReceiptOut;
     document.getElementById('profitPercentage').addEventListener('input', function() {
         calculateSuggestedPrices();
-        // Tính toán lại tổng tiền nếu cần
         calculateTotalPayment();
     });
     loadGoodsReceiptList()
 }
+
 async function calculateSuggestedPrices() {
     const profitPercentage = parseFloat(document.getElementById('profitPercentage').value) || 0;
     const productRows = document.querySelectorAll("#productTableBody tr");
@@ -124,147 +124,190 @@ async function calculateSuggestedPrices() {
         return;
     }
 
-    // Kiểm tra trùng lặp sản phẩm và size
-    const productSizeMap = {};
-    let hasDuplicate = false;
-    
+    const products = {};
+
     productRows.forEach(row => {
         const productId = row.querySelector('.product-name').value;
+        const productName = row.querySelector('.product-name option:checked').text;
         const sizeId = row.querySelector('.product-size').value;
-        
-        if (productId && sizeId) {
-            const key = `${productId}-${sizeId}`;
-            if (productSizeMap[key]) {
-                hasDuplicate = true;
-                row.style.border = "2px solid red";
-            } else {
-                productSizeMap[key] = true;
-                row.style.border = "";
-            }
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const importPrice = parseFloat(row.querySelector('.price').value) || 0;
+
+        // Nếu thiếu thông tin, bỏ qua hàng này
+        if (!productId || !sizeId || quantity <= 0 || importPrice <= 0) return;
+
+        if (!products[productId]) {
+            products[productId] = {
+                productName: productName,
+                items: []
+            };
         }
+
+        products[productId].items.push({
+            MaSize: sizeId,
+            SoLuongNhap: quantity,
+            DonGia: importPrice
+        });
     });
 
-    if (hasDuplicate) {
-        document.getElementById('suggestedPrices').innerHTML = `
-            <div class="alert alert-danger">
-                Lỗi: Có sản phẩm cùng size bị trùng lặp. Vui lòng kiểm tra lại.
-            </div>`;
+    // Không có sản phẩm hợp lệ => không gửi request
+    if (Object.keys(products).length === 0) {
+        document.getElementById('suggestedPrices').innerHTML = '';
         return;
     }
 
-    // Nhóm sản phẩm theo MaSP để tìm giá cao nhất
+    try {
+        const response = await fetch('../../admin/API/index.php?type=calculateSuggestedPrices', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ProfitPercentage: profitPercentage,
+                products: products
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            document.getElementById('suggestedPrices').innerHTML = `
+                <div class="alert alert-danger">${result.message}</div>`;
+            return;
+        }
+
+        const container = document.getElementById('suggestedPrices');
+        const productList = result.data;
+
+        let html = `<div class="table-responsive"><table class="table table-bordered">
+        <thead><tr>
+            <th>Tên sản phẩm</th>
+            <th>Giá nhập trung bình</th>
+            <th>Khuyến mãi %</th>
+            <th>Lợi nhuận %</th>
+            <th>Giá bán đề xuất</th>
+        </tr></thead><tbody>`;
+
+        for (const product of productList) {
+            html += `<tr>
+                <td>${product.productName}</td>
+                <td>${Number(product.averagePrice).toLocaleString()}</td>
+                <td>${product.discount}%</td>
+                <td>${profitPercentage}%</td>
+                <td>${Number(product.suggestedPrice).toFixed(0).toLocaleString()}</td>
+            </tr>`;
+        }
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('suggestedPrices').innerHTML = `
+            <div class="alert alert-danger">Đã xảy ra lỗi khi lấy giá đề xuất.</div>`;
+    }
+}
+function submitGoodReceiptForm() {
+    calculateSuggestedPrices();
+    const errorDiv = document.querySelector("#suggestedPrices .alert-danger");
+
+    if (errorDiv) {
+        alert("Vui lòng sửa các lỗi trước khi lưu");
+        return;
+    }
+
+    const providerId = document.getElementById('provider').value;
+    const profitPercentage = parseFloat(document.getElementById('profitPercentage').value) || 0;
+
+    if (!providerId) {
+        alert('Vui lòng chọn nhà cung cấp');
+        return;
+    }
+
+    const productRows = document.querySelectorAll("#productTableBody tr");
+    if (productRows.length === 0) {
+        alert('Vui lòng thêm ít nhất 1 sản phẩm');
+        return;
+    }
+
     const productsGrouped = {};
-    let hasLowPriceIssue = false;
-    
-    for (const row of productRows) {
+    let isValid = true;
+
+    productRows.forEach(row => {
         const productId = row.querySelector('.product-name').value;
         const productName = row.querySelector('.product-name option:checked').text;
-        const price = parseFloat(row.querySelector('.price').value) || 0;
+        const sizeId = row.querySelector('.product-size').value;
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const importPrice = parseFloat(row.querySelector('.price').value) || 0;
+        const subtotal = parseFloat(row.querySelector('.subtotal').value.replace(/,/g, '')) || 0;
 
-        if (!productId || price <= 0) continue;
+        if (!productId || !sizeId || quantity <= 0 || importPrice <= 0) {
+            isValid = false;
+            return;
+        }
 
         if (!productsGrouped[productId]) {
             productsGrouped[productId] = {
                 productName: productName,
-                maxImportPrice: price,
-                discount: 0,
                 items: []
             };
-        } else if (price > productsGrouped[productId].maxImportPrice) {
-            productsGrouped[productId].maxImportPrice = price;
         }
-    }
 
-    // Lấy thông tin khuyến mãi từ server
-    // Lấy thông tin khuyến mãi từ server
-for (const productId in productsGrouped) {
-    try {
-        const response = await $.ajax({
-            url: `../../admin/API/index.php?type=getProductDiscount&MaSP=${productId}&t=${Date.now()}`,
-            method: 'GET',
-            dataType: 'json'
+        productsGrouped[productId].items.push({
+            MaSize: sizeId,
+            SoLuongNhap: quantity,
+            DonGia: importPrice,
+            ThanhTien: subtotal
         });
-        let discount = response.discount;
-        discount = parseFloat(discount);
-        if (isNaN(discount)) {
-            console.warn(`Invalid discount value for product ${productId}:`, response.discount);
-            discount = 0;
+    });
+
+    if (!isValid) {
+        alert('Vui lòng điền đầy đủ thông tin cho tất cả sản phẩm');
+        return;
+    }
+
+    const totalPay = document.getElementById('totalPay').value.replace(/,/g, '');
+
+    const data = {
+        MaNCC: providerId,
+        products: productsGrouped,
+        TongTien: totalPay,
+        ProfitPercentage: profitPercentage
+    };
+
+    $.ajax({
+        url: '../../admin/API/index.php?type=addGoodReceipt',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            MaNCC: providerId,
+            products: JSON.stringify(productsGrouped),
+            TongTien: totalPay,
+            ProfitPercentage: profitPercentage
+        },
+        success: function(response) {
+            try {
+                const result = typeof response === 'string' ? JSON.parse(response) : response;
+                if (result.success) {
+                    alert(result.message);
+                    $('#addProductModal').modal('hide');
+                    loadGoodsReceiptList();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (e) {
+                alert('Thêm phiếu nhập thành công');
+                $('#addProductModal').modal('hide');
+                loadGoodsReceiptList();
+            }
+        },
+        error: function(error) {
+            try {
+                const errResponse = JSON.parse(error.responseText);
+                alert('Lỗi: ' + (errResponse.message || 'Có lỗi xảy ra khi thêm phiếu nhập'));
+            } catch (e) {
+                alert('Có lỗi xảy ra khi thêm phiếu nhập');
+            }
         }
-
-        productsGrouped[productId].discount = discount;
-        
-        console.log(`Product ${productId} discount set to:`, productsGrouped[productId].discount);
-        
-    } catch (error) {
-        console.error(`Error getting discount for product ${productId}:`, error);
-        console.error("Error response:", error.responseText);
-        productsGrouped[productId].discount = 0;
-    }
+    });
 }
-    
-    // Tính toán giá bán và kiểm tra giá thấp
-    for (const productId in productsGrouped) {
-        const product = productsGrouped[productId];
-        product.suggestedPrice = product.maxImportPrice * 
-                               (1 + (profitPercentage/100) - (product.discount/100));
-        
-        if (product.suggestedPrice < product.maxImportPrice) {
-            hasLowPriceIssue = true;
-        }
-    }
-
-    // Hiển thị kết quả
-    const container = document.getElementById('suggestedPrices');
-    
-    let html = '<div class="table-responsive"><table class="table table-bordered">';
-    html += `
-        <thead>
-            <tr>
-                <th>Tên sản phẩm</th>
-                <th>Giá nhập cao nhất</th>
-                <th>%KM</th>
-                <th>%LN</th>
-                <th>Giá bán</th>
-                <th>Trạng thái</th>
-            </tr>
-        </thead>
-        <tbody>`;
-    
-    for (const productId in productsGrouped) {
-        const product = productsGrouped[productId];
-        const isLowPrice = product.suggestedPrice < product.maxImportPrice;
-        
-        html += `
-            <tr class="${isLowPrice ? 'table-warning' : ''}">
-                <td>${product.productName}</td>
-                <td>${product.maxImportPrice.toLocaleString()}</td>
-                <td>${product.discount}%</td>
-                <td>${profitPercentage}%</td>
-                <td class="fw-bold ${isLowPrice ? 'text-danger' : 'text-primary'}">
-                    ${product.suggestedPrice.toFixed(2)}
-                </td>
-                <td>
-                    ${isLowPrice ? 
-                      '<span class="badge bg-danger">Giá thấp hơn giá nhập</span>' : 
-                      '<span class="badge bg-success">Hợp lệ</span>'}
-                </td>
-            </tr>`;
-    }
-    
-    html += '</tbody></table></div>';
-    
-    // Thêm cảnh báo nếu có giá thấp
-    if (hasLowPriceIssue) {
-        html += `
-        <div class="alert alert-warning mt-3">
-            <strong>Cảnh báo:</strong> Một số sản phẩm có giá bán thấp hơn giá nhập. 
-            Vui lòng tăng % lợi nhuận hoặc giảm % khuyến mãi.
-        </div>`;
-    }
-    
-    container.innerHTML = html;
-}
-
 // Thêm kiểm tra khi thêm sản phẩm mới
 function addProductRow() {
     const productTableBody = document.getElementById('productTableBody');
@@ -552,104 +595,4 @@ function renderGoodsReceiptDetailList(data){
         detailTable.append(row)
     })
 }
-function submitGoodReceiptForm(){
-    calculateSuggestedPrices();
-    const errorDiv = document.querySelector("#suggestedPrices .alert-danger");
-    const warningDiv = document.querySelector("#suggestedPrices .alert-warning");
-    
-    if (errorDiv) {
-        alert("Vui lòng sửa các lỗi trước khi lưu");
-        return;
-    }
-    
-    if (warningDiv && !confirm("Một số sản phẩm có giá bán thấp hơn giá nhập. Bạn có chắc muốn tiếp tục?")) {
-        return;
-    }
-    const providerId = document.getElementById('provider').value;
-    const profitPercentage = parseFloat(document.getElementById('profitPercentage').value) || 0;
-    
-    if (!providerId) {
-        alert('Vui lòng chọn nhà cung cấp');
-        return;
-    }
-
-    const productRows = document.querySelectorAll("#productTableBody tr");
-    if (productRows.length === 0) {
-        alert('Vui lòng thêm ít nhất 1 sản phẩm');
-        return;
-    }
-
-    // Nhóm sản phẩm theo MaSP và thu thập thông tin
-    const productsGrouped = {};
-    let isValid = true;
-
-    productRows.forEach(row => {
-        const productId = row.querySelector('.product-name').value;
-        const sizeId = row.querySelector('.product-size').value;
-        const quantity = row.querySelector('.quantity').value;
-        const importPrice = row.querySelector('.price').value;
-        const subtotal = row.querySelector('.subtotal').value.replace(/,/g, '');
-
-        if (!productId || !sizeId || !quantity || !importPrice) {
-            isValid = false;
-            return;
-        }
-
-        if (!productsGrouped[productId]) {
-            productsGrouped[productId] = {
-                productName: row.querySelector('.product-name option:checked').text,
-                maxImportPrice: 0,
-                items: []
-            };
-        }
-
-        // Cập nhật giá nhập cao nhất
-        const price = parseFloat(importPrice);
-        if (price > productsGrouped[productId].maxImportPrice) {
-            productsGrouped[productId].maxImportPrice = price;
-        }
-
-        productsGrouped[productId].items.push({
-            MaSize: sizeId,
-            SoLuongNhap: quantity,
-            DonGia: importPrice,
-            ThanhTien: subtotal
-        });
-    });
-
-    if (!isValid) {
-        alert('Vui lòng điền đầy đủ thông tin cho tất cả sản phẩm');
-        return;
-    }
-
-    // Gửi dữ liệu lên server
-    const data = {
-        MaNCC: providerId,
-        products: productsGrouped,
-        TongTien: document.getElementById('totalPay').value.replace(/,/g, ''),
-        ProfitPercentage: profitPercentage
-    };
-    
-    $.ajax({
-        url: '../../admin/API/index.php?type=addGoodReceipt',
-        method: 'POST',
-        dataType: 'json',
-        data: {
-            MaNCC: providerId,
-            products: JSON.stringify(productsGrouped),  // ⚡ Convert sang JSON string
-            TongTien: document.getElementById('totalPay').value.replace(/,/g, ''),
-            ProfitPercentage: profitPercentage
-        },
-        success: function(response) {
-            alert('Thêm phiếu nhập thành công');
-            $('#addProductModal').modal('hide');
-            loadGoodsReceiptList();
-        },
-        error: function(error) {
-            alert('Có lỗi xảy ra khi thêm phiếu nhập: ' + error.responseText);
-            console.error("Lỗi khi thêm phiếu nhập", error);
-        }
-    });
-}
-// 
 handleGoodsReceipt()
