@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <title>Cửa hàng quần áo</title>
-</head>
-<body>
-        <?php
-            //include("View/login.php");
-            include("View/login.php");
-       ?>
-</body>
-</html>
+<?php
+include("./Controller/CartController.php");
+
+$page = $_GET['page'] ?? 'home';
+
+if ($page === 'cart') {
+    $cartController = new CartController();
+    $cartController->showCart(1); // Thay 1 bằng mã người dùng thực tế
+} else {
+    include("View/login.php"); // Trang mặc định
+}
+?>
