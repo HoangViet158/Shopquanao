@@ -1,4 +1,3 @@
-<!-- View/cart.php -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -27,19 +26,20 @@
                 foreach ($items as $item):
                     $gia = $item['GiaBan'];
                     $soLuong = $item['SoLuong'];
+                    $soLuongTon = $item['SoLuongTon'];
                     $tien = $gia * $soLuong;
                     $tong += $tien;
                     $anhList = explode(',', $item['HinhAnh']);
                 ?>
                 <tr data-masp="<?= $item['MaSP'] ?>" data-masize="<?= $item['MaSize'] ?>">
                     <td>
-                        <img src="<?= $anhList[0] ?>" alt="Ảnh sản phẩm" width="80">
+                        <img src="/Shopquanao/<?= $anhList[0] ?>" alt="Ảnh sản phẩm" width="80">
                         <div><?= $item['TenSP'] ?></div>
                     </td>
                     <td><?= number_format($gia, 0, ',', '.') ?>đ</td>
                     <td>0đ</td>
                     <td>
-                        <input type="number" value="<?= $soLuong ?>" min="1" max="10"
+                        <input type="number" value="<?= $soLuong ?>" min="1" max="<?= $soLuongTon ?>"
                                data-masp="<?= $item['MaSP'] ?>" data-masize="<?= $item['MaSize'] ?>">
                     </td>
                     <td><?= $item['TenSize'] ?></td>
