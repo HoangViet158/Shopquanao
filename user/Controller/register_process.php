@@ -1,5 +1,7 @@
 <?php
 include "../../config/connect.php"; // Kết nối DB
+$db=new Database();
+$conn = $db->connection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fullname = trim($_POST["fullname"]);
