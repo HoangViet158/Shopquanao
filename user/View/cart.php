@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['MaTK'])) {
+    header("Location: /Shopquanao/user/View/login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -53,10 +60,10 @@
         <div class="cart-footer">
             <a href="#" class="btn">Mua tiếp</a>
             <div class="total">Tổng tiền: <span id="tong-tien"><?= number_format($tong, 0, ',', '.') ?>đ</span></div>
-            <button class="btn">Đặt hàng</button>
-        </div>
+      <form action="order_form.php" method="post">
+        <input type="submit" class="dh" value="Đặt hàng">
     </form>
-
+    </form>
     <script src="/Shopquanao/user/js/cart.js"></script>
 </body>
 </html>

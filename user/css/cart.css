@@ -1,6 +1,6 @@
 body {
     font-family: Arial;
-    background: #222;
+    background: #7d7cce;
     color: #fff;
 }
 h2 {
@@ -39,3 +39,14 @@ img {
     font-size: 20px;
     font-weight: bold;
 }
+.dh {
+    background: red;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+

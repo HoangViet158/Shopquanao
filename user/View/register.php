@@ -30,13 +30,13 @@
                     <button type="submit" class="register-btn">Đăng ký</button>
                 </form>
                 <div class="login-link">
-                    Đã có tài khoản? <a href="/login.php">Đăng nhập</a>
+                    Đã có tài khoản? <a href="/Shopquanao/user/View/login.php">Đăng nhập</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Gọi JavaScript kt đăng ký -->
-    <script src="../js/validate_register.js"></script>
+    <script src="/Shopquanao/user/js/validate_register.js"></script>
 </body>
 </html>

@@ -1,32 +1,30 @@
 <?php
-include_once(__DIR__ . '/../../config/connect.php');
+include_once __DIR__ . '/../Model/OrderModel.php';
 
 class CartController {
     public function showCart($maNguoiDung) {
-        $db = new Database();
-        $conn = $db->connection();
+        $model = new OrderModel();
+        $cartItems = $model->getCart($maNguoiDung); // Gọi đúng hàm
+        include_once __DIR__ . '/../View/order.php';
+    }
 
-        $sql = "SELECT gh.*, sp.TenSP, sp.GiaBan, sz.TenSize, szsp.SoLuong AS SoLuongTon,
-                       (SELECT GROUP_CONCAT(URL) FROM anh WHERE MaSP = gh.MaSP) AS HinhAnh
-                FROM giohang gh
-                JOIN sanpham sp ON gh.MaSP = sp.MaSP
-                JOIN size sz ON gh.MaSize = sz.MaSize
-                JOIN size_sanpham szsp ON gh.MaSP = szsp.MaSP AND gh.MaSize = szsp.MaSize
-                WHERE gh.MaNguoiDung = ?";
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $maNguoiDung);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    public function placeOrder($maNguoiDung, $diaChi, $sdt, $thanhToan) {
+        $model = new OrderModel();
+        $cartItems = $model->getCart($maNguoiDung); // Gọi đúng hàm
 
-        $items = [];
-        while ($row = $result->fetch_assoc()) {
-            $items[] = $row;
+        if (empty($cartItems)) {
+            echo "<script>alert('Giỏ hàng trống!'); window.location.href='?page=cart';</script>";
+            return;
         }
 
-        $stmt->close();
-        $conn->close();
+        $maHD = $model->createHoaDon($maNguoiDung, $thanhToan, $diaChi); // Thứ tự tham số khớp model
 
-        include_once('./View/cart.php');
+        foreach ($cartItems as $item) {
+            $model->addCTHoaDon($maHD, $item); // Gọi đúng tên hàm
+        }
+
+        $model->clearCart($maNguoiDung);
+
+        echo "<script>alert('Đặt hàng thành công!'); window.location.href='?page=success';</script>";
     }
 }
