@@ -1,5 +1,18 @@
 /* order_history.css */
 
+/* Làm mờ background-image */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("/Shopquanao/upload/products/slide1.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(2px);
+    z-index: -1;
+}
+
+/* Cài đặt chung cho body */
 body {
     margin: 0;
     padding: 0;
@@ -9,10 +22,12 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    position: relative;
+    z-index: 0;
 }
 
 .order-history {
-    background: #ebe8e8;
+    background: #ebe8e8cc; /* thêm độ mờ nhẹ */
     width: 50%;
     padding: 30px;
     border-radius: 10px;

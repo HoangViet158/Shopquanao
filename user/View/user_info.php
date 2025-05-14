@@ -58,7 +58,7 @@ if ($user = $result->fetch_assoc()) {
     <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($diaChi) ?></p>
 
    <div class="button-container">
-            <a href="index.php?page=order_history" class="order-history-button">Xem lịch sử đơn hàng</a>
+            <a href="order_history.php" class="order-history-button">Xem lịch sử đơn hàng</a>
             <a href="logout.php" class="logout-button">Đăng xuất</a>
     </div>
 </div>
