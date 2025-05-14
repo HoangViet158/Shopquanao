@@ -58,7 +58,7 @@ define('BASE_URL', '/web2');
             <!--Danh muc -->
             <div class="product-catalog">
                 <div class="catalog-header">
-                    <h2 class="section-title">Danh mục sản phẩm</h2>
+                    <h2 class="section-title">DANH MỤC SẢN PHẨM</h2>
                     <div class="catalog-buttons">
                         <?php if (!empty($categories)) : ?>
                             <?php foreach ($categories as $category) : ?>
@@ -77,7 +77,7 @@ define('BASE_URL', '/web2');
 
             <!--All products-->
             <div class="all-products">
-                <h2 class="section-title">Tất cả sản phẩm</h2>
+                <h2 class="section-title">TẤT CẢ SẢN PHẨM</h2>
                 <div class="section-products">
                 <!-- Sản phẩm sẽ được chèn ở đây -->
                 </div>
