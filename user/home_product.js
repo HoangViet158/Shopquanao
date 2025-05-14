@@ -2,6 +2,7 @@ let currentPage = 1;
 const perPage = 8;
 $(document).ready(function () {
      loadProductData();
+     loadRandomProducts()
 });
 function loadProductData() {
   $.ajax({
@@ -55,3 +56,39 @@ function renderProducts(products) {
     container.append(productHtml);
   });
 }
+
+function loadRandomProducts() {
+    $.ajax({
+        url: 'http://localhost:8080/web2/admin/API/index.php?type=getAllProducts',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (!Array.isArray(data.products) || data.products.length === 0) {
+                console.warn("Không có sản phẩm.");
+                return;
+            }
+
+            // Xáo trộn và lấy 4 sản phẩm ngẫu nhiên
+            const randomProducts = data.products.sort(() => Math.random() - 0.5).slice(0, 4);
+            const container = $('.product-grid'); // nơi hiển thị
+            container.empty();
+
+            randomProducts.forEach(product => {
+                const imageUrl = product.Anh?.[0] ? `/web2${product.Anh[0]}` : '/web2/images/no-image.png';
+
+                container.append(`
+                    <div class="product-item">
+                        <img src="${imageUrl}" alt="${product.TenSP}" class="card-img-top" onerror="this.src='/web2/images/no-image.png'">
+                        <div class="product-name">${product.TenSP}</div>
+                        <p>${product.MoTa}</p>
+                        <p style="color:red; font-weight:bold">${product.GiaBan}</p>
+                    </div>
+                `);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Lỗi khi lấy sản phẩm:", error);
+        }
+    });
+}
+

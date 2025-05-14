@@ -89,104 +89,19 @@ define('BASE_URL', '/web2');
             </div>
             
 
-            <!--San pham ban chay
+            <!--San pham ban chay -->
             <div class="best-selling-product">
                 <div class="top-section">
-                    <h2 class="section-title">Sản phẩm bán chạy</h2>
-                    <button class="view-more">Xem thêm sản phẩm</button>
+                    <h2 class="section-title">SẢN PHẨM BÁN CHẠY</h2>
                 </div>
                 <div class="product-box">
-                    <div class="product-grid">
-                        <div class="product-card">
-                            <img src="../upload/products/aothuncotrontaydai.jpg" alt="">
-                            <h3>Áo thun cổ tròn</h3>
-                            <p>250.000đ</p>
-                        </div>
-                        
-                        <div class="product-card">
-                            <img src="../upload/products/aokhoackaki.jpg" alt="">
-                            <h3>Áo khoác kaki</h3>
-                            <p>350.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aopolonam-den.jpg" alt="">
-                            <h3>Áo polo nam đen</h3>
-                            <p>200.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aosomitrang.jpg" alt="">
-                            <h3>Áo sơ mi trắng</h3>
-                            <p>280.000đ</p>
-                        </div>
-
-                    </div>
+                    <div class="product-grid"></div>
                 </div>
             </div>
 
-                    -->
+            
 
-            <!--Kham pha-->
-            <!-- <div class="explore-product">
-                <h2 class="section-title">Khám phá sản phẩm của chúng tôi</h2>
-
-                <div class="product-box">
-                    <div class="product-grid">
-                        <div class="product-card">
-                            <img src="../upload/products/aothuncotroncottonxam.jpg" alt="">
-                            <h3>Áo thun cổ tròn cotton</h3>
-                            <p>250.000đ</p>
-                        </div>
-                        
-                        <div class="product-card">
-                            <img src="../upload/products/aopolonam.jpg" alt="">
-                            <h3>Áo polo nam</h3>
-                            <p>300.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aothunambasic.jpg" alt="">
-                            <h3>Áo thun nam</h3>
-                            <p>200.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aokhoacdu.jpg" alt="">
-                            <h3>Áo khoác nam</h3>
-                            <p>240.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aothuncotrontaydaiden.jpg" alt="">
-                            <h3>Áo sơ tay dài</h3>
-                            <p>200.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aothunrong.jpg" alt="">
-                            <h3>Áo mới</h3>
-                            <p>300.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aokhoacjean.jpg" alt="">
-                            <h3>Áo jean</h3>
-                            <p>350.000đ</p>
-                        </div>
-
-                        <div class="product-card">
-                            <img src="../upload/products/aosomitayngan.jpg" alt="">
-                            <h3>Áo sơ mi ngắn tay</h3>
-                            <p>280.000đ</p>
-                        </div>
-                        
-                    </div>
-                    <div class="view-more-container">
-                        <button class="view-more">Xem tất cả sản phẩm</button>
-                    </div>
-                </div>
-            </div> -->
+           
         </section>
         
 
