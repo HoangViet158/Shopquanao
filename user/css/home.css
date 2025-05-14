@@ -12,6 +12,7 @@ body {
   flex-direction: column;
 }
 .page-container {
+    width: 100%;
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100vh;
@@ -29,13 +30,13 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: transparent;
+  background-color: #333;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 999;
-  height: 110px; /* Đảm bảo chiều cao của header */
+  height: 82px; /* Đảm bảo chiều cao của header */
 }
 .logo img {
   height: 70px;
@@ -95,7 +96,7 @@ body {
   flex-grow: 1;
 }
 .product-catalog {
-  background: #b5b2b2;
+  background: #fff;
 }
 .top-banner {
   width: 100%;
@@ -107,6 +108,7 @@ body {
   margin-bottom: 15px;
   line-height: 1.4;
   white-space: nowrap;
+  width: 30%;
 }
 
 .section-title::before {
@@ -123,7 +125,7 @@ body {
 .product-catalog h2 {
   font-size: 20px;
   padding-left: 30px;
-  margin-bottom: 15px;
+  margin: 15px;
   color: #e53935;
 }
 .catalog-header {
@@ -141,19 +143,19 @@ body {
   justify-content: center;
 }
 .category-btn {
-    background-color: #f3f3f3;
-    color: #333;
-    border: 2px solid #ccc;
+    background-color: rgb(241, 24, 24);
+    color: #fff;
+    border: 2px solid rgb(241, 24, 24);
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: bold;
 }
 .category-btn:hover {
-    background-color: rgb(241, 24, 24);
-    color: #fff;
-    border-color: rgb(241, 24, 24);
+    background-color: rgb(171, 2, 2);
+    border-color: rgb(171, 2, 2);
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
@@ -275,6 +277,7 @@ footer.footer-container {
   margin: 0;
   color: white;
   font-size: 24px;
+  font-weight: bold;
 }
 
 .footer-section {
@@ -297,7 +300,8 @@ footer.footer-container {
 /* Footer Center */
 .footer-center p {
     margin: 8px 0;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 700;
 }
 
 /* Footer Right */
@@ -314,7 +318,7 @@ footer.footer-container {
 .footer-right ul li a {
     color: white;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
     transition: color 0.3s;
 }
 
