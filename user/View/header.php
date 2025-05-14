@@ -42,10 +42,23 @@
                 </button>
             </div>
             <div class="icons">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <i class="fa-solid fa-user"></i>
+               <?php session_start(); ?>
+        <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
+
+        <?php if (isset($_SESSION['username'])): ?>
+        <div class="user-info-dropdown">
+                    <i class="fa-solid fa-user"></i>
             </div>
         </div>
+            <div class="user-info-form">
+            <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
+            <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
+            <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
+            </div>
+        </div>
+        <?php else: ?>
+        <a href="login.php"><i class="fa-solid fa-user"></i></a>
+        <?php endif; ?>
     </div>
 </header>
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

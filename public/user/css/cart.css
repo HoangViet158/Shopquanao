@@ -1,0 +1,52 @@
+body {
+    font-family: Arial;
+    background: #7d7cce;
+    color: #fff;
+}
+h2 {
+    text-align: center;
+}
+table {
+    width: 90%;
+    margin: 0 auto;
+    background: #fff;
+    color: #000;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+img {
+    max-height: 80px;
+}
+.cart-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 20px auto;
+}
+.btn {
+    background: red;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+.total {
+    font-size: 20px;
+    font-weight: bold;
+}
+.dh {
+    background: red;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+
