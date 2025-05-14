@@ -140,5 +140,19 @@
 
 
 </div>
+<script>
+    const actionPermissions = {
+        canView: <?php echo json_encode(hasAction(5, 'view')); ?>,
+        canEdit: <?php echo json_encode(hasAction(5, 'edit')); ?>,
+        canDelete: <?php echo json_encode(hasAction(5, 'delete')); ?>,
+        canAdd: <?php echo json_encode(hasAction(5, 'add')); ?>
+    };
+</script>
 
+<div id="user-permissions"
+     data-can-view="<?php echo json_encode(hasAction(5, 'view'));?>"
+     data-can-edit="<?php echo json_encode(hasAction(5, 'edit')); ?>"
+     data-can-delete="<?php echo json_encode(hasAction(5, 'delete')); ?>"
+     data-can-add="<?php echo json_encode(hasAction(5, 'add')); ?>">
+</div>
 <script src="../../public/admin/js/user.js"></script>

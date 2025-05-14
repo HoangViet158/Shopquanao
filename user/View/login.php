@@ -5,14 +5,14 @@
         <img src="../../upload/products/imgmainlogin.jpg" alt="Hình ảnh">
         <div>
             <h2  class="text-center"> Đăng nhập </h2>
-            <form action="/log-in" method="POST">
+            <form id="login-form" method="POST">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Tên Người Dùng</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên người dùng " required>
+                    <label for="username" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Nhập tên người dùng " required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="text" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
                 </div>
                 <div>
                 <div class="d-flex justify-content-center align-items-center mb-2">
@@ -26,3 +26,4 @@
     </div>
 </body>
 </html>
+<script src="../../public/user/js/auth.js"></script>

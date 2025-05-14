@@ -7,3 +7,11 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../../public/admin/js/promotion.js"></script>
+<script>
+    const actionPermissions = {
+        canView: <?php echo json_encode(hasAction(4, 'view')); ?>,
+        canEdit: <?php echo json_encode(hasAction(4, 'edit')); ?>,
+        canDelete: <?php echo json_encode(hasAction(4, 'delete')); ?>,
+        canAdd: <?php echo json_encode(hasAction(4, 'add')); ?>
+    };
+</script>

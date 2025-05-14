@@ -91,17 +91,19 @@ class permission_model {
             $stmtUpdate->execute();
         }
 
-        // Xóa quyền
-        $deleteSql = "DELETE FROM quyen WHERE MaQuyen = ?";
-        $stmtDelete = $conn->prepare($deleteSql);
-        $stmtDelete->bind_param("i", $id);
-        $success = $stmtDelete->execute();
 
         //Xóa chi tiết quyền có mã quyền đã xóa
         $deleteSql1 = "DELETE FROM chitiet_quyen_cn WHERE MaQuyen = ?";
         $stmtDelete1 = $conn->prepare($deleteSql1);
         $stmtDelete1->bind_param('i',$id);
         $stmtDelete1->execute();
+
+        
+        // Xóa quyền
+        $deleteSql = "DELETE FROM quyen WHERE MaQuyen = ?";
+        $stmtDelete = $conn->prepare($deleteSql);
+        $stmtDelete->bind_param("i", $id);
+        $success = $stmtDelete->execute();
 
         return $success;
     }

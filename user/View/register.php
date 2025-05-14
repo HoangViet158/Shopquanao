@@ -10,17 +10,17 @@
                     <label for="username" class="form-label">Tên Người Dùng</label>
                     <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên người dùng " required>
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="fullname" class="form-label">Họ và tên</label>
                     <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Nhập họ và tên" required>
-                </div>
+                </div> -->
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="text" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
                 </div>
                 <div class="mb-3">
                     <label for="password-confirm" class="form-label">Mật khẩu</label>

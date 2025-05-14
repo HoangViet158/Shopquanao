@@ -408,6 +408,15 @@ function loadSizeOptions(row){
     })
 }
 function showAddGoodReceiptForm(){
+    if(!actionPermissions.canAdd){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
     $.ajax({
         url:'../../admin/API/index.php?type=getAllProvider',
         method:'GET',
@@ -653,3 +662,16 @@ function submitGoodReceiptForm(){
 }
 // 
 handleGoodsReceipt()
+
+document.addEventListener('DOMContentLoaded', () => {
+        const permissionElement = document.getElementById('goodReceipt-permissions');
+        const actionPermissions = {
+        canView: permissionElement.dataset.canView ,
+        canEdit: permissionElement.dataset.canEdit ,
+        canDelete: permissionElement.dataset.canDelete ,
+        canAdd: permissionElement.dataset.canAdd
+    };
+
+    console.log("Can Delete:", actionPermissions.canDelete);
+
+});

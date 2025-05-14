@@ -3,6 +3,15 @@ let selectedNewImages=[]
 // để chuyển lại router lúc mà thành công hoặc đóng modal thì chuyển router lại về /
 // ctrl f tìm dòng này router.navigate('/products'); k chắc đúng logic k nữa mà thôi kệ đi=))
 function openAddProductModal() {
+  if(!actionPermissions.canAdd){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
   $("#addProductModal").modal("show")
   $("#addProductForm")[0].reset()
   $("#imagePreview").empty()
@@ -525,6 +534,15 @@ function renderProductTable(products) {
   })
 }
 function deleteProduct(productId) {
+  if(!actionPermissions.canDelete){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
   // if (window.router && window.location.pathname.includes('/delete/')) {
     
   //   return;
@@ -566,6 +584,15 @@ function deleteProduct(productId) {
 }
 
 function showEditForm(productId) {
+  if(!actionPermissions.canEdit){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
 //   if (window.router) {
 //     router.navigate(`/products/edit/${productId}`);
 // } else {
@@ -710,3 +737,14 @@ function formatCurrency(amount) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
 }
 handleProduct()
+
+document.addEventListener('DOMContentLoaded', () => {
+        const permissionElement = document.getElementById('product-permissions');
+        const actionPermissions = {
+        canView: permissionElement.dataset.canView ,
+        canEdit: permissionElement.dataset.canEdit ,
+        canDelete: permissionElement.dataset.canDelete ,
+        canAdd: permissionElement.dataset.canAdd
+    };
+    console.log("Can Delete:", actionPermissions.canDelete);
+})

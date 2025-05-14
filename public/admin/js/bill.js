@@ -249,6 +249,16 @@ function renderBillList(data) {
     });
 }
 function updateBillStatus(billId) {
+    console.log(actionPermissions.canEdit)
+    if(!actionPermissions.canEdit){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
     // if (window.router) {
     //     router.navigate(`/bills/updateStatus/${billId}`);
     // }
@@ -413,3 +423,15 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 }
 handleBill()
+document.addEventListener('DOMContentLoaded', () => {
+        const permissionElement = document.getElementById('bill-permissions');
+        const actionPermissions = {
+        canView: permissionElement.dataset.canView ,
+        canEdit: permissionElement.dataset.canEdit ,
+        canDelete: permissionElement.dataset.canDelete ,
+        canAdd: permissionElement.dataset.canAdd
+    };
+
+    console.log("Can Delete:", actionPermissions.canDelete);
+
+});

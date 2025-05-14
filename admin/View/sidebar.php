@@ -1,3 +1,8 @@
+<?php 
+require_once('../Controller/auth_helper.php');
+requireLogin();
+?>
+
 <html lang="en">
 
 <head>
@@ -33,32 +38,43 @@
 
             <!-- Menu sidebar -->
             <div class="content_side">
-                <a href="product.php" style="text-decoration: none;">
-                    <div class="side_item">
-                        <div><i class="fa-solid fa-shop"></i></div>
-                        <div><span>Quản Lí Sản Phẩm</span></div>
-                    </div>
-                </a>
+                <?php if (canViewProduct()): ?>
+                    <a href="product.php" style="text-decoration: none;">
+                        <div class="side_item">
+                            <div><i class="fa-solid fa-shop"></i></div>
+                            <div><span>Quản Lí Sản Phẩm</span></div>
+                        </div>
+                    </a>
+                <?php endif; ?>
+
+                <?php if (canViewBill()): ?>          
                 <a href="bill.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-truck-fast"></i></div>
                         <div><span>Quản Lí Đơn Hàng</span></div>
                     </div>
                 </a>
-                
+                <?php endif; ?>
+
+                <?php if (canViewGoodReceipt()): ?>
                 <a href="goodReceipt.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-pen"></i></div>
                         <div><span>Quản Lí Phiếu Nhập</span></div>
                     </div>
                 </a>
+                <?php endif; ?>
 
+                <?php if (canViewUser()): ?>
                 <a href="user.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-user"></i></div>
                         <div><span>Quản lí Khách Hàng</span></div>
                     </div>
                 </a>
+                <?php endif; ?>
+
+                <?php if (canViewPermission()): ?>
                 <a href="permission.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-user-group"></i></div>
@@ -67,6 +83,9 @@
                         </div>
                     </div>
                 </a>
+                <?php endif; ?>
+
+                <?php if (canViewPromotion()): ?>
                 <a href="promotion.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-money-bill-wave"></i></div>
@@ -75,7 +94,8 @@
                         </div>
                     </div>
                 </a>
-                
+                <?php endif; ?>
+
                 <a href="statistic.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-chart-simple"></i></div>
