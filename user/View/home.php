@@ -27,7 +27,7 @@ session_start();
       <button><i class="fas fa-search"></i></button>
     </div>
     <div class="header-icons">
-      <a href="cart.php"><i class="fas fa-shopping-cart"></i></a>
+      <a href="../user/view/cart.php"><i class="fas fa-shopping-cart"></i></a>
       <?php if (isset($_SESSION['MaTK'])): ?>
     <a href="../user/view/user_info.php"><i class="fas fa-user"></i></a>
     <?php else: ?>
