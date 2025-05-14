@@ -451,6 +451,15 @@ function loadSizeOptions(row){
     })
 }
 function showAddGoodReceiptForm(){
+    if(!actionPermissions.canAdd){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
     $.ajax({
         url:'../../admin/API/index.php?type=getAllProvider',
         method:'GET',
@@ -595,4 +604,117 @@ function renderGoodsReceiptDetailList(data){
         detailTable.append(row)
     })
 }
+function submitGoodReceiptForm(){
+    calculateSuggestedPrices();
+    const errorDiv = document.querySelector("#suggestedPrices .alert-danger");
+    const warningDiv = document.querySelector("#suggestedPrices .alert-warning");
+    
+    if (errorDiv) {
+        alert("Vui lòng sửa các lỗi trước khi lưu");
+        return;
+    }
+    
+    if (warningDiv && !confirm("Một số sản phẩm có giá bán thấp hơn giá nhập. Bạn có chắc muốn tiếp tục?")) {
+        return;
+    }
+    const providerId = document.getElementById('provider').value;
+    const profitPercentage = parseFloat(document.getElementById('profitPercentage').value) || 0;
+    
+    if (!providerId) {
+        alert('Vui lòng chọn nhà cung cấp');
+        return;
+    }
+
+    const productRows = document.querySelectorAll("#productTableBody tr");
+    if (productRows.length === 0) {
+        alert('Vui lòng thêm ít nhất 1 sản phẩm');
+        return;
+    }
+
+    // Nhóm sản phẩm theo MaSP và thu thập thông tin
+    const productsGrouped = {};
+    let isValid = true;
+
+    productRows.forEach(row => {
+        const productId = row.querySelector('.product-name').value;
+        const sizeId = row.querySelector('.product-size').value;
+        const quantity = row.querySelector('.quantity').value;
+        const importPrice = row.querySelector('.price').value;
+        const subtotal = row.querySelector('.subtotal').value.replace(/,/g, '');
+
+        if (!productId || !sizeId || !quantity || !importPrice) {
+            isValid = false;
+            return;
+        }
+
+        if (!productsGrouped[productId]) {
+            productsGrouped[productId] = {
+                productName: row.querySelector('.product-name option:checked').text,
+                maxImportPrice: 0,
+                items: []
+            };
+        }
+
+        // Cập nhật giá nhập cao nhất
+        const price = parseFloat(importPrice);
+        if (price > productsGrouped[productId].maxImportPrice) {
+            productsGrouped[productId].maxImportPrice = price;
+        }
+
+        productsGrouped[productId].items.push({
+            MaSize: sizeId,
+            SoLuongNhap: quantity,
+            DonGia: importPrice,
+            ThanhTien: subtotal
+        });
+    });
+
+    if (!isValid) {
+        alert('Vui lòng điền đầy đủ thông tin cho tất cả sản phẩm');
+        return;
+    }
+
+    // Gửi dữ liệu lên server
+    const data = {
+        MaNCC: providerId,
+        products: productsGrouped,
+        TongTien: document.getElementById('totalPay').value.replace(/,/g, ''),
+        ProfitPercentage: profitPercentage
+    };
+    
+    $.ajax({
+        url: '../../admin/API/index.php?type=addGoodReceipt',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            MaNCC: providerId,
+            products: JSON.stringify(productsGrouped),  // ⚡ Convert sang JSON string
+            TongTien: document.getElementById('totalPay').value.replace(/,/g, ''),
+            ProfitPercentage: profitPercentage
+        },
+        success: function(response) {
+            alert('Thêm phiếu nhập thành công');
+            $('#addProductModal').modal('hide');
+            loadGoodsReceiptList();
+        },
+        error: function(error) {
+            alert('Có lỗi xảy ra khi thêm phiếu nhập: ' + error.responseText);
+            console.error("Lỗi khi thêm phiếu nhập", error);
+        }
+    });
+}
+// 
 handleGoodsReceipt()
+
+document.addEventListener('DOMContentLoaded', () => {
+        const permissionElement = document.getElementById('goodReceipt-permissions');
+        const actionPermissions = {
+        canView: permissionElement.dataset.canView ,
+        canEdit: permissionElement.dataset.canEdit ,
+        canDelete: permissionElement.dataset.canDelete ,
+        canAdd: permissionElement.dataset.canAdd
+    };
+
+    console.log("Can Delete:", actionPermissions.canDelete);
+
+});

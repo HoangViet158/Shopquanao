@@ -12,6 +12,7 @@ require_once(__DIR__ . '/../Controller/product_Controller.php');
 require_once(__DIR__ . '/../Controller/goodsReceipt_Controller.php');
 require_once(__DIR__ . '/../Controller/bill_Controller.php');
 require_once(__DIR__ . '/../Controller/user_Controller.php');
+require_once(__DIR__ . '/../../user/Controller/auth_Controller.php');
 
 $billController = new bill_Controller();
 $goodReceiptController = new goodsReceipt_Controller();
@@ -22,6 +23,7 @@ $promotionController = new promotion_Controller();
 $statisticConTroller = new statistic_Controller();
 $userController = new user_Controller();
 $permissionController = new permission_Controller();
+$authController = new auth_Controller();
 $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
@@ -544,4 +546,43 @@ switch ($type) {
         $data = json_decode(file_get_contents('php://input'), true);
         echo json_encode($goodReceiptController->calculateSuggestedPrices($data));
         break;
+case 'login':
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+
+    $email = isset($data['email']) ? $data['email'] : "";
+    $matkhau = isset($data['password']) ? $data['password'] : "";
+
+    $result = $authController->loginValidate($email,$matkhau);
+    if($result){
+        session_start();
+        $_SESSION['user'] = [
+            'id' => $result['MaNguoiDung'],
+            'permission' => $result['MaQuyen'],
+            'username' => $result['TenTK'],
+            'email' => $result['Email'],
+
+        ];
+    }
+    echo json_encode(
+        [
+            'status' => $result ? 'success' : 'error',
+            'message' => $result ? 'Đăng nhập thành công' : 'Đăng nhập thất bại',
+            'user' => $result ? $_SESSION['user'] : null
+        ]
+    );
+    break;
+case 'getSession':
+        if (isset($_SESSION['user'])) {
+        echo json_encode([
+            'status' => 'success',
+            'user' => $_SESSION['user']
+        ]);
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'User not logged in'
+        ]);
+    }
+    break;
 }

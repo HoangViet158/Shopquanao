@@ -3,6 +3,15 @@ let limit = 5;
 let totalUsers = 0;
 let searchName = "";
 
+// const permissionElement = document.getElementById('user-permissions');
+
+//     const actionPermissions = {
+//         canView: permissionElement.dataset.canView === "1",
+//         canEdit: permissionElement.dataset.canEdit === "1",
+//         canDelete: permissionElement.dataset.canDelete === "1",
+//         canAdd: permissionElement.dataset.canAdd === "1"
+//     };
+
 // Format trạng thái user
 function formatStatus(statusid){
     switch (String(statusid)) {
@@ -221,8 +230,49 @@ const addUserClose  = document.getElementById('addUserClose');
 const addUserForm   = document.getElementById('addUserForm');
 
 // Hàm mở modal
-function openAddUserModal() {
-  addUserModal.style.display = 'block';
+async function openAddUserModal() {
+    if(!actionPermissions.canAdd){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
+
+  const types = await getAllType();
+    const selectType = document.getElementById('addUserType');
+    selectType.innerHTML = '';
+    types.forEach(type => {
+        const option = document.createElement("option");
+        option.value = type.MaLoai;
+        option.textContent = type.TenLoai;
+        // if (id && id == type.MaLoai) {
+        //     option.selected = true;
+        // }
+        if(type.MaLoai != 3){
+            selectType.appendChild(option)
+        }
+    })
+
+    listPermission = await getAllPermission();
+    const selectPermission = document.getElementById('permission');
+    selectPermission.innerHTML = '';
+    listPermission.forEach(permission => {
+        const option = document.createElement("option");
+        option.value = permission.MaQuyen;
+        option.textContent = permission.TenQuyen;
+        // if (id && id == permission.MaQuyen){
+        //     option.selected = true;
+        // }
+        if(permission.MaQuyen != 1){
+            selectPermission.appendChild(option);
+        }
+    });
+
+    addUserModal.style.display = 'block';
+
 }
 
 // Khi bấm nút ×, hỏi xác nhận rồi mới đóng
@@ -364,6 +414,15 @@ const editModalEl = document.getElementById('editUserModal');
 const editModal = new bootstrap.Modal(editModalEl);
 // Hàm edit/delete placeholder
 async function openEditUser(id) {
+    if(!actionPermissions.canEdit){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
     try {
       const response = await fetch(`../../admin/API/index.php?type=getUserById&id=${id}`);
       if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu');
@@ -382,7 +441,7 @@ async function openEditUser(id) {
         //   console.log(permission)
         //   getAllPermission();
       const permissionSelection = await getAllPermission();
-      renderEditPermission(permissionSelection, user.MaQuyen);
+      await renderEditPermission(permissionSelection, user.MaQuyen);
       await renderEditType(user.MaLoai);
 
       document.getElementById('editUserId').value  = user.MaNguoiDung;
@@ -447,6 +506,15 @@ async function updateUser(){
 
 // Khóa và mở khóa user
 async function lockUnLockUser(id, status) {
+     if(!actionPermissions.canDelete){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
     const newStatus = status === 1 ? 0 : 1;
 
     const response = await fetch(`../../admin/API/index.php?type=getUserById&id=${id}`);
@@ -512,5 +580,14 @@ function searchUser(){
 // Khi trang load xong, khởi tạo
 document.addEventListener('DOMContentLoaded', () => {
     loadUser(limit, 0, "");
-    // getAllType()
+        const permissionElement = document.getElementById('user-permissions');
+        const actionPermissions = {
+        canView: permissionElement.dataset.canView ,
+        canEdit: permissionElement.dataset.canEdit ,
+        canDelete: permissionElement.dataset.canDelete ,
+        canAdd: permissionElement.dataset.canAdd
+    };
+
+    console.log("Can Delete:", actionPermissions.canDelete);
+
 });

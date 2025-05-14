@@ -89,6 +89,15 @@ addPermissionForm.addEventListener('submit', async e => {
   const formData = new FormData(addPermissionForm);
   const data = Object.fromEntries(formData.entries());
 //   console.log(data)
+  if(!data.tenQuyen.trim()){
+      Swal.fire({
+      icon: 'warning',
+      title: 'Cảnh báo!',
+      text: 'Tên quyền không được để trống',
+      confirmButtonText: 'Đã hiểu'
+    });  
+    return     
+  }
 
   try {
     const res = await fetch('../../admin/API/index.php?type=addPermission', {
@@ -123,18 +132,20 @@ addPermissionForm.addEventListener('submit', async e => {
 });
 //validate cho xóa quyền
 async function validateDeletePermission(id) {
-    const res = await fetch(`./../admin/API/index.php?type=getPermissionById&id=${id}`)
+    const res = await fetch(`../../admin/API/index.php?type=getPermissionById&id=${id}`)
     if (!res.ok) throw new Error('lỗi khi lấy permission');
-    const permission = res.json();
-    if (permission.TenQuyen == "Admin" || permission == "Khách hàng"){
+    const permission = await res.json();
+    // console.log(permission)
+    if (permission.TenQuyen == "Admin" || permission.TenQuyen == "Khách hàng"){
         Swal.fire({
             icon: "error",
             title: 'Cảnh báo',
             text: 'Không được xóa quyền Admin hoặc khách hàng',
             confirmButtonText: 'Đã hiểu'
         })
-        return;
+        return true;
     }
+    return false;
 }
 
 //mở trang chi tiết quyền chức năng
@@ -144,6 +155,10 @@ function openEditPermission(id){
 
 //Xóa quyền
 async function deletePermission(id) {
+  const isInvalid = await validateDeletePermission(id);
+  if (isInvalid) {
+    return;
+  }
     Swal.fire({
         icon: 'warning',
         title: 'Xóa quyền?',

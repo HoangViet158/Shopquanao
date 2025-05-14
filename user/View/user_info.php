@@ -2,16 +2,16 @@
 session_start();
 require_once dirname(__DIR__, 2) . '/config/connect.php';
 
-if (!isset($_SESSION['MaTK'])) {
+if (!isset($_SESSION['user'])) {
     header("Location: ../user/view/login.php");
     exit();
 }
 $db = new Database();
 $conn = $db->connection();
-$maTK = $_SESSION['MaTK'];
+// $maTK = $_SESSION['MaTK'];
 
 // Lấy MaTK từ session
-$maTK = $_SESSION['MaTK'];
+$maTK = $_SESSION['user']['id'];
 
 // Sửa câu truy vấn để lấy dữ liệu từ cả hai bảng
 $sql = "SELECT t.TenTK, n.Email, n.DiaChi
@@ -42,7 +42,10 @@ if ($user = $result->fetch_assoc()) {
 }
 
 ?>
-
+<script>
+    console.log("Tên người dùng: <?= htmlspecialchars($tenNguoiDung) ?>");
+    
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>

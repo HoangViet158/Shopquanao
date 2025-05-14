@@ -59,16 +59,16 @@
                     </div>
                     <div class="col-sm-6">
                     <label class="form-label">Loại tài khoản</label>
-                    <select name="MaLoai" class="form-select">
-                        <option value="1">Khách hàng</option>
+                    <select id="addUserType" name="MaLoai" class="form-select">
+                        <!-- <option value="1">Khách hàng</option>
                         <option value="2">Nhân viên</option>
-                        <option value="3">Quản trị viên</option>
+                        <option value="3">Quản trị viên</option> -->
                     </select>
                     </div>
                     <div class="col-sm-6">
                     <label class="form-label">Quyền</label>
                     <select id="permission" name="MaQuyen" class="form-select">
-                        <option value="1">Khách hàng</option>
+                        <!-- <option value="1">Khách hàng</option> -->
                         <!-- Populate options here -->
                     </select>
                     </div>
@@ -140,5 +140,19 @@
 
 
 </div>
+<script>
+    const actionPermissions = {
+        canView: <?php echo json_encode(hasAction(5, 'view')); ?>,
+        canEdit: <?php echo json_encode(hasAction(5, 'edit')); ?>,
+        canDelete: <?php echo json_encode(hasAction(5, 'delete')); ?>,
+        canAdd: <?php echo json_encode(hasAction(5, 'add')); ?>
+    };
+</script>
 
+<div id="user-permissions"
+     data-can-view="<?php echo json_encode(hasAction(5, 'view'));?>"
+     data-can-edit="<?php echo json_encode(hasAction(5, 'edit')); ?>"
+     data-can-delete="<?php echo json_encode(hasAction(5, 'delete')); ?>"
+     data-can-add="<?php echo json_encode(hasAction(5, 'add')); ?>">
+</div>
 <script src="../../public/admin/js/user.js"></script>

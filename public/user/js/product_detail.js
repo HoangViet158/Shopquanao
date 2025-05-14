@@ -1,6 +1,6 @@
 function loadCategories() {
         $.ajax({
-            url: '../../../admin/API/index.php?type=getAllCategories',
+            url: '../../admin/API/index.php?type=getAllCategories',
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -37,7 +37,7 @@ $(document).ready(function() {
         
         // Gọi API lấy chi tiết sản phẩm
         $.ajax({
-            url: `../../../user/API/index.php?type=getProductDetail&id=${productId}`,
+            url: `../../user/API/index.php?type=getProductDetail&id=${productId}`,
             type: "GET",
             dataType: "json",
             success: function(product) {
@@ -75,13 +75,13 @@ $(document).ready(function() {
             
             galleryHtml = `
             <div class="product-gallery ">
-                <img src="../../../${mainImage}" class="main-image mb-3" id="main-image" alt="${product.TenSP}">
+                <img src="../../${mainImage}" class="main-image mb-3" id="main-image" alt="${product.TenSP}">
                 <div class="thumbnail-container border p-2 rounded shadow-sm">
             `;
             
             product.Anh.forEach((image, index) => {
                 galleryHtml += `
-                <img src="../../../${image.Url}" class="thumbnail ${index === 0 ? 'active' : ''}" 
+                <img src="../../${image.Url}" class="thumbnail ${index === 0 ? 'active' : ''}" 
                      onclick="changeMainImage('${image.Url}')" alt="Ảnh ${index + 1}">
                 `;
             });
@@ -169,9 +169,9 @@ $(document).ready(function() {
     }
     
     function changeMainImage(url) {
-        $('#main-image').attr('src', '../../../' + url);
+        $('#main-image').attr('src', '../../' + url);
         $('.thumbnail').removeClass('active');
-        $(`.thumbnail[src="../../../${url}"]`).addClass('active');
+        $(`.thumbnail[src="../../${url}"]`).addClass('active');
     }
     
     function formatPrice(price) {

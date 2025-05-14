@@ -10,3 +10,4 @@
 </div>
 <script src="../../public/admin/js/permission-detail.js"></script>
 </html>
+

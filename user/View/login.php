@@ -1,42 +1,29 @@
-<?php session_start(); ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Đăng nhập</title>
-    <link rel="stylesheet" href="/Shopquanao/public/user/css/style.css">
-    <script src="/Shopquanao/user/js/validate_login.js" defer></script>
-</head>
-<body>
-    <div class="container">
-        <div class="image-section"></div>
-        <div class="login-section">
-            <h2>Đăng nhập</h2>
-            <div class="form-container">
+<?php require_once "../../user/View/header.php" ?>
 
-                <!-- Hiển thị thông báo lỗi nếu có -->
-                <?php
-                if (isset($_SESSION['login_error'])) {
-                    echo '<p style="color: red;">' . $_SESSION['login_error'] . '</p>';
-                    unset($_SESSION['login_error']);
-                }
-                ?>
-
-                <form id="loginForm" method="POST" action="/Shopquanao/user/Controller/login_process.php">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" required>
-
-                    <button type="submit" class="login-btn">Đăng nhập</button>
-                </form>
-
-                <div class="register-link">
-                    Chưa có tài khoản? <a href="/Shopquanao/user/View/register.php">Đăng ký</a>
+<div class="container my-5">
+    <div id="log-in">
+        <img src="../../upload/products/imgmainlogin.jpg" alt="Hình ảnh">
+        <div>
+            <h2  class="text-center"> Đăng nhập </h2>
+            <form id="login-form" method="POST">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Nhập tên người dùng " required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div>
+                <div class="d-flex justify-content-center align-items-center mb-2">
+                <button type="submit" name="login" class="btn btn-danger "> Đăng nhập </button>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                     Chưa có tài khoản? <a href="register.php" class="text-dark"><strong> Đăng ký </strong></a>
                 </div>
             </div>
         </div>
     </div>
 </body>
 </html>
+<script src="../../public/user/js/auth.js"></script>

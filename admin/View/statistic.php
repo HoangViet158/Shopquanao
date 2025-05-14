@@ -38,7 +38,8 @@ $monthlyRevenue = $statisticController->monthly_revenue(date("Y-m-d"));
 <body> -->
 
 <?php
-require_once "sidebar.php" ?>
+require_once ("sidebar.php");
+?>
 <div id="statistic-content" class="content-container" style="max-width:80%">
     <div class="Mange_client" >
         <h3> Thống kê </h3>

@@ -5,20 +5,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../../../public/user/css/user.css" />
+    <link rel="stylesheet" href="../../public/user/css/user.css" />
     <title>Shop Quần áo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
-<?php session_start(); ?>
+
 <header>
     <div class="welcome-banner">
         <h4>Chào mừng bạn đến với cửa hàng chúng tôi</h4>
     </div>
     <div class="title">
         <div class="logo">
-            <img src="../../../upload/products/logo-shop-quan-ao-nam-9.jpg" alt="logo">
+            <img src="../../upload/products/logo-shop-quan-ao-nam-9.jpg" alt="logo">
         </div>
         <div class="nav-links">
             <a href="/">Trang chủ</a>
@@ -40,14 +42,15 @@
             </div>
             <div class="icons">
                 <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
-                <?php if (isset($_SESSION['username'])): ?>
+                <?php if (isset($_SESSION['user'])): ?>
                     <div class="user-info-dropdown">
-                        <i class="fa-solid fa-user"></i>
+                        <a href="user_info.php" class="user-info">
+                            <i class="fa-solid fa-user"></i>
                     </div>
             </div>
             <div class="user-info-form">
-                <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
-                <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
+                <p><strong>Tên:</strong> <?= $_SESSION['user']['username'] ?></p>
+                <p><strong>Email:</strong> <?= $_SESSION['user']['email'] ?? 'Chưa cập nhật' ?></p>
                 <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
             </div>
         <?php else: ?>
