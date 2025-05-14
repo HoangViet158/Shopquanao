@@ -1,5 +1,3 @@
-<html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<html>
+<?php session_start(); ?>
 <header>
     <div class="welcome-banner">
         <h4>Chào mừng bạn đến với cửa hàng chúng tôi</h4>
@@ -29,7 +27,6 @@
                     Danh mục sản phẩm
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="categoriesDropdown" id="categoriesMenu">
-                    <!-- Danh mục sẽ được load bằng JavaScript -->
                     <li><a class="dropdown-item" href="#" data-category="all">Tất cả sản phẩm</a></li>
                 </ul>
             </div>
@@ -42,25 +39,24 @@
                 </button>
             </div>
             <div class="icons">
-               <?php session_start(); ?>
-        <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
-
-        <?php if (isset($_SESSION['username'])): ?>
-        <div class="user-info-dropdown">
-                    <i class="fa-solid fa-user"></i>
+                <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
+                <?php if (isset($_SESSION['username'])): ?>
+                    <div class="user-info-dropdown">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
             </div>
-        </div>
             <div class="user-info-form">
-            <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
-            <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
-            <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
+                <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
+                <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
+                <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
             </div>
-        </div>
         <?php else: ?>
-        <a href="login.php"><i class="fa-solid fa-user"></i></a>
+            <a href="login.php"><i class="fa-solid fa-user"></i></a>
         <?php endif; ?>
+        </div>
     </div>
 </header>
+
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/user/js/products.js"></script> -->
