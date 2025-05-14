@@ -42,15 +42,15 @@
             </div>
             <div class="icons">
                 <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
-                <?php if (isset($_SESSION['username'])): ?>
+                <?php if (isset($_SESSION['user'])): ?>
                     <div class="user-info-dropdown">
-                        <i class="fa-solid fa-user"></i>
+                        <a href="user_info.php"><i class="fa-solid fa-user"></i></a>
                     </div>
             </div>
             <div class="user-info-form">
-                <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
-                <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
-                <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
+                <?php if($_SESSION['user']['permission'] != 3):?>
+                    <a href="../../admin/View/statistic.php"><i class="fa-solid fa-gear"></i></a>
+                <?php endif; ?>
             </div>
         <?php else: ?>
             <a href="login.php"><i class="fa-solid fa-user"></i></a>

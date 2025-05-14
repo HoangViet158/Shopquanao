@@ -318,6 +318,15 @@ function loadProductOptions() {
 
 // Mở modal thêm khuyến mãi
 function openAddPromotionModal() {
+  if(!actionPermissions.canAdd){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
   $("#addPromotionForm")[0].reset()
   $("#selectedProductsList").empty()
   $("#promotionAlerts").empty()
@@ -528,6 +537,15 @@ function showPromotionAlert(type, message) {
 
 // hàm show thông tin khi ấn nút sửa
 function editPromotion(promotionId) {
+  if(!actionPermissions.canEdit){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
   $("#editPromotionForm")[0].reset()
   $("#editSelectedProductsList").empty()
   $("#editPromotionAlerts").empty()
@@ -802,6 +820,15 @@ function showEditPromotionAlert(type, message) {
 
 // Xác nhận xóa khuyến mãi
 function confirmDeletePromotion(promotionId) {
+  if(!actionPermissions.canDelete){
+           Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không có quyền hạn truy cập chức năng này!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return 
+    }
   if (promotionId) {
     $("#editPromotionId").val(promotionId)
   }
@@ -899,3 +926,16 @@ function searchProduct() {
 }
 
 handlePromotions()
+document.addEventListener('DOMContentLoaded', () => {
+    loadUser(limit, 0, "");
+        const permissionElement = document.getElementById('promotion-permissions');
+        const actionPermissions = {
+        canView: permissionElement.dataset.canView ,
+        canEdit: permissionElement.dataset.canEdit ,
+        canDelete: permissionElement.dataset.canDelete ,
+        canAdd: permissionElement.dataset.canAdd
+    };
+
+    console.log("Can Delete:", actionPermissions.canDelete);
+
+});

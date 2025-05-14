@@ -5,7 +5,7 @@
         <img src="../../upload/products/imgmainlogin.jpg" alt="Hình ảnh">
         <div>
             <h2  class="text-center"> Đăng ký </h2>
-            <form action="/log-in" method="POST">
+            <form id="register-form" method="POST">
                 <div class="mb-3">
                     <label for="username" class="form-label">Tên Người Dùng</label>
                     <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên người dùng " required>
@@ -19,12 +19,12 @@
                     <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                    <label for="address" class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="Nhập địa chỉ" required>
                 </div>
                 <div class="mb-3">
-                    <label for="password-confirm" class="form-label">Mật khẩu</label>
-                    <input type="text" class="form-control" id="password-confirm" name="password-confirm" placeholder="Nhập lại mật khẩu" required>
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
                 </div>
                 <div>
                 <div class="d-flex justify-content-center align-items-center mb-2">
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Gọi JavaScript kt đăng ký -->
-    <script src="/Shopquanao/user/js/validate_register.js"></script>
+<script src="../../public/user/js/register.js"></script>
 </body>
 
 </html>

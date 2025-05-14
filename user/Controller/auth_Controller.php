@@ -9,7 +9,7 @@ class auth_Controller{
     }
 
     public function getAuthByEmail($email){
-        return $this->auth_model->getAuthByEmail($email);
+        return $this->auth_model->getUserByEmail($email);
     }
 
     public function loginValidate($email,$matkhau){
