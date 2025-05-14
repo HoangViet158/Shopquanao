@@ -2,7 +2,7 @@
 ?>
 <div id="statistic-content" class="content-container">
     <div class="Mange_client">
-        <h3> Chi tiết đơn hàng </h3>
+        <h3> Chi tiết đơn hàngg </h3>
     </div>
 </div>
 <script>

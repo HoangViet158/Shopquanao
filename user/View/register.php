@@ -35,6 +35,10 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Gọi JavaScript kt đăng ký -->
+    <script src="/Shopquanao/user/js/validate_register.js"></script>
 </body>
 
 </html>
