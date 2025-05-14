@@ -74,18 +74,20 @@ function handleProduct(shouldLoadData = true) {
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-6">
+              <div class="col">
                 <label for="editProductCategory" class="form-label">Danh mục</label>
                 <select class="form-select" id="editProductCategory" required>
                   <option value="">Chọn danh mục</option>
                 </select>
               </div>
+              <!--
               <div class="col-md-6">
                 <label for="editProductPromotion" class="form-label">Khuyến mãi</label>
                 <select class="form-select" id="editProductPromotion">
                   <option value="">Không có khuyến mãi</option>
                 </select>
               </div>
+              !-->
             </div>
             <div class="mb-3">
               <label for="editProductDescription" class="form-label">Mô tả sản phẩm</label>
@@ -131,18 +133,20 @@ function handleProduct(shouldLoadData = true) {
             </div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-6">
+              <div class="col">
                 <label for="productCategory" class="form-label">Danh mục</label>
                 <select class="form-select" id="productCategory" required>
                 <option value=""></option>
                 </select>
               </div>
+              <!--
               <div class="col-md-6">
               <label for="productPromotion" class="form-label">Khuyến mãi</label>
                 <select class="form-select" id="productPromotion">
                   <option value="">Không có khuyến mãi</option>
                 </select>
               </div>
+              !-->
             </div>
             
             <div class="mb-3">
@@ -488,6 +492,7 @@ function submitProductForm() {
 }
 
 function renderProductTable(products) {
+  console.log(products)
   const tableBody = $("#productTableBody")
   tableBody.empty()
 
