@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="/Shopquanao/user/css/style.css">
+    <link rel="stylesheet" href="/Shopquanao/public/user/css/style.css">
     <script src="/Shopquanao/user/js/validate_login.js" defer></script>
 </head>
 <body>

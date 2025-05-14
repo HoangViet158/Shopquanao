@@ -30,7 +30,20 @@
             <input type="text" name="search" placeholder="Nhập từ khóa tìm kiếm">
             <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i> </span>
         </div>
-        <i class="fa-solid fa-cart-shopping"></i>
-        <i class="fa-solid fa-user"></i>
+       <?php session_start(); ?>
+        <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
+
+        <?php if (isset($_SESSION['username'])): ?>
+        <div class="user-info-dropdown">
+            <i class="fa-solid fa-user"></i>
+            <div class="user-info-form">
+            <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
+            <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
+            <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
+            </div>
+        </div>
+        <?php else: ?>
+        <a href="login.php"><i class="fa-solid fa-user"></i></a>
+        <?php endif; ?>
     </div>
 </header>

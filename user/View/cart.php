@@ -10,7 +10,7 @@ if (!isset($_SESSION['MaTK'])) {
 <head>
     <meta charset="UTF-8">
     <title>Giỏ hàng</title>
-    <link rel="stylesheet" href="/Shopquanao/user/css/cart.css">
+    <link rel="stylesheet" href="/Shopquanao/public/user/css/cart.css">
 </head>
 <body>
     <h2>Giỏ hàng</h2>
