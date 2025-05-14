@@ -216,3 +216,32 @@ body {
     background-color: rgba(255, 255, 255, 0.7);
     z-index: -1;
 }
+
+/* css cho lich su don hang*/
+.button-container {
+    display: flex; /* Để các nút nằm ngang */
+    justify-content: space-evenly; /* Cách đều các nút */
+    gap: 10px; /* Khoảng cách giữa các nút */
+    margin-top: 20px; /* Khoảng cách trên của nút */
+}
+
+.order-history-button, .logout-button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.order-history-button:hover, .logout-button:hover {
+    background-color: #218838;
+}
+
+.logout-button {
+    background-color: #007BFF; /* Màu cho nút đăng xuất */
+}
+
+.logout-button:hover {
+    background-color: #0056b3;
+}

@@ -42,4 +42,25 @@ class OrderController {
             echo "<script>alert('Đặt hàng thành công!'); window.location.href='index.php?page=cart';</script>";
         }
     }
+
+    /* ham cho form lich su don hang*/
+    public function showOrderHistory() {
+        if (!isset($_SESSION['MaTK'])) {
+            header("Location: ./user/view/login.php");
+            exit();
+        }
+
+        $model = new OrderModel();
+        $orders = $model->getOrdersByUser($_SESSION['MaTK']);
+
+        include './View/order_history.php';
+    }
+
+    public function cancelOrder() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mahd'])) {
+            $model = new OrderModel();
+            $model->cancelOrder($_POST['mahd']);
+            echo "<script>alert('Huỷ đơn hàng thành công'); window.location.href='index.php?page=order_history';</script>";
+        }
+    }
 }

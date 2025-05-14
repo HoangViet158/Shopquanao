@@ -52,11 +52,15 @@ if ($user = $result->fetch_assoc()) {
 </head>
 <body class="user-info-page">
     <div class="user-info-container">
-        <h2>Thông tin tài khoản</h2>
-        <p><strong>Tên người dùng:</strong> <?= htmlspecialchars($tenNguoiDung) ?></p>
-        <p><strong>Email:</strong> <?= htmlspecialchars($email) ?></p>
-        <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($diaChi) ?></p>
-        <a href="logout.php">Đăng xuất</a>
+    <h2>Thông tin tài khoản</h2>
+    <p><strong>Tên người dùng:</strong> <?= htmlspecialchars($tenNguoiDung) ?></p>
+    <p><strong>Email:</strong> <?= htmlspecialchars($email) ?></p>
+    <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($diaChi) ?></p>
+
+   <div class="button-container">
+            <a href="index.php?page=order_history" class="order-history-button">Xem lịch sử đơn hàng</a>
+            <a href="logout.php" class="logout-button">Đăng xuất</a>
     </div>
+</div>
 </body>
 </html>
