@@ -12,6 +12,7 @@ $productController = new product_Controller();
 switch ($type) {
     case 'filter':
         $filter = [
+            'keyword' => $_GET['keyword'] ?? null,
             'categories' => isset($_GET['categories']) ? explode(',', $_GET['categories']) : [],
             'price' => $_GET['price'] ?? null,
             'genders' => isset($_GET['genders']) ? explode(',', $_GET['genders']) : [],
@@ -19,6 +20,11 @@ switch ($type) {
         ];
 
         $result = $productController->filterProducts($filter, $page, $limit);
+        echo json_encode($result);
+        break;
+    case 'getProductDetail':
+        $id = $_GET['id'] ?? 0;
+        $result = $productController->getProductDetail($id);
         echo json_encode($result);
         break;
     default:

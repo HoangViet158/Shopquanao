@@ -18,4 +18,8 @@ class product_Controller
 
         return $this->product_model->filterProducts($filter, $page, $limit);
     }
+    public function getProductDetail($id)
+    {
+        return $this->product_model->getProductById($id);
+    }
 }

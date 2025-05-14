@@ -15,22 +15,39 @@
 </head>
 <html>
 <header>
-    <div>
-        <h4> Chào mừng bạn đến với cửa hàng chúng tôi </h4>
+    <div class="welcome-banner">
+        <h4>Chào mừng bạn đến với cửa hàng chúng tôi</h4>
     </div>
     <div class="title">
-        <div>
+        <div class="logo">
             <img src="../../../upload/products/logo-shop-quan-ao-nam-9.jpg" alt="logo">
         </div>
-        <div>
-            <a href=""> Trang chủ </a>
-            <a href=""> Sản phẩm </a>
+        <div class="nav-links">
+            <a href="/">Trang chủ</a>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Danh mục sản phẩm
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="categoriesDropdown" id="categoriesMenu">
+                    <!-- Danh mục sẽ được load bằng JavaScript -->
+                    <li><a class="dropdown-item" href="#" data-category="all">Tất cả sản phẩm</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="input-group mb-3">
-            <input type="text" name="search" placeholder="Nhập từ khóa tìm kiếm">
-            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i> </span>
+        <div class="search-cart">
+            <div class="input-group">
+                <input type="text" class="nameTxt form-control" name="search" placeholder="Nhập từ khóa tìm kiếm">
+                <button class="btn btn-outline-secondary findByKeyword" type="button">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+            <div class="icons">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <i class="fa-solid fa-user"></i>
+            </div>
         </div>
-        <i class="fa-solid fa-cart-shopping"></i>
-        <i class="fa-solid fa-user"></i>
     </div>
 </header>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../../public/user/js/products.js"></script> -->

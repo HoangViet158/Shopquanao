@@ -67,8 +67,8 @@ function handleProduct(shouldLoadData = true) {
               <div class="col-md-6">
                 <label for="editProductGender" class="form-label">Giới tính</label>
                 <select class="form-select" id="editProductGender" required>
-                  <option value="0">Nam</option>
-                  <option value="1">Nữ</option>
+                  <option value="1">Nam</option>
+                  <option value="0">Nữ</option>
                   <option value="2">Unisex</option>
                 </select>
               </div>
@@ -126,8 +126,8 @@ function handleProduct(shouldLoadData = true) {
               <div class="col-md-6">
               <label for="productGender" class="form-label">Giới tính</label>
               <select class="form-select" id="productGender" required>
-                <option value="0">Nam</option>
-                <option value="1">Nữ</option>
+                <option value="1">Nam</option>
+                <option value="0">Nữ</option>
                 <option value="2">Unisex</option>
               </select>
             </div>
