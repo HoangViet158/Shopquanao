@@ -116,7 +116,7 @@ $(document).ready(function() {
                                 <td>${product.MaSP || 'Không xác định'}</td>
                             </tr>
                             <tr>
-                                <th>Mô tả</th>
+                                <th>Mô tả </th>
                                 <td>${product.MoTa || 'Không có'}</td>
                             </tr>
                             <tr>
