@@ -7,14 +7,14 @@
     <title>Chi tiết sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../../public/user/css/product_detail.css" rel="stylesheet">
-    
+
 </head>
 <?php include __DIR__ . '/../header.php'; ?>
 
 <body>
     <div class="container my-5 border rounded shadow-sm">
         <div id="product-detail-container">
-            <!-- Nội dung sẽ được điền bằng JavaScript -->
+            <!-- Nội dung sẽ được điền bằng JavaScript  niceee-->
             <div class="text-center py-5">
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden">Loading...</span>
