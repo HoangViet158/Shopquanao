@@ -19,6 +19,14 @@
                     <input class="form-check-input filter-option" type="checkbox" name="category" id="category-polo" value="3">
                     <label class="form-check-label" for="category-polo">Quần jean</label>
                 </div>
+                <div class="form-check">
+                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-pants" value="4">
+                    <label class="form-check-label" for="category-pants">Quần Short</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-jacket" value="5">
+                    <label class="form-check-label" for="category-jacket">Đầm/váy</label>
+                </div>
             </div>
 
             <!-- Giá (radio: chỉ chọn 1) -->

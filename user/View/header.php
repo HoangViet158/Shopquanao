@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
-<?php session_start(); ?>
+
 <header>
     <div class="welcome-banner">
         <h4>Chào mừng bạn đến với cửa hàng chúng tôi</h4>
@@ -42,14 +42,15 @@
             </div>
             <div class="icons">
                 <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
-                <?php if (isset($_SESSION['username'])): ?>
+                <?php if (isset($_SESSION['user'])): ?>
                     <div class="user-info-dropdown">
-                        <i class="fa-solid fa-user"></i>
+                        <a href="user_info.php" class="user-info">
+                            <i class="fa-solid fa-user"></i>
                     </div>
             </div>
             <div class="user-info-form">
-                <p><strong>Tên:</strong> <?= $_SESSION['username'] ?></p>
-                <p><strong>Email:</strong> <?= $_SESSION['email'] ?? 'Chưa cập nhật' ?></p>
+                <p><strong>Tên:</strong> <?= $_SESSION['user']['username'] ?></p>
+                <p><strong>Email:</strong> <?= $_SESSION['user']['email'] ?? 'Chưa cập nhật' ?></p>
                 <a href="logout.php" class="btn btn-sm btn-danger mt-2">Đăng xuất</a>
             </div>
         <?php else: ?>

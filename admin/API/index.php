@@ -558,10 +558,19 @@ case 'login':
         session_start();
         $_SESSION['user'] = [
             'id' => $result['MaNguoiDung'],
-            'permission' => $result['MaQuyen']
+            'permission' => $result['MaQuyen'],
+            'username' => $result['TenTK'],
+            'email' => $result['Email'],
+
         ];
     }
-    echo json_encode($result);
+    echo json_encode(
+        [
+            'status' => $result ? 'success' : 'error',
+            'message' => $result ? 'Đăng nhập thành công' : 'Đăng nhập thất bại',
+            'user' => $result ? $_SESSION['user'] : null
+        ]
+    );
     break;
 case 'getSession':
         if (isset($_SESSION['user'])) {
