@@ -111,3 +111,41 @@ header h4 {
     width: 50%;
 }
 
+/* dropdown menu header */
+.dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+        }
+        .title img {
+            height: 50px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+        .search-cart {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .icons {
+            display: flex;
+            gap: 15px;
+        }
+        .icons i {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+/*end  dropdown menu */

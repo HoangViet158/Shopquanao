@@ -25,11 +25,15 @@
             <div class="mb-3">
                 <h6 class="fw-bold">Giá</h6>
                 <div class="form-check">
+                    <input class="form-check-input filter-option" type="radio" name="price" id="price-all" value="" checked>
+                    <label class="form-check-label" for="price-all">Tất cả giá</label>
+                </div>
+                <div class="form-check">
                     <input class="form-check-input filter-option" type="radio" name="price" id="price-under100" value="under100">
                     <label class="form-check-label" for="price-under100">Dưới 100.000</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input filter-option" type="radio" name="price" id="price-100-500" value="100-500" checked>
+                    <input class="form-check-input filter-option" type="radio" name="price" id="price-100-500" value="100-500">
                     <label class="form-check-label" for="price-100-500">Từ 100.000-500.000</label>
                 </div>
                 <div class="form-check">
