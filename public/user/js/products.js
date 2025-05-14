@@ -66,7 +66,7 @@ $(document).ready(function() {
 });
 function loadCategories() {
         $.ajax({
-            url: '../../../admin/API/index.php?type=getAllCategories',
+            url: '../../admin/API/index.php?type=getAllCategories',
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -175,7 +175,7 @@ function filterProductData(page = 1) {
         loadProductData(page);
         return;
     }
-    let apiUrl = `../../../user/API/index.php?type=filter&page=${page}`;
+    let apiUrl = `../../user/API/index.php?type=filter&page=${page}`;
     
     // Thêm các tham số filter 
     if (params.get('categories')) apiUrl += `&categories=${params.get('categories')}`;
@@ -201,7 +201,7 @@ function filterProductData(page = 1) {
 
 function loadProductData(page = 1) {
     $.ajax({  
-        url: `../../../admin/API/index.php?type=getAllProducts&page=${page}`,
+        url: `../../admin/API/index.php?type=getAllProducts&page=${page}`,
         type: "GET",
         dataType: "json",
         success: function(data) {
@@ -229,7 +229,7 @@ function renderProducts(products) {
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <a href="product_detail.php?id=${product.MaSP}">
-                    <img src="../../..${imageSrc}" class="card-img-top" alt="${product.TenSP}">
+                    <img src="../..${imageSrc}" class="card-img-top" alt="${product.TenSP}">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">${product.TenSP}</h5>

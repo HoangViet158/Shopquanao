@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 
 <html lang="vi">
 
@@ -9,8 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../../public/user/css/products.css" rel="stylesheet">
     
-</head>
-<?php include __DIR__ . '/../header.php'; ?>
+</head> -->
+<?php include __DIR__ . '/header.php'; ?>
 <!-- code đc render từ file js trong thư mục public/user/js/products.js -->
 
 <body>
@@ -37,8 +37,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../public/user/js/products.js"></script>
+    <script src="../../public/user/js/products.js"></script>
 </body>
-<?php include __DIR__ . '/../footer.php'; ?>
+<?php include __DIR__ . '/footer.php'; ?>
 
 </html>
