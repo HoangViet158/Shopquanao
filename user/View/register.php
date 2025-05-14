@@ -14,7 +14,7 @@
         <div class="register-section">
             <h2>Đăng ký tài khoản</h2>
             <div class="form-container">
-                <form action="#" method="POST">
+                <form id="registerForm" action="../../user/controller/register_process.php" method="POST">
                     <label for="fullname">Họ và tên</label>
                     <input type="text" id="fullname" name="fullname" required>
 
@@ -27,13 +27,19 @@
                     <label for="confirm_password">Nhập lại mật khẩu</label>
                     <input type="password" id="confirm_password" name="confirm_password" required>
 
+                    <div id="error" style="color:red; margin-top:10px;"></div>
+
                     <button type="submit" class="register-btn">Đăng ký</button>
                 </form>
                 <div class="login-link">
-                    Đã có tài khoản? <a href="login.php">Đăng nhập</a>
+                    Đã có tài khoản? <a href="/Shopquanao/user/View/login.php">Đăng nhập</a>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Gọi JavaScript kt đăng ký -->
+    <script src="/Shopquanao/user/js/validate_register.js"></script>
 </body>
 
 </html>
