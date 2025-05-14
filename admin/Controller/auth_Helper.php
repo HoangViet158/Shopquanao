@@ -22,7 +22,7 @@ function requireLogin() {
     $parts = explode('/', str_replace('\\', '/', $path));
     $index = array_search("admin", $parts);        
     $projectFolder = $parts[$index - 1];
-    $fullPath = "/user/View/login.php";
+    $fullPath = "/user/View/product.php";
     $urlPath = "/" . $projectFolder . $fullPath;
     $succesPath = "/" . $projectFolder . "/user/View/index.php";
     // Nếu chưa login, redirect về login.php

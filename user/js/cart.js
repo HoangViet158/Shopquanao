@@ -1,65 +1,79 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const inputs = document.querySelectorAll('input[type="number"]');
-    const totalSpan = document.getElementById('tong-tien');
-
-    function capNhatTong() {
-        let tong = 0;
-        document.querySelectorAll('.tien').forEach(cell => {
-            tong += parseInt(cell.textContent.replace(/\D/g, ''));
-        });
-        totalSpan.textContent = tong.toLocaleString('vi-VN') + 'đ';
-    }
-
-    inputs.forEach(input => {
-        input.addEventListener('change', function () {
-            const row = input.closest('tr');
-            const donGia = parseInt(row.querySelector('td:nth-child(2)').textContent.replace(/\D/g, ''));
-            const soLuong = parseInt(input.value);
-            const max = parseInt(input.getAttribute('max'));
-
-            if (soLuong > max) {
-                alert("Vượt quá số lượng tồn kho!");
-                input.value = max;
-                return;
-            }
-
-            const thanhTien = donGia * soLuong;
-            row.querySelector('.tien').textContent = thanhTien.toLocaleString('vi-VN') + 'đ';
-            capNhatTong();
-
-            const maSP = input.dataset.masp;
-            const maSize = input.dataset.masize;
-
-            fetch('/Shopquanao/user/Ajax/update_quantity.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `MaSP=${maSP}&MaSize=${maSize}&SoLuong=${soLuong}`
-            })
-            .then(res => res.text())
-            .then(data => console.log(data));
-        });
-    });
-
-    document.querySelectorAll('.xoa-sp').forEach(link => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (!confirm("Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ?")) return;
-
-            const row = this.closest('tr');
-            const maSP = row.dataset.masp;
-            const maSize = row.dataset.masize;
-
-            fetch('/Shopquanao/user/Ajax/delete_cart_item.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `MaSP=${maSP}&MaSize=${maSize}`
-            })
-            .then(res => res.text())
-            .then(data => {
-                alert(data);
+// Xử lý xóa sản phẩm
+$(document).on('click', '.xoa-sp', function(e) {
+    e.preventDefault();
+    const row = $(this).closest('tr');
+    const maSP = row.data('masp');
+    const maSize = row.data('masize');
+    
+    if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+    
+    $.ajax({
+        url: '/Shopquanao/user/API/index.php?type=deleteCartItem',
+        method: 'POST',
+        data: {
+            maSP: maSP,
+            maSize: maSize
+        },
+        success: function(response) {
+            if (response.success) {
                 row.remove();
-                capNhatTong();
-            });
-        });
+                calculateTotal();
+                if ($('#cart-body tr[data-masp]').length === 0) {
+                    $('#dat-hang').prop('disabled', true);
+                }
+            } else {
+                alert(response.error || 'Xóa sản phẩm thất bại');
+            }
+        },
+        error: function() {
+            alert('Có lỗi xảy ra khi xóa sản phẩm');
+        }
     });
 });
+
+    $(document).on('click', '#dat-hang', function() {
+        window.location.href = '/Shopquanao/user/View/order.php';
+    })
+// Xử lý cập nhật số lượng
+$(document).on('change', 'input[type="number"]', function() {
+    const row = $(this).closest('tr');
+    const maSP = row.data('masp');
+    const maSize = row.data('masize');
+    const soLuong = $(this).val();
+    
+    $.ajax({
+        url: '/Shopquanao/user/API/index.php?type=updateCartItem',
+        method: 'POST',
+        data: {
+            maSP: maSP,
+            maSize: maSize,
+            soLuong: soLuong
+        },
+        success: function(response) {
+            if (!response.success) {
+                alert(response.error || 'Cập nhật số lượng thất bại');
+                // Reload lại trang nếu cập nhật thất bại
+                location.reload();
+            } else {
+                // Tính lại tổng tiền
+                calculateTotal();
+            }
+        },
+        error: function() {
+            alert('Có lỗi xảy ra khi cập nhật số lượng');
+        }
+    });
+});
+
+// Tính tổng tiền
+function calculateTotal() {
+    let total = 0;
+    $('#cart-body tr[data-masp]').each(function() {
+        const gia = parseInt($(this).find('td:nth-child(2)').text().replace(/\.|đ/g, ''));
+        const soLuong = parseInt($(this).find('input').val());
+        const tien = gia * soLuong;
+        $(this).find('.tien').text(tien.toLocaleString('vi-VN') + 'đ');
+        total += tien;
+    });
+    $('#tong-tien').text(total.toLocaleString('vi-VN') + 'đ');
+}

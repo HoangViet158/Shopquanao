@@ -14,18 +14,18 @@ $(document).ready(function() {
     const currentPath = window.location.pathname;
 
     // Lấy đường dẫn đến index.php 
-    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/index.php';
+    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/product.php';
     
     let targetUrl = basePath;
-
+    $('input[name="category"]').prop('checked', false);
     // Nếu không phải 'all', thêm categories vào URL
     if (categoryId !== 'all') {
         const params = new URLSearchParams();
         params.set('categories', categoryId);
         targetUrl += '?' + params.toString();
-         $('input[name="category"]').prop('checked', false);
+         
     }
-    if (window.location.pathname.includes('index.php')) {
+    if (window.location.pathname.includes('product.php')) {
         window.history.pushState({}, '', targetUrl);
         filterProductData(); // Gọi AJAX để lọc
     } else {
@@ -38,12 +38,14 @@ $(document).ready(function() {
         updateURLFromFilters();
         filterProductData();
     });
+    // Xử lý khi click vào nút tìm kiếm
     $('.findByKeyword').on('click', () => {
     const params = new URLSearchParams(window.location.search);
     const keyword = $('.nameTxt').val().trim();
     
     if (keyword) {
         params.set('keyword', keyword);
+        window.location.href = `/Shopquanao/user/View/product.php?${params.toString()}`;
     } else {
         params.delete('keyword');
     }
@@ -142,6 +144,7 @@ function updateActiveFilters() {   // hàm cập nhật trạng thái của các
     // Loại sản phẩm
     const categories = params.get('categories') ? params.get('categories').split(',') : [];
     $('input[name="category"]').prop('checked', false);
+    
     categories.forEach(cat => {
         $(`input[name="category"][value="${cat}"]`).prop('checked', true);
     });

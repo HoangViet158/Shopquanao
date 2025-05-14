@@ -4,6 +4,7 @@ include __DIR__ . '/header.php';
 require_once dirname(__DIR__, 2) . '/config/connect.php';
 
 if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['user'])) {
     header("Location: ../user/view/login.php");
     exit();
 }
@@ -12,6 +13,7 @@ $conn = $db->connection();
 $maTK = $_SESSION['user']['id'];
 
 // Lấy MaTK từ session
+$maTK = $_SESSION['user']['id'];
 $maTK = $_SESSION['user']['id'];
 
 // Sửa câu truy vấn để lấy dữ liệu từ cả hai bảng
@@ -43,7 +45,10 @@ if ($user = $result->fetch_assoc()) {
 }
 
 ?>
-
+<script>
+    console.log("Tên người dùng: <?= htmlspecialchars($tenNguoiDung) ?>");
+    
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
