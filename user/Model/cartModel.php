@@ -9,6 +9,13 @@ class CartModel {
         $this->conn = $db->connection();
     }
 
+    public function addCart($userId, $maSP, $maSize, $soLuong){
+        $sql = "INSERT INTO giohang (MaNguoiDung, MaSP, MaSize, SoLuong, NgayThem) VALUES (?, ?, ?, ?, NOW())";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('iiii', $userId, $maSP, $maSize, $soLuong);
+        return  $stmt->execute();
+    }
+
     public function getCartItems($userId) {
 
         $sql = "SELECT gh.*, sp.TenSP, sp.GiaBan, sz.TenSize, sp.SoLuongTong, GROUP_CONCAT(a.URL) AS HinhAnh

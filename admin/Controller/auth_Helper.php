@@ -24,7 +24,7 @@ function requireLogin() {
     $projectFolder = $parts[$index - 1];
     $fullPath = "/user/View/product.php";
     $urlPath = "/" . $projectFolder . $fullPath;
-    $succesPath = "/" . $projectFolder . "/user/View/index.php";
+    $succesPath = "/" . $projectFolder . "/user/View/product.php";
     // Nếu chưa login, redirect về login.php
     if (!isset($_SESSION['user'])) {
         // $path = $_SERVER['PHP_SELF']; // VD: /web2/admin/view/s.php

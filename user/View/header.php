@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
-
+<?php session_start() ?>
 <header>
     <div class="welcome-banner">
         <h4>Chào mừng bạn đến với cửa hàng chúng tôi</h4>
@@ -43,7 +43,6 @@
             <div class="icons">
                 <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
                 <?php if (isset($_SESSION['user'])): ?>
-                <?php if (isset($_SESSION['user'])): ?>
                     <div class="user-info-dropdown">
                         <a href="user_info.php"><i class="fa-solid fa-user"></i></a>
                     </div>
@@ -59,7 +58,3 @@
         </div>
     </div>
 </header>
-
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../../public/user/js/products.js"></script> -->

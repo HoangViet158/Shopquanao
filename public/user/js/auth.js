@@ -17,7 +17,9 @@ document.getElementById('login-form').addEventListener('submit', async function(
 
     if(user){
         if(user.TrangThai == 1)
-       { window.location.href = '../../user/View/index.php'}
+       {
+         window.location.href = '../../user/View/product.php'
+        }
         else{
             Swal.fire({
             icon: 'warning',

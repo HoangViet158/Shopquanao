@@ -38,6 +38,10 @@ class CartController {
         $this->model = new CartModel();
     }
 
+    public function addCart($userId, $maSP, $maSize, $soLuong){
+        return $this->model->addCart($userId, $maSP, $maSize, $soLuong);
+    }
+
     public function getCart($userId) {
         return $this->model->getCartItems($userId);
     }

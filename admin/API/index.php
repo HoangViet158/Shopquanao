@@ -555,15 +555,13 @@ switch ($type) {
 
         $result = $authController->loginValidate($email,$matkhau);
         if($result){
-            if($result['TrangThai'] == 1){
-                session_start();
-                $_SESSION['user'] = [
-                    'id' => $result['MaNguoiDung'],
-                    'username' => $result['TenTK'],
-                    'email' => $result['Email'],
-                    'permission' => $result['MaQuyen']
-            ];
-            }
+            session_start();
+            $_SESSION['user'] = [
+                'id' => $result['MaNguoiDung'],
+                'username' => $result['TenTK'],
+                'email' => $result['Email'],
+                'permission' => $result['MaQuyen']
+        ]; 
         }
         echo json_encode($result);
         break;

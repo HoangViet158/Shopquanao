@@ -104,7 +104,7 @@ requireLogin();
                         </div>
                     </div>
                 </a>
-                <a href="../../user/View/index.php" style="text-decoration: none;">
+                <a href="../../user/View/product.php" style="text-decoration: none;">
                     <div class="side_item">
                         <div><i class="fa-solid fa-home"></i></div>
                         <div><span>Trang Chủ</span></div>
