@@ -13,6 +13,167 @@ let searchName = "";
 //     };
 
 // Format trạng thái user
+
+// Validate dữ liệu
+async function validateAddUserForm() {
+    const tenTK = document.querySelector('input[name="TenTK"]').value.trim();
+    const matKhau = document.querySelector('input[name="MatKhau"]').value;
+    const gmail = document.querySelector('input[name="Email"]').value.trim();
+    const address = document.querySelector('input[name="DiaChi"]').value.trim();
+
+    if (tenTK === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không được để trống tên tài khoản!',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    if (matKhau === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không được để trống mật khẩu!',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    if (/\s/.test(matKhau)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Mật khẩu không được chứa khoảng trắng!',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
+    if (!emailRegex.test(gmail)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Cảnh báo!',
+            text: 'Bạn đã nhập sai định dạng email',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    if (address === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không được để trống địa chỉ!',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    try {
+        const response = await fetch(`../../admin/API/index.php?type=checkEmailExist&email=${encodeURIComponent(gmail)}`);
+        if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu');
+        const json = await response.json();
+
+        if (json.success) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Không được phép!',
+                text: 'Email đã tồn tại!',
+                confirmButtonText: 'Đã hiểu'
+            });
+            return false;
+        }
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra email:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể kiểm tra email.',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    return true;
+}
+
+async function validateEditUserForm() {
+    const tenTK = document.getElementById('editTenTK').value.trim();
+    const matKhau = document.getElementById('editMatKhau').value;
+    const address = document.getElementById('editDiaChi').value.trim();
+    const gmail = document.getElementById('editEmail').value.trim();
+
+     if (tenTK === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không được để trống tên tài khoản!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return false;
+    }
+     if (address === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Bạn không được để trống địa chỉ!',
+            confirmButtonText: 'Đã hiểu'
+          });          
+        return false;
+    }
+
+    // if (matKhau === '') {
+    //     Swal.fire({
+    //         icon: 'error',
+    //         title: 'Không được phép!',
+    //         text: 'Bạn không được để trống mật khẩu!',
+    //         confirmButtonText: 'Đã hiểu'
+    //       });
+    //     return false;
+    // }
+
+    if (/\s/.test(matKhau)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Không được phép!',
+            text: 'Mật khẩu không được chứa khoảng trắng!',
+            confirmButtonText: 'Đã hiểu'
+          });
+        return false;
+    }
+
+      try {
+        const response = await fetch(`../../admin/API/index.php?type=checkEmailExist&email=${encodeURIComponent(gmail)}`);
+        if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu');
+        const json = await response.json();
+
+        if (json.success) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Không được phép!',
+                text: 'Email đã tồn tại!',
+                confirmButtonText: 'Đã hiểu'
+            });
+            return false;
+        }
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra email:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: 'Không thể kiểm tra email.',
+            confirmButtonText: 'Đã hiểu'
+        });
+        return false;
+    }
+
+    return true;
+}
+
+
 function formatStatus(statusid){
     switch (String(statusid)) {
         case '0': return 'Đã khóa tài khoản';
@@ -316,6 +477,8 @@ window.addEventListener('click', e => {
 // Xử lý submit form thêm user (ví dụ dùng fetch POST)
 addUserForm.addEventListener('submit', async e => {
   e.preventDefault();
+    const isValid = await validateAddUserForm(); // ❗ Đợi kết quả async
+  if (!isValid) return;
   const formData = new FormData(addUserForm);
   const data = Object.fromEntries(formData.entries());
 //   console.log(data)
@@ -457,7 +620,13 @@ async function openEditUser(id) {
       console.error(error);
     }
   }
-async function updateUser(){
+async function updateUser(e){
+    e.preventDefault();
+    const isValid = await validateEditUserForm(); // ❗ Đợi kết quả async
+    if (!isValid) return;
+    // if(!validateEditUserForm()){
+    //     return;
+    // }
     // console.log('click')
     const formData = new FormData(editUserForm);
     const data = Object.fromEntries(formData.entries());

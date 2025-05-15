@@ -9,7 +9,7 @@ function handleGoodsReceipt(){
                     <i class="fas fa-search"></i>
                 </button>
             </div>
-            <button class="btn" style="background-color:#89cff0; background-border:89cff0;color:black;" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="showAddGoodReceiptForm()">
+            <button class="btn" style="background-color:#89cff0; background-border:89cff0;color:black;" onclick="showAddGoodReceiptForm()">
                 <i class="fas fa-plus"></i>
                 <span>Thêm mới</span>
             </button>
@@ -368,6 +368,14 @@ function addProductRow() {
         
         if (duplicateCount > 1) {
             newRow.style.border = "2px solid red";
+            const errorDiv = document.createElement('div');
+            errorDiv.className = "alert alert-danger";
+            errorDiv.innerText = "Sản phẩm và size đã tồn tại trong danh sách!";
+            errorDiv.style.marginTop = "10px";
+            errorDiv.style.fontSize = "14px";
+            errorDiv.style.color = "red";
+            errorDiv.style.fontWeight = "bold";
+            
             calculateSuggestedPrices(); // Cập nhật thông báo lỗi
         } else {
             newRow.style.border = "";

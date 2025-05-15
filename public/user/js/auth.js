@@ -16,15 +16,28 @@ document.getElementById('login-form').addEventListener('submit', async function(
     const user = await res.json();
 
     if(user){
-        window.location.href = '../../admin/View/statistic.php'
+        if(user.TrangThai == 1)
+       {
+         window.location.href = '../../user/View/product.php'
+        }
+        else{
+            Swal.fire({
+            icon: 'warning',
+            title: 'Thông báo!',
+            text: 'Tài khoản đã bị khóa',
+            confirmButtonText: 'Đã hiểu'
+            });  
+        return;
+        }
     }
     else{
         Swal.fire({
-      icon: 'warning',
-      title: 'Thông báo!',
-      text: 'Tài khoản hoặc mật khẩu không đúng',
-      confirmButtonText: 'Đã hiểu'
-    });  
-    return;
+            icon: 'warning',
+            title: 'Thông báo!',
+            text: 'Tài khoản hoặc mật khẩu không đúng',
+            confirmButtonText: 'Đã hiểu'
+            });  
+        return;
     }
 })
+

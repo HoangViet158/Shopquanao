@@ -1,7 +1,14 @@
+<?php include __DIR__ . '/header.php'; ?>
 <?php
-session_start();
 if (!isset($_SESSION['user'])) {
-    header("Location: /Shopquanao/user/View/login.php");
+      $path = $_SERVER['PHP_SELF'];
+    $parts = explode('/', str_replace('\\', '/', $path));
+    $index = array_search("user", $parts);        
+    $projectFolder = $parts[$index - 1];
+    $fullPath = "/user/View/product.php";
+    $urlPath = "/" . $projectFolder . $fullPath;
+    $succesPath = "/" . $projectFolder . "/user/View/index.php";
+    header("Location: " . $urlPath);
     exit();
 }
 
@@ -15,9 +22,8 @@ $items = $cartController->getCart($_SESSION['user']['id']);
 <head>
     <meta charset="UTF-8">
     <title>Giỏ hàng</title>
-    <link rel="stylesheet" href="/Shopquanao/public/user/css/cart.css">
+    <link rel="stylesheet" href="../../public/user/css/cart.css">
 </head>
-<?php include __DIR__ . '/header.php'; ?>
 <body>
     <div class="mt-5 mb-4">
         <h2>Giỏ hàng</h2>
@@ -72,7 +78,7 @@ $items = $cartController->getCart($_SESSION['user']['id']);
         </table>
 
         <div class="cart-footer ">
-            <a href="/Shopquanao" class="btn btn-danger">Mua tiếp</a>
+            <a href="product.php" class="btn btn-danger">Mua tiếp</a>
             <div class="total">Tổng tiền: <span id="tong-tien"><?= isset($tong) ? number_format($tong, 0, ',', '.') : '0' ?>đ</span></div>
             <button id="dat-hang" class="dh" <?= empty($items) ? 'disabled' : '' ?>>Đặt hàng</button>
         </div>

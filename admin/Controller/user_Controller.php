@@ -29,12 +29,25 @@ class user_Controller{
             $hashedPassword = password_hash($MatKhau, PASSWORD_DEFAULT);
         } else {
             // Không nhập gì → dùng lại mật khẩu cũ từ DB
-            $hashedPassword = $this->user_model->getPasswordById($MaTK);
+            $hashedPassword = $this->user_model->getPasswordById($MaTK)['MatKhau'];
         }
         return $this->user_model->editUser($MaTK, $TenTK, $hashedPassword ,$DiaChi, $Email, $MaLoai, $MaQuyen);
     }
 
     public function deleteUser($TrangThai,$MaTK) {
         return $this->user_model->deleteUser($TrangThai,$MaTK);
+    }
+
+    public function changePassword($MaTK, $MatKhau){
+        if(!empty(trim($MatKhau))){
+            $hashedPassword = password_hash($MatKhau, PASSWORD_DEFAULT);   
+        } else {
+            return false;
+        }
+        return $this->user_model->changePassword($MaTK, $hashedPassword);
+    }
+
+    public function updateInformationUser($MaTK, $TenTK, $DiaChi){
+        return $this->user_model->updateInformationUser($MaTK, $TenTK, $DiaChi);
     }
 }

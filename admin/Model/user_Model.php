@@ -17,7 +17,7 @@ class user_model {
                 FROM nguoidung 
                 JOIN taikhoan ON nguoidung.MaNguoiDung = taikhoan.MaTK
                 WHERE taikhoan.TenTK LIKE CONCAT('%', ?, '%')
-                ORDER BY taikhoan.NgayTaoTK ASC
+                ORDER BY nguoidung.MaNguoiDung ASC
                 LIMIT $offset, $limit";  // <-- Chèn thẳng
 
         $stmt = $this->database->connection()->prepare($sql);
@@ -93,7 +93,7 @@ class user_model {
     // Sửa user
     public function editUser($MaTK, $TenTK, $MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen) {
         $stmt =  $this->database->connection()->prepare("UPDATE taikhoan SET TenTK = ?,MatKhau = ?,MaQuyen = ? WHERE MaTK = ?");
-        $stmt->bind_param('ssii', $TenTK,$MatKhau['MatKhau'] ,$MaQuyen, $MaTK);
+        $stmt->bind_param('ssii', $TenTK,$MatKhau ,$MaQuyen, $MaTK);
         $stmt->execute();
 
         $stmt = $this->database->connection()->prepare("UPDATE nguoidung SET DiaChi = ?, Email = ?, MaLoai = ? WHERE MaNguoiDung = ?");
@@ -109,6 +109,28 @@ class user_model {
         $stmt = $this->database->connection()->prepare($sql);
         $stmt->bind_param('ii',$TrangThai,$MaTK);
         $stmt->execute();
+        return true;
+    }
+
+    //Đổi mật khẩu user
+    public function changePassword($MaTK, $MatKhau){
+        $sql = "UPDATE taikhoan SET MatKhau = ? WHERE MaTK = ?";
+        $stmt = $this->database->connection()->prepare($sql);
+        $stmt->bind_param('si',$MatKhau, $MaTK);
+        $stmt->execute();
+        return true;
+    }
+
+    //Sửa thông tin cơ bản của user
+    public function updateInformationUser($MaTK, $TenTK, $DiaChi){
+        $stmt =  $this->database->connection()->prepare("UPDATE taikhoan SET TenTK = ? WHERE MaTK = ?");
+        $stmt->bind_param('si', $TenTK, $MaTK);
+        $stmt->execute();
+
+        $stmt = $this->database->connection()->prepare("UPDATE nguoidung SET DiaChi = ? WHERE MaNguoiDung = ?");
+        $stmt->bind_param('si', $DiaChi , $MaTK);
+        $stmt->execute();
+
         return true;
     }
 }
