@@ -45,7 +45,7 @@ $(document).ready(function() {
     
     if (keyword) {
         params.set('keyword', keyword);
-        window.location.href = `/Shopquanao/user/View/product.php?${params.toString()}`;
+        window.location.href = `../View/product.php?${params.toString()}`;
     } else {
         params.delete('keyword');
     }
@@ -239,7 +239,6 @@ function renderProducts(products) {
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-danger fw-bold">${formatPrice(product.GiaBan)} đ</span>
-                        <button class="btn btn-sm btn-danger">Thêm vào giỏ</button>
                     </div>
                 </div>
             </div>
