@@ -553,27 +553,26 @@ switch ($type) {
         $email = isset($data['email']) ? $data['email'] : "";
         $matkhau = isset($data['password']) ? $data['password'] : "";
 
-        $result = $authController->loginValidate($email,$matkhau);
-        if($result){
-            if($result['TrangThai'] == 1){
-                session_start();
-                $_SESSION['user'] = [
-                    'id' => $result['MaNguoiDung'],
-                    'username' => $result['TenTK'],
-                    'email' => $result['Email'],
-                    'permission' => $result['MaQuyen']
+        $result = $authController->loginValidate($email, $matkhau);
+        if ($result) {
+
+            session_start();
+            $_SESSION['user'] = [
+                'id' => $result['MaNguoiDung'],
+                'username' => $result['TenTK'],
+                'email' => $result['Email'],
+                'permission' => $result['MaQuyen']
             ];
-            }
         }
         echo json_encode($result);
         break;
     case 'getSession':
         session_start();
         if (isset($_SESSION['user'])) {
-        echo json_encode([
-            'status' => 'success',
-            'user' => $_SESSION['user']
-        ]);
+            echo json_encode([
+                'status' => 'success',
+                'user' => $_SESSION['user']
+            ]);
         } else {
             echo json_encode([
                 'status' => 'error',
@@ -582,24 +581,23 @@ switch ($type) {
         }
         break;
     case 'changePassword':
-        session_start();        
-        if (isset($_SESSION['user'])){
+        session_start();
+        if (isset($_SESSION['user'])) {
             $id = $_SESSION['user']['id'];
             $json = file_get_contents('php://input');
             $data = json_decode($json, true);
             $matkhau = isset($data['password']) ? $data['password'] : "";
-            
+
             $result = $userController->changePassword($id, $matkhau);
             echo json_encode(["success" => $result]);
             break;
-        }
-        else{
+        } else {
             echo json_encode(["success" => "Chưa đăng nhập"]);
             break;
         }
     case 'updateInformationUser':
-        session_start();        
-        if (isset($_SESSION['user'])){
+        session_start();
+        if (isset($_SESSION['user'])) {
             $id = $_SESSION['user']['id'];
             $json = file_get_contents('php://input');
             $data = json_decode($json, true);
@@ -608,23 +606,18 @@ switch ($type) {
             $result = $userController->updateInformationUser($id, $username, $address);
             echo json_encode(["success" => $result]);
             break;
-        }
-        else{
+        } else {
             echo json_encode(["success" => "Chưa đăng nhập"]);
             break;
         }
     case 'checkEmailExist':
         $email = $_GET['email'] ?? '';
         $result = $authController->getAuthByEmail($email);
-        if($result){
+        if ($result) {
             echo json_encode(["success" => true]);
             break;
+        } else {
+            echo json_encode(["success" => false]);
+            break;
         }
-        else{
-             echo json_encode(["success" => false]);
-             break;
-        }
-
-    
-
 }

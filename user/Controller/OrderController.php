@@ -46,19 +46,24 @@
 
 require_once __DIR__ . '/../Model/OrderModel.php';
 
-class OrderController {
+class OrderController
+{
     private $model;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->model = new OrderModel();
     }
-    public function getCartItems($userId) {
+    public function getCartItems($userId)
+    {
         return $this->model->getCartItems($userId);
     }
-    public function getUserAddress($userId) {
+    public function getUserAddress($userId)
+    {
         return $this->model->getUserAddress($userId);
     }
-    public function showOrderForm() {
+    public function showOrderForm()
+    {
         session_start();
         if (!isset($_SESSION['user'])) {
             header("Location: /Shopquanao/user/View/login.php");
@@ -72,31 +77,41 @@ class OrderController {
         require_once __DIR__ . '/../View/order_form.php';
     }
 
-    public function processOrder($userId, $paymentMethod, $address, $phone) {
-    try {
-        
-        // Validate input
-        if (empty($paymentMethod)) {
-            throw new Exception("Phương thức thanh toán không hợp lệ");
+    public function processOrder($userId, $paymentMethod, $address, $phone)
+    {
+        try {
+
+            // Validate input
+            if (empty($paymentMethod)) {
+                throw new Exception("Phương thức thanh toán không hợp lệ");
+            }
+
+            if (empty($address)) {
+                throw new Exception("Địa chỉ không được để trống");
+            }
+
+            // Get cart items
+            $cartItems = $this->model->getCartItems($userId);
+            if (empty($cartItems)) {
+                throw new Exception("Giỏ hàng trống");
+            }
+            foreach ($cartItems as $item) {
+            $available = $this->model->checkAmountAvaible(
+                $item['MaSP'], 
+                $item['MaSize'], 
+                $item['SoLuong']
+            );
+            
+            if (!$available) {
+                throw new Exception("Sản phẩm {$item['TenSP']} size {$item['TenSize']} không đủ số lượng trong kho, vui lòng giảm số lượng hoặc chọn sản phẩm khác");
+            }
         }
-        
-        if (empty($address)) {
-            throw new Exception("Địa chỉ không được để trống");
+            // Create order
+            $orderId = $this->model->createOrder($userId, $paymentMethod, $address, $phone);
+            return $orderId;
+        } catch (Exception $e) {
+
+            throw $e;
         }
-        
-        // Get cart items
-        $cartItems = $this->model->getCartItems($userId);
-        if (empty($cartItems)) {
-            throw new Exception("Giỏ hàng trống");
-        }
-        
-        // Create order
-        $orderId = $this->model->createOrder($userId, $paymentMethod, $address, $phone);
-        return $orderId;
-        
-    } catch (Exception $e) {
-        throw $e;
     }
 }
-}
-?>

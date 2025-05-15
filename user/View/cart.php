@@ -1,5 +1,6 @@
+<?php include __DIR__ . '/header.php'; ?>
 <?php
-session_start();
+
 if (!isset($_SESSION['user'])) {
     header("Location: /Shopquanao/user/View/login.php");
     exit();
@@ -17,7 +18,7 @@ $items = $cartController->getCart($_SESSION['user']['id']);
     <title>Giỏ hàng</title>
     <link rel="stylesheet" href="/Shopquanao/public/user/css/cart.css">
 </head>
-<?php include __DIR__ . '/header.php'; ?>
+
 <body>
     <div class="mt-5 mb-4">
         <h2>Giỏ hàng</h2>
@@ -72,7 +73,7 @@ $items = $cartController->getCart($_SESSION['user']['id']);
         </table>
 
         <div class="cart-footer ">
-            <a href="/Shopquanao" class="btn btn-danger">Mua tiếp</a>
+            <a href="/Shopquana/user/view/product.php" class="btn btn-danger">Mua tiếp</a>
             <div class="total">Tổng tiền: <span id="tong-tien"><?= isset($tong) ? number_format($tong, 0, ',', '.') : '0' ?>đ</span></div>
             <button id="dat-hang" class="dh" <?= empty($items) ? 'disabled' : '' ?>>Đặt hàng</button>
         </div>
