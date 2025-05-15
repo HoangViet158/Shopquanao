@@ -42,11 +42,17 @@ $(document).ready(function() {
     $('.findByKeyword').on('click', () => {
     const params = new URLSearchParams(window.location.search);
     const keyword = $('.nameTxt').val().trim();
-    
-    if (keyword) {
+      const currentPath = window.location.pathname;
+    // if (!currentPath.includes('product.php')) {
+
+    // }
+    if (keyword && !currentPath.includes('product.php')) {
         params.set('keyword', keyword);
         window.location.href = `../View/product.php?${params.toString()}`;
-    } else {
+    } else if(keyword){
+        params.set('keyword', keyword);
+
+    }else{
         params.delete('keyword');
     }
     
