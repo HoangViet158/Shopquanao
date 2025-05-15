@@ -101,7 +101,7 @@ switch ($type) {
 
         $result = $Cartcontroller->addCart($userId, $productId, $sizeId, $amount);
         header('Content-Type: application/json');
-        echo json_encode(['success' => $success]);
+        echo json_encode(['success' => $result]);
         exit;
         break;
 
