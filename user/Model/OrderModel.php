@@ -149,10 +149,10 @@ class OrderModel
             $stmtUpdateAmount = $this->conn->prepare("
                 UPDATE size_sanpham
                 SET SoLuong = SoLuong - ?
-                WHERE MaSP = ?
+                WHERE MaSP = ? and MaSize = ?
             ");
         
-            $stmtUpdateAmount->bind_param("ii", $item['SoLuong'], $item['MaSP']);
+            $stmtUpdateAmount->bind_param("iii", $item['SoLuong'], $item['MaSP'], $item['MaSize']);
             $stmtUpdateAmount->execute();
         }
 

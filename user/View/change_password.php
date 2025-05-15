@@ -4,11 +4,13 @@ include __DIR__ . '/header.php';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Đổi mật khẩu</title>
     <link rel="stylesheet" href="../../public/user/css/user.css">
 </head>
+
 <body class="user-info-page">
     <div class="container my-5">
         <div class="row">
@@ -34,7 +36,7 @@ include __DIR__ . '/header.php';
                     <div class="mb-3">
                         <label for="password-new" class="form-label"> Mật khẩu mới </label>
                         <input type="password" class="form-control" id="password-new" name="password-new"
-                           placeholder="Nhập mật khẩu mới" requried>
+                            placeholder="Nhập mật khẩu mới" requried>
                     </div>
                     <div class="mb-3">
                         <label for="password-new-confirm" class="form-label"> Nhập lại mật khẩu mới </label>
@@ -49,6 +51,9 @@ include __DIR__ . '/header.php';
             </div>
         </div>
     </div>
-<script src="../../public/user/js/change-password.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../../public/user/js/change-password.js"></script>
+    <script src="/Shopquanao/public/user/js/products.js"></script>
 </body>
+
 </html>
