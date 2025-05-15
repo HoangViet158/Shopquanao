@@ -24,6 +24,7 @@ function requireLogin() {
     $projectFolder = $parts[$index - 1];
     $fullPath = "/user/View/product.php";
     $urlPath = "/" . $projectFolder . $fullPath;
+    $succesPath = "/" . $projectFolder . "/user/View/index.php";
     // Nếu chưa login, redirect về login.php
     if (!isset($_SESSION['user'])) {
         // $path = $_SERVER['PHP_SELF']; // VD: /web2/admin/view/s.php
@@ -39,7 +40,7 @@ function requireLogin() {
         exit();
     }
     if ($_SESSION['user']['permission'] == 3){
-        header("Location: " . $urlPath);
+        header("Location: " . $succesPath);
         exit();
     }
 }

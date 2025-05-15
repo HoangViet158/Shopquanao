@@ -50,6 +50,9 @@ async function renderPermissionDetail(functionList){
         document.querySelector(`#function-row-${element.MaCTQ}`).querySelectorAll('.actionCheckbox')
         .forEach(checkbox => {
             checkbox.addEventListener('click', function (e) {
+                const currentValues = getValueFromCheckBoxRow(element.MaCTQ) || [];
+                const isViewChecked = currentValues.includes('view');
+                const checkboxValue = checkbox.value;
                 if(parseInt(idUrl) == 1 || parseInt(idUrl) == 3){
                     e.preventDefault(); 
                     Swal.fire({
@@ -58,6 +61,17 @@ async function renderPermissionDetail(functionList){
                         text: 'Không được chỉnh sửa quyền Admin và Khách hàng',
                         confirmButtonText: 'Đã hiểu'
                     })
+                    return;
+                }
+                // Ngăn tích checkbox khác nếu chưa có quyền 'view'
+                if (!isViewChecked && checkboxValue !== 'view') {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Cần cấp hành động xem cho chức năng này trước!',
+                        confirmButtonText: 'Đã hiểu'
+                    });
                     return;
                 }
                 editPermissionDetail(idUrl, element.MaCTQ, getValueFromCheckBoxRow(element.MaCTQ))

@@ -255,3 +255,28 @@ header h4 {
     background-color: rgba(255, 255, 255, 0.7);
     z-index: -1;
 }
+
+/* CSS cho thông tin user */
+body.user-info-page {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.list-group-item {
+    transition: all 0.2s ease-in-out;
+}
+
+.list-group-item:hover {
+    background-color: #ffecec;
+}
+
+form.bg-light {
+    background-color: #ffffff !important;
+}
+
+input[readonly] {
+    background-color: #f5f5f5;  /* Màu nền nhạt hơn */
+    border: 1px solid #ccc;     /* Viền xám nhẹ */
+    cursor: not-allowed;        /* Con trỏ hiển thị không cho tương tác */
+    color: #555;                /* Màu chữ tối hơn nhẹ */
+}

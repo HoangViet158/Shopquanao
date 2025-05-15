@@ -546,43 +546,85 @@ switch ($type) {
         $data = json_decode(file_get_contents('php://input'), true);
         echo json_encode($goodReceiptController->calculateSuggestedPrices($data));
         break;
-case 'login':
-    $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
+    case 'login':
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
 
-    $email = isset($data['email']) ? $data['email'] : "";
-    $matkhau = isset($data['password']) ? $data['password'] : "";
+        $email = isset($data['email']) ? $data['email'] : "";
+        $matkhau = isset($data['password']) ? $data['password'] : "";
 
-    $result = $authController->loginValidate($email,$matkhau);
-    if($result){
+        $result = $authController->loginValidate($email,$matkhau);
+        if($result){
+            if($result['TrangThai'] == 1){
+                session_start();
+                $_SESSION['user'] = [
+                    'id' => $result['MaNguoiDung'],
+                    'username' => $result['TenTK'],
+                    'email' => $result['Email'],
+                    'permission' => $result['MaQuyen']
+            ];
+            }
+        }
+        echo json_encode($result);
+        break;
+    case 'getSession':
         session_start();
-        $_SESSION['user'] = [
-            'id' => $result['MaNguoiDung'],
-            'permission' => $result['MaQuyen'],
-            'username' => $result['TenTK'],
-            'email' => $result['Email'],
-
-        ];
-    }
-    echo json_encode(
-        [
-            'status' => $result ? 'success' : 'error',
-            'message' => $result ? 'Đăng nhập thành công' : 'Đăng nhập thất bại',
-            'user' => $result ? $_SESSION['user'] : null
-        ]
-    );
-    break;
-case 'getSession':
         if (isset($_SESSION['user'])) {
         echo json_encode([
             'status' => 'success',
             'user' => $_SESSION['user']
         ]);
-    } else {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'User not logged in'
-        ]);
-    }
-    break;
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'User not logged in'
+            ]);
+        }
+        break;
+    case 'changePassword':
+        session_start();        
+        if (isset($_SESSION['user'])){
+            $id = $_SESSION['user']['id'];
+            $json = file_get_contents('php://input');
+            $data = json_decode($json, true);
+            $matkhau = isset($data['password']) ? $data['password'] : "";
+            
+            $result = $userController->changePassword($id, $matkhau);
+            echo json_encode(["success" => $result]);
+            break;
+        }
+        else{
+            echo json_encode(["success" => "Chưa đăng nhập"]);
+            break;
+        }
+    case 'updateInformationUser':
+        session_start();        
+        if (isset($_SESSION['user'])){
+            $id = $_SESSION['user']['id'];
+            $json = file_get_contents('php://input');
+            $data = json_decode($json, true);
+            $username = isset($data['username']) ? $data['username'] : "";
+            $address = isset($data['address']) ? $data['address'] : "";
+            $result = $userController->updateInformationUser($id, $username, $address);
+            echo json_encode(["success" => $result]);
+            break;
+        }
+        else{
+            echo json_encode(["success" => "Chưa đăng nhập"]);
+            break;
+        }
+    case 'checkEmailExist':
+        $email = $_GET['email'] ?? '';
+        $result = $authController->getAuthByEmail($email);
+        if($result){
+            echo json_encode(["success" => true]);
+            break;
+        }
+        else{
+             echo json_encode(["success" => false]);
+             break;
+        }
+
+    
+
 }
