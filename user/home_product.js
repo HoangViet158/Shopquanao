@@ -6,7 +6,7 @@ $(document).ready(function () {
 });
 function loadProductData() {
   $.ajax({
-    url: 'http://localhost:8080/web2/admin/API/index.php?type=getAllProducts&page=1&perPage=8',
+    url: '../../admin/API/index.php?type=getAllProducts&page=1&perPage=8',
     method: 'GET',
     dataType: 'json',
     success: function(data) {
