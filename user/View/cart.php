@@ -25,7 +25,7 @@ $items = $cartController->getCart($_SESSION['user']['id']);
     <link rel="stylesheet" href="../../public/user/css/cart.css">
 </head>
 <body>
-    <div class="mt-5 mb-4">
+    <div class="mt-5 mb-4 yyyyyyyy">
         <h2>Giỏ hàng</h2>
     </div>
     <div id="cart-container">
