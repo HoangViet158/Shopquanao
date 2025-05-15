@@ -11,6 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 </head>
 <?php session_start() ?>
@@ -23,7 +25,7 @@
             <img src="../../upload/products/logo-shop-quan-ao-nam-9.jpg" alt="logo">
         </div>
         <div class="nav-links">
-            <a href="/">Trang chủ</a>
+            <a href="home.php">Trang chủ</a>
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" role="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     Danh mục sản phẩm
@@ -36,7 +38,7 @@
         <div class="search-cart">
             <div class="input-group">
                 <input type="text" class="nameTxt form-control" name="search" placeholder="Nhập từ khóa tìm kiếm">
-                <button class="btn btn-outline-secondary findByKeyword" type="button">
+                <button class="btn  findByKeyword" type="button">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
@@ -57,4 +59,7 @@
         <?php endif; ?>
         </div>
     </div>
+    <script src="../../public/user/js/products.js"></script>
+
 </header>
+

@@ -42,11 +42,17 @@ $(document).ready(function() {
     $('.findByKeyword').on('click', () => {
     const params = new URLSearchParams(window.location.search);
     const keyword = $('.nameTxt').val().trim();
-    
-    if (keyword) {
+      const currentPath = window.location.pathname;
+    // if (!currentPath.includes('product.php')) {
+
+    // }
+    if (keyword && !currentPath.includes('product.php')) {
         params.set('keyword', keyword);
-        window.location.href = `/Shopquanao/user/View/product.php?${params.toString()}`;
-    } else {
+        window.location.href = `../View/product.php?${params.toString()}`;
+    } else if(keyword){
+        params.set('keyword', keyword);
+
+    }else{
         params.delete('keyword');
     }
     
@@ -239,7 +245,6 @@ function renderProducts(products) {
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-danger fw-bold">${formatPrice(product.GiaBan)} đ</span>
-                        <button class="btn btn-sm btn-danger">Thêm vào giỏ</button>
                     </div>
                 </div>
             </div>

@@ -95,9 +95,9 @@ switch ($type) {
         $data = json_decode($json, true);
 
         $userId = $_SESSION['user']['id'] ?? NULL;
-        $productId = isset($data['maSP']) ? $data['maSP'] : NULL;
-        $sizeId = isset($data['maSize']) ? $data['maSize'] : NULL;
-        $amount = isset($data['soluong']) ? $data['soluong'] : 0;
+        $productId = isset($data['maSP']) ? (int)$data['maSP'] : NULL;
+        $sizeId = isset($data['maSize']) ? (int)$data['maSize'] : NULL;
+        $amount = isset($data['soluong']) ? (int)$data['soluong'] : 0;
 
         $result = $Cartcontroller->addCart($userId, $productId, $sizeId, $amount);
         header('Content-Type: application/json');
