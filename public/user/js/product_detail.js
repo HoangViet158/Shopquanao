@@ -199,13 +199,13 @@ $(document).ready(function() {
             credentials: 'include' // đảm bảo session vẫn hoạt động
         })
         if (!res.ok) throw new Error('lỗi')
-        const result     = await res.text();
-        console.log(result)
-        // if (result.success){
-        //     alert('Thêm giỏ hàng thành công!');
-        // } else {
-        //     alert('Thêm giỏ hàng thất bại!');
-        // }
+        const result     = await res.json();
+        // console.log(result)
+        if (result.success){
+            alert('Thêm giỏ hàng thành công!');
+        } else {
+            alert('Thêm giỏ hàng thất bại!');
+        }
     }
     
     function changeMainImage(url) {

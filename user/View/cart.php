@@ -86,9 +86,9 @@ $items = $cartController->getCart($_SESSION['user']['id']);
     
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-     <script src="/Shopquanao/user/js/cart.js"></script>
+     <script src="../../user/js/cart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/Shopquanao/public/user/js/products.js"></script>
+    <script src="../../public/user/js/products.js"></script>
 </body>
 <?php include __DIR__ . '/footer.php'; ?>
 </html>
