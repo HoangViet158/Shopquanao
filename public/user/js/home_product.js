@@ -39,7 +39,7 @@ function renderProducts(products) {
     const firstImage = rawImage ? `/Shopquanao${rawImage}` : '/Shopquanao/images/no-image.png';
 
     const productHtml = `
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+      <div class="col-3 mb-4">
         <div class="product-item card h-100 text-center">
           <img src="${firstImage}" class="card-img-top" alt="${product.TenSP}" onerror="this.src='/Shopquanao/images/no-image.png'">
           <div class="card-body">
@@ -53,15 +53,15 @@ function renderProducts(products) {
 
     rowHtml += productHtml;
 
-    // Sau mỗi 4 sản phẩm, đóng row và mở row mới (nếu còn sản phẩm)
     if ((index + 1) % 4 === 0 && index !== products.length - 1) {
-      rowHtml += '</div><div class="row justify-content-center">';
+      rowHtml += '</div><div class="row justify-content-st">';
     }
   });
 
   rowHtml += '</div>';
   container.append(rowHtml);
 }
+
 
 
 function loadRandomProducts() {
@@ -80,18 +80,33 @@ function loadRandomProducts() {
             const container = $('.product-grid'); // nơi hiển thị
             container.empty();
 
-            randomProducts.forEach(product => {
+            let rowHtml = '<div class="row justify-content-center">';
+
+            randomProducts.forEach((product, index) => {
                 const imageUrl = product.Anh?.[0] ? `/Shopquanao${product.Anh[0]}` : '/Shopquanao/images/no-image.png';
 
-                container.append(`
-                    <div class="product-grid-item">
-                        <img src="${imageUrl}" alt="${product.TenSP}" class="card-img-top" onerror="this.src='/web2/images/no-image.png'">
-                        <div class="product-name">${product.TenSP}</div>
-                        <p>${product.MoTa}</p>
-                        <p style="color:red; font-weight:bold">${product.GiaBan}</p>
+                const productHtml = `
+                    <div class="col-3 mb-4">
+                        <div class="product-item card h-100 text-center">
+                            <img src="${imageUrl}" class="card-img-top" alt="${product.TenSP}" onerror="this.src='/web2/images/no-image.png'">
+                            <div class="card-body">
+                                <div class="product-name font-weight-bold">${product.TenSP}</div>
+                                <div class="product-desc text-muted">${product.MoTa}</div>
+                                <div class="product-price text-danger font-weight-bold mt-2">${product.GiaBan}đ</div>
+                            </div>
+                        </div>
                     </div>
-                `);
+                `;
+
+                rowHtml += productHtml;
+
+                if ((index + 1) % 4 === 0 && index !== randomProducts.length - 1) {
+                    rowHtml += '</div><div class="row justify-content-center">';
+                }
             });
+
+            rowHtml += '</div>';
+            container.append(rowHtml);
         },
         error: function(xhr, status, error) {
             console.error("Lỗi khi lấy sản phẩm:", error);
