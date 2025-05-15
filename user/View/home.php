@@ -38,28 +38,20 @@ require_once 'header.php'
             <img class="top-banner img-fluid" src="../../upload/products/slide1.jpg" alt="">
             
 
-            <!--Danh muc -->
+            <!--Danh muc 
             <div class="product-catalog">
                 <div class="catalog-header">
                     <h2 class="section-title">DANH MỤC SẢN PHẨM</h2>
                     <div class="catalog-buttons">
-                        <?php if (!empty($categories)) : ?>
-                            <?php foreach ($categories as $category) : ?>
-                                <button class="category-btn">
-                                    <?= htmlspecialchars($category['TenDM']) ?>
-                                </button>
-                            <?php endforeach; ?>
-                        <?php else : ?>
-                            <p>Không có dữ liệu</p>
-                        <?php endif; ?>
+                        
                     </div>
                 </div>
             </div>
-
+                        -->
 
 
             <!--All products-->
-            <div class="all-products">
+            <div class="mt-4 container">
                 <h2 class="section-title">TẤT CẢ SẢN PHẨM</h2>
                 <div class="section-products">
                 <!-- Sản phẩm sẽ được chèn ở đây -->
