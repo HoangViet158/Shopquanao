@@ -95,12 +95,25 @@ class OrderModel {
     }
 
     public function createOrder($userId, $paymentMethod, $address, $phone) {
+        $totalPay=0;
+        $stmtCountTT = $this->conn->prepare("
+            SELECT SUM(sp.GiaBan * g.SoLuong) AS Total
+            FROM giohang g
+            JOIN sanpham sp ON g.MaSP = sp.MaSP
+            WHERE g.MaNguoiDung = ?
+        ");
+        $stmtCountTT->bind_param("i", $userId);
+        $stmtCountTT->execute();
+        $result = $stmtCountTT->get_result()->fetch_assoc();
+        if ($result) {
+            $totalPay = $result['Total'];
+        }
         // Create invoice
         $stmt = $this->conn->prepare("
             INSERT INTO hoadon (MaTK, ThoiGian, ThanhToan, MoTa, TrangThai)
-            VALUES (?, NOW(), ?, ?, 1)
+            VALUES (?, NOW(), ?, ?, 0)
         ");
-        $stmt->bind_param("iss", $userId, $paymentMethod, $address);
+        $stmt->bind_param("ids", $userId,$totalPay, $paymentMethod);
         $stmt->execute();
         $orderId = $stmt->insert_id;
         
@@ -123,7 +136,11 @@ class OrderModel {
             );
             $stmt->execute();
         }
-        
+        $sqlInsertAddress="insert into nguoidung(MaNguoiDung,DiaChi) values(?,?,?)";
+        $stmt = $this->conn->prepare($sqlInsertAddress);
+        $stmt->bind_param("isi", $userId, $address);
+        $stmt->execute();
+
         // Clear cart
         $stmt = $this->conn->prepare("DELETE FROM giohang WHERE MaNguoiDung = ?");
         $stmt->bind_param("i", $userId);
