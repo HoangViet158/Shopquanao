@@ -1,5 +1,6 @@
+<?php include __DIR__ . '/header.php'; ?>
 <?php
-session_start();
+
 if (!isset($_SESSION['user'])) {
     header("Location: /Shopquanao/user/View/login.php");
     exit();
@@ -26,14 +27,14 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/Shopquanao/public/user/css/order.css">
 </head>
-<?php include __DIR__ . '/header.php'; ?>
+
 <body class="bg-light">
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card shadow">
                     <div class="card-header bg-danger text-white d-flex justify-content-center align-items-center">
-                        <h2 class="h4 mb-0 ">Thông tin đặt hàng</h2>
+                        <h2 class="h4 mb-0 gg ">Thông tin đặt hàng</h2>
                     </div>
 
                     <div class="card-body">
@@ -46,7 +47,7 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
 
                             <div class="mb-3">
                                 <label for="sdt" class="form-label">Số điện thoại</label>
-                                <input type="text" class="form-control" id="sdt" name="sdt" required>
+                                <input type="number" class="form-control" id="sdt" name="sdt" required>
                             </div>
 
                             <div class="mb-4">
@@ -91,8 +92,8 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit"  class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
-                                <a href="/Shopquanao" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
+                                <button type="submit" class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
+                                <a href="/Shopquanao/user/view/product.php" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
                             </div>
                         </form>
                     </div>
@@ -136,7 +137,8 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
             });
         });
     </script>
-     <script src="../../public/user/js/products.js"></script>
+    <script src="../../public/user/js/products.js"></script>
 </body>
 <?php include __DIR__ . '/footer.php'; ?>
+
 </html>

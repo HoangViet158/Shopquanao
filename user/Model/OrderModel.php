@@ -65,15 +65,18 @@
 
 require_once __DIR__ . '/../../config/connect.php';
 
-class OrderModel {
+class OrderModel
+{
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         $db = new Database();
         $this->conn = $db->connection();
     }
 
-    public function getCartItems($userId) {
+    public function getCartItems($userId)
+    {
         $stmt = $this->conn->prepare("
             SELECT g.MaSP, g.MaSize, g.SoLuong, sp.TenSP, sp.GiaBan, sz.TenSize
             FROM giohang g
@@ -86,7 +89,8 @@ class OrderModel {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getUserAddress($userId) {
+    public function getUserAddress($userId)
+    {
         $stmt = $this->conn->prepare("SELECT DiaChi FROM nguoidung WHERE MaNguoiDung = ?");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
@@ -94,16 +98,30 @@ class OrderModel {
         return $result ? $result['DiaChi'] : '';
     }
 
-    public function createOrder($userId, $paymentMethod, $address, $phone) {
+    public function createOrder($userId, $paymentMethod, $address, $phone)
+    {
+        $totalPay = 0;
+        $stmtCountTT = $this->conn->prepare("
+            SELECT SUM(sp.GiaBan * g.SoLuong) AS Total
+            FROM giohang g
+            JOIN sanpham sp ON g.MaSP = sp.MaSP
+            WHERE g.MaNguoiDung = ?
+        ");
+        $stmtCountTT->bind_param("i", $userId);
+        $stmtCountTT->execute();
+        $result = $stmtCountTT->get_result()->fetch_assoc();
+        if ($result) {
+            $totalPay = $result['Total'];
+        }
         // Create invoice
         $stmt = $this->conn->prepare("
             INSERT INTO hoadon (MaTK, ThoiGian, ThanhToan, MoTa, TrangThai)
-            VALUES (?, NOW(), ?, ?, 1)
+            VALUES (?, NOW(), ?, ?, 0)
         ");
-        $stmt->bind_param("iss", $userId, $paymentMethod, $address);
+        $stmt->bind_param("ids", $userId, $totalPay, $paymentMethod);
         $stmt->execute();
         $orderId = $stmt->insert_id;
-        
+
         // Add order items
         $cartItems = $this->getCartItems($userId);
         foreach ($cartItems as $item) {
@@ -113,23 +131,77 @@ class OrderModel {
                 VALUES (?, ?, ?, ?, ?, ?)
             ");
             $stmt->bind_param(
-                "iiiddi", 
-                $orderId, 
-                $item['MaSP'], 
-                $item['SoLuong'], 
-                $item['GiaBan'], 
-                $total, 
+                "iiiddi",
+                $orderId,
+                $item['MaSP'],
+                $item['SoLuong'],
+                $item['GiaBan'],
+                $total,
                 $item['MaSize']
             );
             $stmt->execute();
         }
+        $sqlInsertAddress = "insert into nguoidung(MaNguoiDung,DiaChi) values(?,?)";
+        $stmt = $this->conn->prepare($sqlInsertAddress);
+        $stmt->bind_param("is", $userId, $address);
+        $stmt->execute();
+        foreach ($cartItems as $item) {
+            $stmtUpdateAmount = $this->conn->prepare("
+                UPDATE size_sanpham
+                SET SoLuong = SoLuong - ?
+                WHERE MaSP = ?
+            ");
         
+            $stmtUpdateAmount->bind_param("ii", $item['SoLuong'], $item['MaSP']);
+            $stmtUpdateAmount->execute();
+        }
+
         // Clear cart
         $stmt = $this->conn->prepare("DELETE FROM giohang WHERE MaNguoiDung = ?");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
-        
+
         return $orderId;
     }
+    public function checkAmountAvaible($masp, $masize, $soluong)
+    {
+        $stmt = $this->conn->prepare("
+            SELECT SoLuong
+            FROM size_sanpham
+            WHERE MaSP = ? AND MaSize = ?
+        ");
+        $stmt->bind_param("ii", $masp, $masize);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result ? $result['SoLuong'] >= $soluong : false;
+    }
+    // public function getUserId($userId)
+    // {
+    //     $stmt = $this->conn->prepare("SELECT MaNguoiDung FROM nguoidung WHERE MaTK = ?");
+    //     $stmt->bind_param("i", $userId);
+    //     $stmt->execute();
+    //     $result = $stmt->get_result()->fetch_assoc();
+    //     return $result ? $result['MaNguoiDung'] : null;
+    // }
+    // public function getMaSPByUserId($userId)
+    // {
+    //     $stmt = $this->conn->prepare("SELECT MaSP FROM giohang WHERE MaNguoiDung = ?");
+    //     $stmt->bind_param("i", $userId);
+    //     $stmt->execute();
+    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // }
+    // public function getMaSizeByUserId($userId)
+    // {
+    //     $stmt = $this->conn->prepare("SELECT MaSize FROM giohang WHERE MaNguoiDung = ?");
+    //     $stmt->bind_param("i", $userId);
+    //     $stmt->execute();
+    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // }
+    // public function getAmountByUserId($userId)
+    // {
+    //     $stmt = $this->conn->prepare("SELECT SoLuong FROM giohang WHERE MaNguoiDung = ?");
+    //     $stmt->bind_param("i", $userId);
+    //     $stmt->execute();
+    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // }
 }
-?>

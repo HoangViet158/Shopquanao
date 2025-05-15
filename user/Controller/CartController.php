@@ -37,7 +37,7 @@ class CartController {
     public function __construct() {
         $this->model = new CartModel();
     }
-
+    
     public function addCart($userId, $maSP, $maSize, $soLuong){
         return $this->model->addCart($userId, $maSP, $maSize, $soLuong);
     }

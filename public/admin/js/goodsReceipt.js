@@ -368,6 +368,14 @@ function addProductRow() {
         
         if (duplicateCount > 1) {
             newRow.style.border = "2px solid red";
+            const errorDiv = document.createElement('div');
+            errorDiv.className = "alert alert-danger";
+            errorDiv.innerText = "Sản phẩm và size đã tồn tại trong danh sách!";
+            errorDiv.style.marginTop = "10px";
+            errorDiv.style.fontSize = "14px";
+            errorDiv.style.color = "red";
+            errorDiv.style.fontWeight = "bold";
+            
             calculateSuggestedPrices(); // Cập nhật thông báo lỗi
         } else {
             newRow.style.border = "";

@@ -48,7 +48,7 @@
                     </div>
             </div>
             <div class="user-info-form">
-                <?php if($_SESSION['user']['permission'] != 3):?>
+                <?php if ($_SESSION['user']['permission'] != 3): ?>
                     <a href="../../admin/View/statistic.php"><i class="fa-solid fa-gear"></i></a>
                 <?php endif; ?>
             </div>
