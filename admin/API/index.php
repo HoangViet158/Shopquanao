@@ -553,16 +553,15 @@ switch ($type) {
         $email = isset($data['email']) ? $data['email'] : "";
         $matkhau = isset($data['password']) ? $data['password'] : "";
 
-        $result = $authController->loginValidate($email, $matkhau);
-        if ($result) {
-
+        $result = $authController->loginValidate($email,$matkhau);
+        if($result){
             session_start();
             $_SESSION['user'] = [
                 'id' => $result['MaNguoiDung'],
                 'username' => $result['TenTK'],
                 'email' => $result['Email'],
                 'permission' => $result['MaQuyen']
-            ];
+        ]; 
         }
         echo json_encode($result);
         break;

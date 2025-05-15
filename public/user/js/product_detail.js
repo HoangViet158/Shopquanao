@@ -55,117 +55,157 @@ $(document).ready(function() {
         });
     });
     
-    function renderProductDetail(product) {
-        // Tính giá gốc nếu có khuyến mãi
-        let originalPrice = '';
-        let discountBadge = '';
-        
-        const discountValue = parseFloat(product.giaTriKM);
-    
-        if (product.MaKM && !isNaN(discountValue) && discountValue > 0) {
-            const original = Math.round(product.GiaBan / (1 - discountValue/100));
-            originalPrice = `<span class="original-price ms-2">${formatPrice(original)} đ</span>`;
-            discountBadge = `<span class="discount-badge ms-2">-${discountValue}%</span>`;
-        }
-        
-        // Tạo HTML cho gallery ảnh
-        let galleryHtml = '';
-        if (product.Anh && product.Anh.length > 0) {
-            const mainImage = product.Anh[0].Url;
+        function renderProductDetail(product) {
+            // Tính giá gốc nếu có khuyến mãi
+            let originalPrice = '';
+            let discountBadge = '';
             
-            galleryHtml = `
-            <div class="product-gallery ">
-                <img src="../../${mainImage}" class="main-image mb-3" id="main-image" alt="${product.TenSP}">
-                <div class="thumbnail-container border p-2 rounded shadow-sm">
+            const discountValue = parseFloat(product.giaTriKM);
+        
+            if (product.MaKM && !isNaN(discountValue) && discountValue > 0) {
+                const original = Math.round(product.GiaBan / (1 - discountValue/100));
+                originalPrice = `<span class="original-price ms-2">${formatPrice(original)} đ</span>`;
+                discountBadge = `<span class="discount-badge ms-2">-${discountValue}%</span>`;
+            }
+            
+            // Tạo HTML cho gallery ảnh
+            let galleryHtml = '';
+            if (product.Anh && product.Anh.length > 0) {
+                const mainImage = product.Anh[0].Url;
+                
+                galleryHtml = `
+                <div class="product-gallery ">
+                    <img src="../../${mainImage}" class="main-image mb-3" id="main-image" alt="${product.TenSP}">
+                    <div class="thumbnail-container border p-2 rounded shadow-sm">
+                `;
+                
+                product.Anh.forEach((image, index) => {
+                    galleryHtml += `
+                    <img src="../../${image.Url}" class="thumbnail ${index === 0 ? 'active' : ''}" 
+                        onclick="changeMainImage('${image.Url}')" alt="Ảnh ${index + 1}">
+                    `;
+                });
+                
+                galleryHtml += '</div></div>';
+            }
+            
+            // Tạo HTML chi tiết sản phẩm
+            const html = `
+            <div class="row">
+                <div class="col-md-6">
+                    ${galleryHtml}
+                </div>
+                <div class="col-md-6">
+                    <h2 class="my-3">${product.TenSP}</h2>
+                    <div class="d-flex align-items-center my-3 ">
+                        <h4 class="text-danger mb-0">${formatPrice(product.GiaBan)} đ</h4>
+                        ${originalPrice}
+                        ${discountBadge}
+                    </div>
+                    
+                    
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Thông tin chi tiết</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <tr>
+                                    <th width="30%">Mã sản phẩm</th>
+                                    <td>${product.MaSP || 'Không xác định'}</td>
+                                </tr>
+                                <tr>
+                                    <th>Mô tả </th>
+                                    <td>${product.MoTa || 'Không có'}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Danh mục</th>
+                                    <td>${product.TenDM || 'Không xác định'}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ngày đăng</th>
+                                    <td>${formatDate(product.NgayTao)}</td>
+                                </tr>
+                                <tr>
+                                    <th>Số lượng tồn</th>
+                                    <td>${product.SoLuongTong || 0}</td>
+                                </tr>
+                                <tr>
+                                    <th>Giới tính</th>
+                                    <td>${getGenderText(product.GioiTinh)}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    ${(product.SoLuongTong === 0 || product.GiaBan === 0)
+                    ? `<div class="alert alert-warning">Sản phẩm này hiện không có sẵn.</div>`
+                    : `
+                    <div class="d-flex align-items-center my-3">
+                        <div class="me-3">
+                            <label>Số lượng:</label>
+                            <input type="number" min="1" max="${product.SoLuongTong}" value="1" class="form-control" style="width: 80px;">
+                        </div>
+                        <div class="me-3">
+                            <label>Size:</label>
+                            <select class="form-select" id="size-select">
+                                <option value="">Chọn kích cỡ</option>
+                                ${product.Sizes && product.Sizes.length > 0 
+                                    ? product.Sizes.map(size => `<option value="${size.MaSize}">${size.TenSize}</option>`).join('') 
+                                    : ''}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex my-3">
+                            <button class="btn btn-danger me-2" id="add-to-cart-btn">Thêm vào giỏ hàng</button>
+                    </div>
+                    `}
+                </div>
+            </div>
             `;
             
-            product.Anh.forEach((image, index) => {
-                galleryHtml += `
-                <img src="../../${image.Url}" class="thumbnail ${index === 0 ? 'active' : ''}" 
-                     onclick="changeMainImage('${image.Url}')" alt="Ảnh ${index + 1}">
-                `;
-            });
-            
-            galleryHtml += '</div></div>';
+            $('#product-detail-container').html(html);
+            $('#add-to-cart-btn').on('click', () => addCart(product));
+
         }
-        
-        // Tạo HTML chi tiết sản phẩm
-        const html = `
-        <div class="row">
-            <div class="col-md-6">
-                ${galleryHtml}
-            </div>
-            <div class="col-md-6">
-                <h2 class="my-3">${product.TenSP}</h2>
-                <div class="d-flex align-items-center my-3 ">
-                    <h4 class="text-danger mb-0">${formatPrice(product.GiaBan)} đ</h4>
-                    ${originalPrice}
-                    ${discountBadge}
-                </div>
-                
-                
-                
-                <div class="card mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Thông tin chi tiết</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <tr>
-                                <th width="30%">Mã sản phẩm</th>
-                                <td>${product.MaSP || 'Không xác định'}</td>
-                            </tr>
-                            <tr>
-                                <th>Mô tả </th>
-                                <td>${product.MoTa || 'Không có'}</td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Danh mục</th>
-                                <td>${product.TenDM || 'Không xác định'}</td>
-                            </tr>
-                            <tr>
-                                <th>Ngày đăng</th>
-                                <td>${formatDate(product.NgayTao)}</td>
-                            </tr>
-                            <tr>
-                                <th>Số lượng tồn</th>
-                                <td>${product.SoLuongTong || 0}</td>
-                            </tr>
-                            <tr>
-                                <th>Giới tính</th>
-                                <td>${getGenderText(product.GioiTinh)}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                
-                ${(product.SoLuongTong === 0 || product.GiaBan === 0)
-                ? `<div class="alert alert-warning">Sản phẩm này hiện không có sẵn.</div>`
-                : `
-                <div class="d-flex align-items-center my-3">
-                    <div class="me-3">
-                        <label>Số lượng:</label>
-                        <input type="number" min="1" max="${product.SoLuongTong}" value="1" class="form-control" style="width: 80px;">
-                    </div>
-                    <div class="me-3">
-                        <label>Size:</label>
-                        <select class="form-select" id="size-select">
-                            <option value="">Chọn kích cỡ</option>
-                            ${product.Sizes && product.Sizes.length > 0 
-                                ? product.Sizes.map(size => `<option value="${size.MaSize}">${size.TenSize}</option>`).join('') 
-                                : ''}
-                        </select>
-                    </div>
-                </div>
-                <div class="d-flex my-3">
-                    <button class="btn btn-danger me-2" id="add-to-cart-btn">Thêm vào giỏ hàng</button>
-                </div>
-                `}
-            </div>
-        </div>
-        `;
-        
-        $('#product-detail-container').html(html);
+
+    async function addCart(product) {
+        const maSP = product.MaSP;
+        const maSize = document.getElementById('size-select').value;
+        const soLuong = parseInt(document.querySelector('input[type="number"]').value);
+        console.log(product)
+
+        if (!maSize) {
+        alert('Vui lòng chọn kích cỡ!');
+        return;
+        }
+
+        if (soLuong <= 0) {
+            alert('Số lượng không hợp lệ!');
+            return;
+        }
+        data = {
+            'maSP' : maSP,
+            'maSize' : maSize,
+            'soluong' : soLuong
+        }
+        const res = await fetch('../../user/API/index.php?type=addCart', {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify(data),
+            credentials: 'include' // đảm bảo session vẫn hoạt động
+        })
+        if (!res.ok) throw new Error('lỗi')
+        const result = await res.json();
+        console.log(result)
+        if (result.success){
+            alert('Thêm giỏ hàng thành công!');
+        } else {
+            alert('Thêm giỏ hàng thất bại!');
+        }
     }
     
     function changeMainImage(url) {

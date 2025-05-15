@@ -13,7 +13,6 @@ $maTK = $_SESSION['user']['id'];
 
 // Lấy MaTK từ session
 $maTK = $_SESSION['user']['id'];
-$maTK = $_SESSION['user']['id'];
 
 // Sửa câu truy vấn để lấy dữ liệu từ cả hai bảng
 $sql = "SELECT t.TenTK, n.Email, n.DiaChi
