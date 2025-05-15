@@ -23,7 +23,7 @@
             <img src="../../upload/products/logo-shop-quan-ao-nam-9.jpg" alt="logo">
         </div>
         <div class="nav-links">
-            <a href="/">Trang chủ</a>
+            <a href="home.php">Trang chủ</a>
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" role="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     Danh mục sản phẩm

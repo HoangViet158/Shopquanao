@@ -2,7 +2,7 @@
 <?php
 
 if (!isset($_SESSION['user'])) {
-    header("Location: /Shopquanao/user/View/login.php");
+    header("Location: ../../user/View/login.php");
     exit();
 }
 
@@ -25,7 +25,7 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thông tin đặt hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/Shopquanao/public/user/css/order.css">
+    <link rel="stylesheet" href="../../public/user/css/order.css">
 </head>
 
 <body class="bg-light">
@@ -34,11 +34,11 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
             <div class="col-lg-8">
                 <div class="card shadow">
                     <div class="card-header bg-danger text-white d-flex justify-content-center align-items-center">
-                        <h2 class="h4 mb-0 ">Thông tin đặt hàng</h2>
+                        <h2 class="h4 mb-0 gg ">Thông tin đặt hàng</h2>
                     </div>
 
                     <div class="card-body">
-                        <form id="order-form" action="/Shopquanao/user/API/cart_api.php?type=createOrder" method="POST">
+                        <form id="order-form" action="../../user/API/cart_api.php?type=createOrder" method="POST">
                             <div class="mb-3">
                                 <label for="diachi" class="form-label">Địa chỉ nhận hàng</label>
                                 <input type="text" class="form-control" id="diachi" name="diachi"
@@ -92,8 +92,8 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit"  class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
-                                <a href="/Shopquanao/user/view/product.php" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
+                                <button type="submit" class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
+                                <a href="../../user/view/product.php" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
                             </div>
                         </form>
                     </div>
@@ -112,7 +112,7 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
             var formData = new FormData(form);
 
             $.ajax({
-                url: '/Shopquanao/user/API/index.php?type=createOrder',
+                url: '../../user/API/index.php?type=createOrder',
                 type: 'POST',
                 data: formData,
                 processData: false, // Không xử lý dữ liệu k có 2 dòng này lỗi jquery
@@ -122,7 +122,7 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
                         var data = typeof response === 'string' ? JSON.parse(response) : response;
                         if (data.success) {
                             alert('Đặt hàng thành công');
-                            window.location.href = `/Shopquanao/user/View/product.php`;
+                            window.location.href = `../../user/View/product.php`;
                         } else {
                             alert(data.error || 'Đặt hàng không thành công');
                         }
@@ -137,7 +137,8 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
             });
         });
     </script>
-     <script src="../../public/user/js/products.js"></script>
+    <script src="../../public/user/js/products.js"></script>
 </body>
 <?php include __DIR__ . '/footer.php'; ?>
+
 </html>
