@@ -34,7 +34,7 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
             <div class="col-lg-8">
                 <div class="card shadow">
                     <div class="card-header bg-danger text-white d-flex justify-content-center align-items-center">
-                        <h2 class="h4 mb-0 ">Thông tin đặt hàng</h2>
+                        <h2 class="h4 mb-0 gg ">Thông tin đặt hàng</h2>
                     </div>
 
                     <div class="card-body">
@@ -92,7 +92,7 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit"  class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
+                                <button type="submit" class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
                                 <a href="/Shopquanao/user/view/product.php" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
                             </div>
                         </form>
@@ -137,7 +137,8 @@ $userAddress = $orderController->getUserAddress($_SESSION['user']['id']);
             });
         });
     </script>
-     <script src="../../public/user/js/products.js"></script>
+    <script src="../../public/user/js/products.js"></script>
 </body>
 <?php include __DIR__ . '/footer.php'; ?>
+
 </html>
