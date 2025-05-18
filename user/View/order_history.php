@@ -49,7 +49,7 @@ $detailOrderId = $_GET['detail'] ?? null;
                                             echo '<span class="badge bg-success">Đang giao hàng</span>';
                                             break;
                                         case 3:
-                                            echo '<span class="badge bg-secondary">Đã hủy</span>';
+                                            echo '<span class="badge bg-danger">Đã hủy</span>';
                                             break;
                                         default:
                                             echo '<span class="badge bg-dark">Không xác định</span>';

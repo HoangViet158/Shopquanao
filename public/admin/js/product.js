@@ -14,7 +14,8 @@ function openAddProductModal() {
   $("#addProductForm")[0].reset()
   $("#productImage").val("")
   $("#imagePreview").empty()
-
+  $("#productCategory").val("")
+  $("#productType").prop("disabled", true).empty().append('<option value="">Chọn danh mục trước</option>')
   selectedImages = []
   selectedNewImages = []
 }
