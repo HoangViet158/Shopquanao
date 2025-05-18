@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", function () {
             const maHD = this.getAttribute("data-id");
             showConfirmDialog("Bạn có chắc muốn hủy đơn này?", function () {
-                fetch('../Ajax/cancel_order.php', {
+                fetch('../View/cancel_order.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'MaHD=' + maHD

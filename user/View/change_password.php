@@ -17,7 +17,7 @@ include __DIR__ . '/header.php';
             <!-- Bên trái: menu -->
             <div class="col-md-4">
                 <div class="list-group shadow-sm rounded">
-                    <a href="../Ajax/order_history.php" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
+                    <a href="order_history.php" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
                     <a href="user_info.php" class="list-group-item list-group-item-action text-danger fw-bold">Thông tin tài khoản</a>
                     <a href="change_password.php" class="list-group-item list-group-item-action text-danger fw-bold">Đổi mật khẩu</a>
                     <a href="logout.php" class="list-group-item list-group-item-action text-danger fw-bold">Đăng xuất</a>
@@ -44,7 +44,7 @@ include __DIR__ . '/header.php';
                             placeholder="Nhập lại mật khẩu mới" required>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-4">
-                        <a href="index.php" class="btn btn-outline-secondary">Thoát</a>
+                        <a href="home.php" class="btn btn-outline-secondary">Thoát</a>
                         <button type="submit" class="btn btn-danger">Cập nhật</button>
                     </div>
                 </form>
@@ -53,7 +53,7 @@ include __DIR__ . '/header.php';
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../../public/user/js/change-password.js"></script>
-    <script src="/Shopquanao/public/user/js/products.js"></script>
+    <script src="../..public/user/js/products.js"></script>
 </body>
 
 </html>
