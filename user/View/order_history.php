@@ -19,9 +19,9 @@ $detailOrderId = $_GET['detail'] ?? null;
             <!-- Menu bên trái  -->
             <div class="list-group shadow-sm rounded">
                 <a href="order_history.php" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
-                <a href="user_info.php" class="list-group-item list-group-item-action text-danger fw-bold">Thông tin tài khoản</a>
-                <a href="change_password.php" class="list-group-item list-group-item-action text-danger fw-bold">Đổi mật khẩu</a>
-                <a href="logout.php" class="list-group-item list-group-item-action text-danger fw-bold">Đăng xuất</a>
+                <a href="../View/user_info.php" class="list-group-item list-group-item-action text-danger fw-bold">Thông tin tài khoản</a>
+                <a href="../View/change_password.php" class="list-group-item list-group-item-action text-danger fw-bold">Đổi mật khẩu</a>
+                <a href="../View/logout.php" class="list-group-item list-group-item-action text-danger fw-bold">Đăng xuất</a>
             </div>
         </div>
 
@@ -95,7 +95,7 @@ $detailOrderId = $_GET['detail'] ?? null;
                 <?php endif; ?>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <a href="index.php" class="btn btn-outline-secondary">Thoát</a>
+                    <a href="../View/index.php" class="btn btn-outline-secondary">Thoát</a>
                 </div>
             </form>
         </div>
@@ -105,4 +105,7 @@ $detailOrderId = $_GET['detail'] ?? null;
 <script src="../js/order_history.js"></script>
 
 </body>
+
+
 </html>
+

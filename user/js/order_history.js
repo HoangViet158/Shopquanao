@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const backBtn = document.getElementById("btn-back");
     if (backBtn) {
         backBtn.addEventListener("click", () => {
-            window.location.href = "index.php";
+            window.location.href = "order_history.php";
         });
     }
 

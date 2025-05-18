@@ -71,7 +71,8 @@ class OrderController
     }
 
     public function showOrderHistory() {
-        $userId = $_SESSION['MaNguoiDung'] ?? null;
+        session_start();
+        $userId = $_SESSION['user']['id'];
         if (!$userId) {
             header("Location: ./user/view/login.php");
             exit;
@@ -86,13 +87,12 @@ class OrderController
         } else {
             $orders = $this->model->getOrdersByUser($userId);
         }
-
         include '../View/order_history.php';
     }
 
     public function cancelOrder() {
         $MaHD = $_POST['MaHD'] ?? null;
-        $userId = $_SESSION['MaNguoiDung'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
 
         if (!$MaHD || !$userId) {
             echo "Dữ liệu không hợp lệ!";

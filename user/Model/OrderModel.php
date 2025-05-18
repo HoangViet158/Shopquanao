@@ -118,6 +118,7 @@ class OrderModel
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
     }
 
     public function getOrderDetails($maHD) {
