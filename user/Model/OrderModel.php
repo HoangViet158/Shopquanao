@@ -104,6 +104,14 @@ class OrderModel
         ");
         $stmtUpdateAmount->bind_param("iii", $item['SoLuong'], $item['MaSP'], $item['MaSize']);
         $stmtUpdateAmount->execute();
+        $stmtUpdateSoLuongTongKho = $this->conn->prepare("
+            UPDATE sanpham
+            SET SoLuongTong = SoLuongTong - ?
+            WHERE MaSP = ?
+        ");
+        $stmtUpdateSoLuongTongKho->bind_param("ii", $item['SoLuong'], $item['MaSP']);
+        $stmtUpdateSoLuongTongKho->execute();
+
     }
 
     // 6. Xóa giỏ hàng
@@ -172,7 +180,15 @@ class OrderModel
             $up->bind_param("iii", $item['SoLuongBan'], $item['MaSP'], $item['MaSize']);
             $up->execute();
         }
-
+        $stmtIncrease = $this->conn->prepare("
+            UPDATE sanpham
+            SET SoLuongTong = SoLuongTong + ?
+            WHERE MaSP = ?
+        ");
+        foreach ($items as $item) {
+            $stmtIncrease->bind_param("ii", $item['SoLuongBan'], $item['MaSP']);
+            $stmtIncrease->execute();
+        }
         // Cập nhật trạng thái đơn
         $sql = "UPDATE hoadon SET TrangThai = 3 WHERE MaHD = ?";
         $stmt = $this->conn->prepare($sql);
