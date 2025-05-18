@@ -25,18 +25,18 @@ $limit = $_GET['limit'] ?? 6;
 $productController = new product_Controller();
 switch ($type) {
     case 'filter':
-    $filter = [
-        'keyword' => $_GET['keyword'] ?? null,
-        'categories' => isset($_GET['categories']) ? explode(',', $_GET['categories']) : [],
-        'types' => isset($_GET['types']) ? $_GET['types'] : null,
-        'price' => $_GET['price'] ?? null,
-        'genders' => isset($_GET['genders']) ? explode(',', $_GET['genders']) : [],
-        'sizes' => isset($_GET['sizes']) ? explode(',', $_GET['sizes']) : []
-    ];
+        $filter = [
+            'keyword' => $_GET['keyword'] ?? null,
+            'categories' => isset($_GET['categories']) ? explode(',', $_GET['categories']) : [],
+            'types' => isset($_GET['types']) ? $_GET['types'] : null,
+            'price' => $_GET['price'] ?? null,
+            'genders' => isset($_GET['genders']) ? explode(',', $_GET['genders']) : [],
+            'sizes' => isset($_GET['sizes']) ? explode(',', $_GET['sizes']) : []
+        ];
 
-    $result = $productController->filterProducts($filter, $page, $limit);
-    echo json_encode($result);
-    break;
+        $result = $productController->filterProducts($filter, $page, $limit);
+        echo json_encode($result);
+        break;
     case 'getProductDetail':
         $id = $_GET['id'] ?? 0;
         $result = $productController->getProductDetail($id);
@@ -80,6 +80,13 @@ switch ($type) {
         $paymentMethod = $_POST['thanhtoan'] ?? '';
         $address = $_POST['diachi'] ?? '';
         $phone = $_POST['sdt'] ?? '';
+        $bankNumber = $_POST['bankNumber'] ?? '';
+        $bankName = $_POST['bankName'] ?? '';
+
+        // Kết hợp thông tin thanh toán nếu là chuyển khoản
+        if ($paymentMethod === 'Chuyển khoản' && $bankNumber && $bankName) {
+            $paymentMethod .= " (Ngân hàng: $bankName, Số tài khoản: $bankNumber)";
+        }
 
         try {
             $orderId = $orderController->processOrder($userId, $paymentMethod, $address, $phone);
@@ -105,5 +112,4 @@ switch ($type) {
         echo json_encode(['success' => $result]);
         exit;
         break;
-
 }

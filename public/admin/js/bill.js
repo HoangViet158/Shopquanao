@@ -414,7 +414,7 @@ function getStatusText(status) {
     switch (statusNum) {
         case 0: return "Chưa xác nhận";
         case 1: return "Đã xác nhận";
-        case 2: return "Đã giao thành công";
+        case 2: return "Đang giao hàng";
         case 3: return "Đã hủy";
         default: return "Không xác định";
     }

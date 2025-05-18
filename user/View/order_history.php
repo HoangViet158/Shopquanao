@@ -39,10 +39,20 @@ $detailOrderId = $_GET['detail'] ?? null;
                                 <p><strong>Trạng thái:</strong> 
                                     <?php
                                     switch ($order['TrangThai']) {
-                                        case 1: echo "Chưa thanh toán"; break;
-                                        case 2: echo "Đã thanh toán"; break;
-                                        case 3: echo "Đã hủy"; break;
-                                        default: echo "Không xác định";
+                                        case 0:
+                                            echo '<span class="badge bg-warning text-dark">Đang chờ xác nhận</span>';
+                                            break;
+                                        case 1:
+                                            echo '<span class="badge bg-primary">Đã xác nhận</span>';
+                                            break;
+                                        case 2:
+                                            echo '<span class="badge bg-success">Đang giao hàng</span>';
+                                            break;
+                                        case 3:
+                                            echo '<span class="badge bg-secondary">Đã hủy</span>';
+                                            break;
+                                        default:
+                                            echo '<span class="badge bg-dark">Không xác định</span>';
                                     }
                                     ?>
                                 </p>
@@ -51,7 +61,7 @@ $detailOrderId = $_GET['detail'] ?? null;
                                         <i class="bi bi-eye"></i> Xem chi tiết
                                     </button>
 
-                                    <?php if ($order['TrangThai'] == 1): ?>
+                                    <?php if ($order['TrangThai'] ==0): ?>
                                         <button type="button" class="btn btn-sm btn-danger btn-cancel-order" data-id="<?= $order['MaHD'] ?>">
                                             <i class="bi bi-trash"></i> Hủy đơn
                                         </button>

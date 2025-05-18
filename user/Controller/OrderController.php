@@ -17,6 +17,10 @@ class OrderController
     {
         return $this->model->getUserAddress($userId);
     }
+    public function getUserPhone($userId)
+    {
+        return $this->model->getUserPhone($userId);
+    }
     public function showOrderForm()
     {
         session_start();
@@ -102,4 +106,16 @@ class OrderController
         $result = $this->model->cancelOrder($MaHD, $userId);
         echo $result ? "Hủy đơn hàng thành công!" : "Hủy đơn hàng thất bại!";
     }
+    public function getOrderDetail($orderId, $userId)
+{
+    try {
+        $order = $this->model->getOrderDetail($orderId, $userId);
+        if (!$order) {
+            throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về bạn");
+        }
+        return $order;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
 }
