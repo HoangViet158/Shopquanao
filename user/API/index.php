@@ -84,7 +84,7 @@ switch ($type) {
         $bankName = $_POST['bankName'] ?? '';
 
         // Kết hợp thông tin thanh toán nếu là chuyển khoản
-        if ($paymentMethod === 'Chuyển khoản' && $bankNumber && $bankName) {
+        if ($paymentMethod === 'Thẻ ATM' && $bankNumber && $bankName) {
             $paymentMethod .= " (Ngân hàng: $bankName, Số tài khoản: $bankNumber)";
         }
 

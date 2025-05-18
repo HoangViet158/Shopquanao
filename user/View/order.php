@@ -215,7 +215,7 @@ $userPhone = $orderController->getUserPhone($_SESSION['user']['id']);
         </table>`;
 
             const paymentNote = thanhtoan === 'Thẻ ATM' ?
-                `Thanh toán bằng thẻ ngân hàng (${bankName} - ${bankNumber})` :
+                `Thanh toán bằng thẻ ATM (${bankName} - ${bankNumber})` :
                 `Thanh toán khi nhận hàng`;
 
             const html = `
