@@ -156,7 +156,7 @@ class OrderModel
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
 
-        if (!$result || $result['TrangThai'] != 1) return false;
+        if (!$result || $result['TrangThai'] != 0) return false;
 
         // Lấy chi tiết đơn
         $sql = "SELECT MaSP, MaSize, SoLuongBan FROM cthoadon WHERE MaHD = ?";

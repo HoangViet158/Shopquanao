@@ -1,6 +1,5 @@
 <?php
 include __DIR__ . '/header.php';
-// session_start();
 require_once dirname(__DIR__, 2) . '/config/connect.php';
 
 if (!isset($_SESSION['user'])) {
@@ -15,7 +14,7 @@ $maTK = $_SESSION['user']['id'];
 $maTK = $_SESSION['user']['id'];
 
 // Sửa câu truy vấn để lấy dữ liệu từ cả hai bảng
-$sql = "SELECT t.TenTK, n.Email, n.DiaChi
+$sql = "SELECT t.TenTK, n.Email, n.DiaChi,n.SoDienThoai
         FROM Taikhoan t
         JOIN Nguoidung n ON t.MaTK = n.MaNguoiDung
         WHERE t.MaTK = ?";
@@ -35,11 +34,13 @@ if ($user = $result->fetch_assoc()) {
     $tenNguoiDung = $user['TenTK'] ?? 'Người dùng';
     $email = $user['Email'] ?? 'Chưa có email';
     $diaChi = $user['DiaChi'] ?? 'Chưa có địa chỉ';
+    $soDienThoai = $user['SoDienThoai'] ?? 'Chưa có số điện thoại'; 
 } else {
     // Nếu không tìm thấy người dùng
     $tenNguoiDung = 'Người dùng';
     $email = 'Chưa có email';
     $diaChi = 'Chưa có địa chỉ';
+    $soDienThoai = 'Chưa có số điện thoại';
 }
 
 ?>
@@ -85,6 +86,11 @@ if ($user = $result->fetch_assoc()) {
                         <label for="address" class="form-label">Địa chỉ</label>
                         <input type="text" class="form-control" id="address" name="address"
                             value="<?= htmlspecialchars($diaChi) ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phone" name="phone"
+                            value="<?= htmlspecialchars($soDienThoai) ?>" required>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <a href="index.php" class="btn btn-outline-secondary">Thoát</a>
