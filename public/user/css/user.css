@@ -112,7 +112,7 @@ header h4 {
 }
 
 /* dropdown menu header */
-.dropdown-menu {
+/* .dropdown-menu {
             max-height: 300px;
             overflow-y: auto;
         }
@@ -147,7 +147,7 @@ header h4 {
         .icons i {
             font-size: 1.2rem;
             cursor: pointer;
-        }
+        } */
 /*end  dropdown menu */
 .user-info-dropdown {
   position: relative;
@@ -279,4 +279,31 @@ input[readonly] {
     border: 1px solid #ccc;     /* Viền xám nhẹ */
     cursor: not-allowed;        /* Con trỏ hiển thị không cho tương tác */
     color: #555;                /* Màu chữ tối hơn nhẹ */
+}
+
+.confirm-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 9999; /* Đảm bảo nằm trên mọi phần tử khác */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-dialog {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+    max-width: 300px;
+}
+
+.confirm-dialog button {
+    margin: 10px 5px 0;
+    min-width: 80px;
 }

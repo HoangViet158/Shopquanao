@@ -174,7 +174,6 @@ $(document).ready(function() {
         const maSP = product.MaSP;
         const maSize = document.getElementById('size-select').value;
         const soLuong = parseInt(document.querySelector('input[type="number"]').value);
-        console.log(product)
 
         if (!maSize) {
         alert('Vui lòng chọn kích cỡ!');
@@ -190,6 +189,7 @@ $(document).ready(function() {
             'maSize' : maSize,
             'soluong' : soLuong
         }
+        console.log(data)
         const res = await fetch('../../user/API/index.php?type=addCart', {
             method : 'POST',
             headers : {
@@ -199,8 +199,8 @@ $(document).ready(function() {
             credentials: 'include' // đảm bảo session vẫn hoạt động
         })
         if (!res.ok) throw new Error('lỗi')
-        const result = await res.json();
-        console.log(result)
+        const result     = await res.json();
+        // console.log(result)
         if (result.success){
             alert('Thêm giỏ hàng thành công!');
         } else {

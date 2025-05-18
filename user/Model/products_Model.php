@@ -19,6 +19,7 @@ class products_Model
             FROM sanpham sp
             LEFT JOIN danhmuc dm ON sp.MaDM = dm.MaDM
             LEFT JOIN khuyenmai km ON sp.MaKM = km.MaKM
+            left join phanloai pl on sp.MaPL = pl.MaPL
             WHERE sp.TrangThai = 1";
 
         // Câu SQL đếm tổng
@@ -86,16 +87,42 @@ class products_Model
 
         // --- Filter danh mục ---
         if (!empty($filter['categories'])) {
-            $in = implode(',', array_fill(0, count($filter['categories']), '?'));
-            $sql .= " AND sp.MaDM IN ($in)";
-            $countSql .= " AND sp.MaDM IN ($in)";
-            foreach ($filter['categories'] as $cat) {
-                $params[] = $cat;
-                $countParams[] = $cat;
+            // Chuyển categories thành mảng nếu chưa phải
+            $categoriesArray = is_array($filter['categories']) ? $filter['categories'] : explode(',', $filter['categories']);
+            
+            if (!empty($categoriesArray)) {
+                $placeholders = implode(',', array_fill(0, count($categoriesArray), '?'));
+                $sql .= " AND sp.MaDM IN ($placeholders)";
+                $countSql .= " AND sp.MaDM IN ($placeholders)";
+                
+                foreach ($categoriesArray as $category) {
+                    $params[] = $category;
+                    $countParams[] = $category;
+                    $types .= "i";
+                    $countTypes .= "i";
+                }
+            }
+        }
+
+        // --- Filter phân loại ---
+        if (!empty($filter['types'])) {
+        // Chuyển types thành mảng nếu chưa phải
+        $typesArray = is_array($filter['types']) ? $filter['types'] : explode(',', $filter['types']);
+        
+        if (!empty($typesArray)) {
+            $placeholders = implode(',', array_fill(0, count($typesArray), '?'));
+            $sql .= " AND sp.MaPL IN ($placeholders)";
+            $countSql .= " AND sp.MaPL IN ($placeholders)";
+            
+            foreach ($typesArray as $type) {
+                $params[] = $type;
+                $countParams[] = $type;
                 $types .= "i";
                 $countTypes .= "i";
             }
         }
+    }
+
 
         // --- Filter giới tính ---
         if (!empty($filter['genders'])) {
@@ -204,24 +231,24 @@ class products_Model
         return null;
     }
     public function getProductSizes($MaSP)
-{
-    $sql = "SELECT s.TenSize, size_sanpham.*
+    {
+        $sql = "SELECT s.TenSize, size_sanpham.*
             FROM size_sanpham
             JOIN size s ON size_sanpham.MaSize = s.MaSize
             WHERE size_sanpham.MaSP = ?";
 
-    $stmt = $this->database->prepare($sql);
-    $stmt->bind_param("i", $MaSP);
-    $stmt->execute();
-    $result = $stmt->get_result();
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $MaSP);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    $sizes = array();
-    while ($row = $result->fetch_assoc()) {
-        $sizes[] = $row;
+        $sizes = array();
+        while ($row = $result->fetch_assoc()) {
+            $sizes[] = $row;
+        }
+
+        return $sizes;
     }
-
-    return $sizes;
-}
 
     public function getProductImages($MaSP)
     {

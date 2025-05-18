@@ -24,6 +24,7 @@ $statisticConTroller = new statistic_Controller();
 $userController = new user_Controller();
 $permissionController = new permission_Controller();
 $authController = new auth_Controller();
+
 $MaKM = isset($_POST['MaKM']) && $_POST['MaKM'] !== "" ? $_POST['MaKM'] : null;
 switch ($type) {
     case 'getAllProducts':
@@ -41,6 +42,7 @@ switch ($type) {
             $productData = [
                 'TenSP' => trim($_POST['TenSP']),
                 'MaDM' => (int)$_POST['MaDM'],
+                'MaPL' => (int)$_POST['MaPL'],
                 'MaKM' => $MaKM,
                 'GioiTinh' => (int)$_POST['GioiTinh'],
                 'MoTa' => trim($_POST['MoTa']),
@@ -50,6 +52,7 @@ switch ($type) {
             $maSP = $productController->AddProducts(
                 $productData['MaKM'],
                 $productData['MaDM'],
+                $productData['MaPL'],
                 $productData['TenSP'],
                 $productData['MoTa'],
                 $productData['GioiTinh']
@@ -146,6 +149,7 @@ switch ($type) {
         $productData = [
             'TenSP' => $_POST['TenSP'],
             'MaDM' => $_POST['MaDM'],
+            'MaPL' => $_POST['MaPL'],
             'MaKM' => ($_POST['MaKM'] === 'null') ? NULL : $_POST['MaKM'],
             'GioiTinh' => $_POST['GioiTinh'],
             'MoTa' => $_POST['MoTa']
@@ -193,7 +197,7 @@ switch ($type) {
             $result = $productController->deleteProduct($productId);
             echo json_encode([
                 'success' => $result,
-                'message' => $result ? 'Xóa thành công' : 'Xóa thất bại'
+               
             ]);
         } else {
             echo json_encode([
@@ -553,15 +557,15 @@ switch ($type) {
         $email = isset($data['email']) ? $data['email'] : "";
         $matkhau = isset($data['password']) ? $data['password'] : "";
 
-        $result = $authController->loginValidate($email,$matkhau);
-        if($result){
+        $result = $authController->loginValidate($email, $matkhau);
+        if ($result) {
             session_start();
             $_SESSION['user'] = [
                 'id' => $result['MaNguoiDung'],
                 'username' => $result['TenTK'],
                 'email' => $result['Email'],
                 'permission' => $result['MaQuyen']
-        ]; 
+            ];
         }
         echo json_encode($result);
         break;
@@ -619,4 +623,20 @@ switch ($type) {
             echo json_encode(["success" => false]);
             break;
         }
+    case 'getProductsByType':
+        $id = $_GET['id'] ?? 0;
+        $result = $productController->getProductsByType($id);
+        echo json_encode($result);
+        break;
+
+    case 'getProductImage':
+        $id = $_GET['id'] ?? 0;
+        $result = $productController->getProductImages($id);
+        echo json_encode($result);
+        break;
+    case 'getAllTypeByCategory':
+        $id = $_GET['id'] ?? 0;
+        $result = $categoryController->getAllTypeByCategory($id);
+        echo json_encode($result);
+        break;
 }

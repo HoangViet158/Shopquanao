@@ -8,7 +8,7 @@ $(document).on('click', '.xoa-sp', function(e) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
     
     $.ajax({
-        url: '/Shopquanao/user/API/index.php?type=deleteCartItem',
+        url: '../../user/API/index.php?type=deleteCartItem',
         method: 'POST',
         data: {
             maSP: maSP,
@@ -32,7 +32,7 @@ $(document).on('click', '.xoa-sp', function(e) {
 });
 
     $(document).on('click', '#dat-hang', function() {
-        window.location.href = '/Shopquanao/user/View/order.php';
+        window.location.href = '../../user/View/order.php';
     })
 // Xử lý cập nhật số lượng
 $(document).on('change', 'input[type="number"]', function() {
@@ -42,7 +42,7 @@ $(document).on('change', 'input[type="number"]', function() {
     const soLuong = $(this).val();
     
     $.ajax({
-        url: '/Shopquanao/user/API/index.php?type=updateCartItem',
+        url: '../../user/API/index.php?type=updateCartItem',
         method: 'POST',
         data: {
             maSP: maSP,

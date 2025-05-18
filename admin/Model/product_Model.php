@@ -25,6 +25,7 @@ class product_Model
         $sql = "SELECT * FROM sanpham 
                 LEFT JOIN khuyenmai ON sanpham.MaKM = khuyenmai.MaKM
                 LEFT JOIN danhmuc ON sanpham.MaDM = danhmuc.MaDM
+                LEFT JOIN phanloai ON sanpham.MaPL = phanloai.MaPL
                 WHERE sanpham.TrangThai = 1
                 LIMIT $perPage OFFSET $offset";
 
@@ -59,7 +60,10 @@ class product_Model
                     'MaDM' => $row['MaDM'],
                     'TenDM' => $row['TenDM'] ?? 'Không có',
                 );
-
+                $phanloai = array(
+                    'MaPL' => $row['MaPL'],
+                    'TenPL' => $row['TenPL'] ?? 'Không có',
+                );
                 $data['products'][] = array(
                     'MaSP' => $row['MaSP'],
                     'TenSP' => $row['TenSP'],
@@ -68,6 +72,7 @@ class product_Model
                     'SoLuong' => $row['SoLuongTong'],
                     'GioiTinh' => $row['GioiTinh'],
                     'DanhMuc' => $danhmuc,
+                    'PhanLoai' => $phanloai,
                     'KhuyenMai' => $khuyenmai,
                     'Anh' => $anh
                 );
@@ -86,7 +91,7 @@ class product_Model
     //     $result=$this->database->execute($sql);
     //     return $result;
     // }
-    public function AddProducts($MaKM, $MaDM, $tenSP, $Mota, $GioiTinh)
+    public function AddProducts($MaKM, $MaDM, $MaPL, $tenSP, $Mota, $GioiTinh)
     {
         $giaBan = 0;
         $soLuongTong = 0;
@@ -97,29 +102,13 @@ class product_Model
 
         if ($MaKM === NULL) {
             $sql = "INSERT INTO sanpham 
-                    (MaDM, TenSP, MoTa, GiaBan, TrangThai, NgayTao, SoLuongTong, GioiTinh) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $this->database->prepare($sql);
-            $stmt->bind_param(
-                "issiisii",
-                $MaDM,
-                $tenSP,
-                $Mota,
-                $giaBan,
-                $trangThai,
-                $ngayTao,
-                $soLuongTong,
-                $GioiTinh
-            );
-        } else {
-            $sql = "INSERT INTO sanpham 
-                    (MaKM, MaDM, TenSP, MoTa, GiaBan, TrangThai, NgayTao, SoLuongTong, GioiTinh) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    (MaDM,MaPL, TenSP, MoTa, GiaBan, TrangThai, NgayTao, SoLuongTong, GioiTinh) 
+                    VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->database->prepare($sql);
             $stmt->bind_param(
                 "iissiisii",
-                $MaKM,
                 $MaDM,
+                $MaPL,
                 $tenSP,
                 $Mota,
                 $giaBan,
@@ -129,7 +118,6 @@ class product_Model
                 $GioiTinh
             );
         }
-
         $result = $stmt->execute();
         $lastInsertId = $this->database->getInsertId();
         $stmt->close();
@@ -188,18 +176,18 @@ class product_Model
         return $images;
     }
 
-    public function updateProductInfo($MaSP, $TenSP, $MaDM, $GioiTinh, $MoTa)
+    public function updateProductInfo($MaSP, $TenSP, $MaDM, $MaPL, $GioiTinh, $MoTa)
     {
         $sql = "UPDATE sanpham SET 
                 TenSP = ?, 
                 MaDM = ?, 
-                
+                MaPL = ?,
                 GioiTinh = ?, 
                 MoTa = ?
                 WHERE MaSP = ?";
 
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param("siisi", $TenSP, $MaDM,  $GioiTinh, $MoTa, $MaSP);
+        $stmt->bind_param("siiisi", $TenSP, $MaDM, $MaPL,  $GioiTinh, $MoTa, $MaSP);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -230,7 +218,7 @@ class product_Model
     }
     public function deleteProduct($maSP)
     {
-        if ($this->checkProductExistInBill($maSP)) {
+        if ($this->checkProductExistInBill($maSP) || $this->checkProductExistInGoodReceipt($maSP)) {
             $sql = "UPDATE sanpham SET TrangThai = 0 WHERE MaSP = ?";
             $stmt = $this->database->prepare($sql);
             $stmt->bind_param("i", $maSP);
@@ -251,9 +239,38 @@ class product_Model
             return $result;
         }
     }
+    public function checkAvailableProduct($maSP)
+    {
+        $sql = "SELECT SoLuongTong FROM sanpham WHERE MaSP = ? AND TrangThai = 1";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $maSP);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['SoLuongTong'] > 0; // Trả về true chỉ nếu số lượng > 0
+        }
+        return false;
+    }
     public function checkProductExistInBill($maSP)
     {
         $sql = "SELECT * FROM cthoadon WHERE MaSP = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $maSP);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        if ($result->num_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function checkProductExistInGoodReceipt($maSP)
+    {
+        $sql = "SELECT * FROM ctphieunhap WHERE MaSP = ?";
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param("i", $maSP);
         $stmt->execute();
@@ -311,5 +328,33 @@ class product_Model
             }
         }
         return $data;
+    }
+    public function getProductsByType($id)
+    {
+        $sql = "SELECT * FROM sanpham WHERE MaPL='$id'";
+        $result = $this->database->execute($sql);
+        $data = array();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = array(
+                    'MaSP' => $row['MaSP'],
+                    'TenSP' => $row['TenSP']
+                );
+            }
+        }
+        return $data;
+    }
+
+    public function getProductImage($id)
+    {
+        $sql = "SELECT HinhAnh FROM sanpham WHERE MaSP='$id'";
+        $result = $this->database->execute($sql);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return array(
+                'HinhAnh' => $row['HinhAnh']
+            );
+        }
+        return null;
     }
 }

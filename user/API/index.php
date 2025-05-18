@@ -28,6 +28,7 @@ switch ($type) {
         $filter = [
             'keyword' => $_GET['keyword'] ?? null,
             'categories' => isset($_GET['categories']) ? explode(',', $_GET['categories']) : [],
+            'types' => isset($_GET['types']) ? $_GET['types'] : null,
             'price' => $_GET['price'] ?? null,
             'genders' => isset($_GET['genders']) ? explode(',', $_GET['genders']) : [],
             'sizes' => isset($_GET['sizes']) ? explode(',', $_GET['sizes']) : []
@@ -79,6 +80,13 @@ switch ($type) {
         $paymentMethod = $_POST['thanhtoan'] ?? '';
         $address = $_POST['diachi'] ?? '';
         $phone = $_POST['sdt'] ?? '';
+        $bankNumber = $_POST['bankNumber'] ?? '';
+        $bankName = $_POST['bankName'] ?? '';
+
+        // Kết hợp thông tin thanh toán nếu là chuyển khoản
+        if ($paymentMethod === 'Chuyển khoản' && $bankNumber && $bankName) {
+            $paymentMethod .= " (Ngân hàng: $bankName, Số tài khoản: $bankNumber)";
+        }
 
         try {
             $orderId = $orderController->processOrder($userId, $paymentMethod, $address, $phone);
@@ -95,14 +103,13 @@ switch ($type) {
         $data = json_decode($json, true);
 
         $userId = $_SESSION['user']['id'] ?? NULL;
-        $productId = isset($data['maSP']) ? $data['maSP'] : NULL;
-        $sizeId = isset($data['maSize']) ? $data['maSize'] : NULL;
-        $amount = isset($data['soluong']) ? $data['soluong'] : 0;
+        $productId = isset($data['maSP']) ? (int)$data['maSP'] : NULL;
+        $sizeId = isset($data['maSize']) ? (int)$data['maSize'] : NULL;
+        $amount = isset($data['soluong']) ? (int)$data['soluong'] : 0;
 
         $result = $Cartcontroller->addCart($userId, $productId, $sizeId, $amount);
         header('Content-Type: application/json');
         echo json_encode(['success' => $result]);
         exit;
         break;
-
 }
