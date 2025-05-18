@@ -1,11 +1,12 @@
 <?php
-include __DIR__ . '/header.php';
-require_once dirname(__DIR__, 2) . '/config/connect.php';
 
+session_start();
 if (!isset($_SESSION['user'])) {
-    header("Location: ../user/view/login.php");
+    header("Location: ../view/login.php");
     exit();
 }
+include __DIR__ . '/header.php';
+require_once dirname(__DIR__, 2) . '/config/connect.php';
 $db = new Database();
 $conn = $db->connection();
 $maTK = $_SESSION['user']['id'];
@@ -61,7 +62,7 @@ if ($user = $result->fetch_assoc()) {
             <!-- Bên trái: menu -->
             <div class="col-md-4">
                 <div class="list-group shadow-sm rounded">
-                    <a href="../Ajax/order_history.php" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
+                    <a href="order_history.php" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
                     <a href="user_info.php" class="list-group-item list-group-item-action text-danger fw-bold">Thông tin tài khoản</a>
                     <a href="change_password.php" class="list-group-item list-group-item-action text-danger fw-bold">Đổi mật khẩu</a>
                     <a href="logout.php" class="list-group-item list-group-item-action text-danger fw-bold">Đăng xuất</a>
@@ -93,7 +94,7 @@ if ($user = $result->fetch_assoc()) {
                             value="<?= htmlspecialchars($soDienThoai) ?>" required>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-4">
-                        <a href="index.php" class="btn btn-outline-secondary">Thoát</a>
+                        <a href="home.php" class="btn btn-outline-secondary">Thoát</a>
                         <button type="submit" class="btn btn-danger">Cập nhật</button>
                     </div>
                 </form>

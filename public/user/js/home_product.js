@@ -36,12 +36,14 @@ function renderProducts(products) {
 
   products.forEach((product, index) => {
     const rawImage = product.Anh.length > 0 ? product.Anh[0] : '';
-    const firstImage = rawImage ? `/Shopquanao${rawImage}` : '/Shopquanao/images/no-image.png';
+    const firstImage = rawImage ? `../..${rawImage}` : '../../images/no-image.png';
 
     const productHtml = `
       <div class="col-3 mb-4">
         <div class="product-item card h-100 text-center">
-          <img src="${firstImage}" class="card-img-top" alt="${product.TenSP}" onerror="this.src='/Shopquanao/images/no-image.png'">
+          <a href="product_detail.php?id=${product.MaSP}">
+              <img src="${firstImage}" class="card-img-top" alt="${product.TenSP}">
+          </a>
           <div class="card-body">
             <div class="product-name font-weight-bold">${product.TenSP}</div>
             <div class="product-desc text-muted">${product.MoTa}</div>
@@ -83,12 +85,14 @@ function loadRandomProducts() {
             let rowHtml = '<div class="row justify-content-center">';
 
             randomProducts.forEach((product, index) => {
-                const imageUrl = product.Anh?.[0] ? `/Shopquanao${product.Anh[0]}` : '/Shopquanao/images/no-image.png';
+                const imageUrl = product.Anh?.[0] ? `../..${product.Anh[0]}` : '../../images/no-image.png';
 
                 const productHtml = `
                     <div class="col-3 mb-4">
                         <div class="product-item card h-100 text-center">
-                            <img src="${imageUrl}" class="card-img-top" alt="${product.TenSP}" onerror="this.src='/web2/images/no-image.png'">
+                          <a href="product_detail.php?id=${product.MaSP}">
+                              <img src="${imageUrl}" class="card-img-top" alt="${product.TenSP}">
+                          </a>
                             <div class="card-body">
                                 <div class="product-name font-weight-bold">${product.TenSP}</div>
                                 <div class="product-desc text-muted">${product.MoTa}</div>

@@ -1,17 +1,20 @@
-<?php include __DIR__ . '/header.php'; ?>
 <?php
+session_start();
 if (!isset($_SESSION['user'])) {
-      $path = $_SERVER['PHP_SELF'];
+    $path = $_SERVER['PHP_SELF'];
     $parts = explode('/', str_replace('\\', '/', $path));
     $index = array_search("user", $parts);        
     $projectFolder = $parts[$index - 1];
-    $fullPath = "/user/View/product.php";
+    $fullPath = "/user/View/login.php";
     $urlPath = "/" . $projectFolder . $fullPath;
-    $succesPath = "/" . $projectFolder . "/user/View/index.php";
+    $succesPath = "/" . $projectFolder . "/user/View/home.php";
     header("Location: " . $urlPath);
+    session_unset();
+    session_destroy();
     exit();
 }
 
+include __DIR__ . '/header.php';
 require_once(__DIR__ . '/../../user/Controller/CartController.php');
 $cartController = new CartController();
 $items = $cartController->getCart($_SESSION['user']['id']);

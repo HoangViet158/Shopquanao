@@ -26,7 +26,7 @@ class OrderController
         @session_start(); // dấu @ sẽ ẩn mọi lỗi phát sinh từ hàm này
 
         if (!isset($_SESSION['user'])) {
-            header("Location: /Shopquanao/user/View/login.php");
+            header("Location: ../View/login.php");
             exit();
         }
 
@@ -82,7 +82,7 @@ class OrderController
 
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
-            header("Location: ./user/view/login.php");
+            header("Location: ../View/login.php");
             exit;
         }
 
@@ -95,7 +95,7 @@ class OrderController
         } else {
             $orders = $this->model->getOrdersByUser($userId);
         }
-        include '../View/order_history.php';
+        include __DIR__ . '/../View/order_history.php';
     }
 
     public function cancelOrder()
