@@ -102,4 +102,13 @@ class OrderController
         $result = $this->model->cancelOrder($MaHD, $userId);
         echo $result ? "Hủy đơn hàng thành công!" : "Hủy đơn hàng thất bại!";
     }
+    
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    require_once __DIR__ . '/OrderController.php';
+    $controller = new OrderController();
+
+    if ($_POST['action'] === 'cancel') {
+        $controller->cancelOrder();
+    }
 }
