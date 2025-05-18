@@ -1,49 +1,4 @@
 <?php
-// include_once './Model/OrderModel.php';
-// session_start();
-
-// class OrderController {
-//     public function showOrderForm() {
-//         if (!isset($_SESSION['id'])) {
-//             header("Location: ./user/view/login.php");
-//             exit();
-//         }
-
-//         $model = new OrderModel();
-//         $diaChi = $model->getDiaChi($_SESSION['id']);
-//         $giohang = $model->getCart($_SESSION['id']);
-
-//         include './View/order.php';
-//     }
-
-//     public function processOrder() {
-//         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_SESSION['MaTK'])) {
-//             $maTK = $_SESSION['id'];
-//             $sdt = $_POST['sdt'] ?? '';
-//             $diachi = $_POST['diachi'] ?? '';
-//             $thanhtoan = $_POST['thanhtoan'] ?? '';
-
-//             $model = new OrderModel();
-//             $giohang = $model->getCart($maTK);
-
-//             if (empty($giohang)) {
-//                 echo "<script>alert('Giỏ hàng trống!'); window.location.href='index.php?page=cart';</script>";
-//                 return;
-//             }
-
-//             $maHD = $model->createHoaDon($maTK, $thanhtoan, $diachi);
-
-//             foreach ($giohang as $item) {
-//                 $model->addCTHoaDon($maHD, $item);
-//             }
-
-//             $model->clearCart($maTK);
-
-//             echo "<script>alert('Đặt hàng thành công!'); window.location.href='index.php?page=cart';</script>";
-//         }
-//     }
-// }
-
 require_once __DIR__ . '/../Model/OrderModel.php';
 
 class OrderController
@@ -113,5 +68,38 @@ class OrderController
 
             throw $e;
         }
+    }
+
+    public function showOrderHistory() {
+        session_start();
+        $userId = $_SESSION['user']['id'];
+        if (!$userId) {
+            header("Location: ./user/view/login.php");
+            exit;
+        }
+
+        $orders = null;
+        $detailOrder = null;
+        $MaHD = $_GET['detail'] ?? null;
+
+        if ($MaHD) {
+            $detailOrder = $this->model->getOrderDetails($MaHD);
+        } else {
+            $orders = $this->model->getOrdersByUser($userId);
+        }
+        include '../View/order_history.php';
+    }
+
+    public function cancelOrder() {
+        $MaHD = $_POST['MaHD'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
+
+        if (!$MaHD || !$userId) {
+            echo "Dữ liệu không hợp lệ!";
+            return;
+        }
+
+        $result = $this->model->cancelOrder($MaHD, $userId);
+        echo $result ? "Hủy đơn hàng thành công!" : "Hủy đơn hàng thất bại!";
     }
 }

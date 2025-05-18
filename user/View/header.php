@@ -228,7 +228,7 @@
                 <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i></a>
                 <?php if (isset($_SESSION['user'])): ?>
                     <div class="user-info-dropdown">
-                        <a href="user_info.php"><i class="fa-solid fa-user"></i></a>
+                        <a href="../view/user_info.php"><i class="fa-solid fa-user"></i></a>
                     </div>
             </div>
             <div class="user-info-form">

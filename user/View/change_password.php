@@ -17,7 +17,7 @@ include __DIR__ . '/header.php';
             <!-- Bên trái: menu -->
             <div class="col-md-4">
                 <div class="list-group shadow-sm rounded">
-                    <a href="#" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
+                    <a href="../Ajax/order_history.php" class="list-group-item list-group-item-action text-danger fw-bold">Quản lí đơn hàng</a>
                     <a href="user_info.php" class="list-group-item list-group-item-action text-danger fw-bold">Thông tin tài khoản</a>
                     <a href="change_password.php" class="list-group-item list-group-item-action text-danger fw-bold">Đổi mật khẩu</a>
                     <a href="logout.php" class="list-group-item list-group-item-action text-danger fw-bold">Đăng xuất</a>

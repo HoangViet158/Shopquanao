@@ -1,67 +1,4 @@
 <?php
-// class OrderModel {
-//     private $conn;
-
-//     public function __construct() {
-//         include_once __DIR__ . '/../../config/connect.php';
-//         $db = new Database();
-//         $this->conn = $db->connection();
-//     }
-
-//     // Lấy giỏ hàng (dùng trong cả CartController và OrderController)
-//     public function getCart($maNguoiDung) {
-//         $stmt = $this->conn->prepare("SELECT g.MaSP, g.MaSize, g.SoLuong, sp.GiaBan AS Gia
-//                                       FROM giohang g
-//                                       JOIN sanpham sp ON g.MaSP = sp.MaSP
-//                                       WHERE g.MaNguoiDung = ?");
-//         $stmt->bind_param("i", $maNguoiDung);
-//         $stmt->execute();
-//         $result = $stmt->get_result();
-//         $items = $result->fetch_all(MYSQLI_ASSOC);
-//         $stmt->close();
-//         return $items;
-//     }
-
-//     // Tạo hóa đơn
-//     public function createHoaDon($maNguoiDung, $thanhToan, $diaChi) {
-//         $stmt = $this->conn->prepare("INSERT INTO hoadon (MaTK, ThoiGian, ThanhToan, MoTa, TrangThai)
-//                                       VALUES (?, NOW(), ?, ?, 1)");
-//         $stmt->bind_param("iss", $maNguoiDung, $thanhToan, $diaChi);
-//         $stmt->execute();
-//         $maHD = $stmt->insert_id;
-//         $stmt->close();
-//         return $maHD;
-//     }
-
-//     // Thêm chi tiết hóa đơn
-//     public function addCTHoaDon($maHD, $item) {
-//         $thanhTien = $item['SoLuong'] * $item['Gia'];
-//         $stmt = $this->conn->prepare("INSERT INTO cthoadon (MaHD, MaSP, SoLuongBan, DonGia, ThanhTien, MaSize)
-//                                       VALUES (?, ?, ?, ?, ?, ?)");
-//         $stmt->bind_param("iiiddi", $maHD, $item['MaSP'], $item['SoLuong'], $item['Gia'], $thanhTien, $item['MaSize']);
-//         $stmt->execute();
-//         $stmt->close();
-//     }
-
-//     // Xóa giỏ hàng
-//     public function clearCart($maNguoiDung) {
-//         $stmt = $this->conn->prepare("DELETE FROM giohang WHERE MaNguoiDung = ?");
-//         $stmt->bind_param("i", $maNguoiDung);
-//         $stmt->execute();
-//         $stmt->close();
-//     }
-
-//     // Lấy địa chỉ người dùng (nếu bạn cần)
-//     public function getDiaChi($maTK) {
-//         $stmt = $this->conn->prepare("SELECT DiaChi FROM taikhoan WHERE MaTK = ?");
-//         $stmt->bind_param("i", $maTK);
-//         $stmt->execute();
-//         $result = $stmt->get_result();
-//         $row = $result->fetch_assoc();
-//         $stmt->close();
-//         return $row ? $row['DiaChi'] : '';
-//     }
-// }
 
 require_once __DIR__ . '/../../config/connect.php';
 
@@ -175,33 +112,56 @@ class OrderModel
         $result = $stmt->get_result()->fetch_assoc();
         return $result ? $result['SoLuong'] >= $soluong : false;
     }
-    // public function getUserId($userId)
-    // {
-    //     $stmt = $this->conn->prepare("SELECT MaNguoiDung FROM nguoidung WHERE MaTK = ?");
-    //     $stmt->bind_param("i", $userId);
-    //     $stmt->execute();
-    //     $result = $stmt->get_result()->fetch_assoc();
-    //     return $result ? $result['MaNguoiDung'] : null;
-    // }
-    // public function getMaSPByUserId($userId)
-    // {
-    //     $stmt = $this->conn->prepare("SELECT MaSP FROM giohang WHERE MaNguoiDung = ?");
-    //     $stmt->bind_param("i", $userId);
-    //     $stmt->execute();
-    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    // }
-    // public function getMaSizeByUserId($userId)
-    // {
-    //     $stmt = $this->conn->prepare("SELECT MaSize FROM giohang WHERE MaNguoiDung = ?");
-    //     $stmt->bind_param("i", $userId);
-    //     $stmt->execute();
-    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    // }
-    // public function getAmountByUserId($userId)
-    // {
-    //     $stmt = $this->conn->prepare("SELECT SoLuong FROM giohang WHERE MaNguoiDung = ?");
-    //     $stmt->bind_param("i", $userId);
-    //     $stmt->execute();
-    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    // }
+    public function getOrdersByUser($userId) {
+        $sql = "SELECT * FROM hoadon WHERE MaTK = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+    }
+
+    public function getOrderDetails($maHD) {
+        $sql = "SELECT cthd.*, sp.TenSP, sz.TenSize 
+                FROM cthoadon cthd 
+                JOIN sanpham sp ON cthd.MaSP = sp.MaSP
+                JOIN size sz ON cthd.MaSize = sz.MaSize
+                WHERE MaHD = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $maHD);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function cancelOrder($maHD, $userId) {
+        // Kiểm tra trạng thái đơn hàng
+        $sql = "SELECT TrangThai FROM hoadon WHERE MaHD = ? AND MaTK = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $maHD, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+
+        if (!$result || $result['TrangThai'] != 1) return false;
+
+        // Lấy chi tiết đơn
+        $sql = "SELECT MaSP, MaSize, SoLuongBan FROM cthoadon WHERE MaHD = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $maHD);
+        $stmt->execute();
+        $items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        // Tăng tồn kho lại
+        foreach ($items as $item) {
+            $sql = "UPDATE size_sanpham SET SoLuong = SoLuong + ? WHERE MaSP = ? AND MaSize = ?";
+            $up = $this->conn->prepare($sql);
+            $up->bind_param("iii", $item['SoLuongBan'], $item['MaSP'], $item['MaSize']);
+            $up->execute();
+        }
+
+        // Cập nhật trạng thái đơn
+        $sql = "UPDATE hoadon SET TrangThai = 3 WHERE MaHD = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $maHD);
+        return $stmt->execute();
+    }
 }
