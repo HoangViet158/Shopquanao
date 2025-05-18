@@ -38,35 +38,30 @@ require_once 'header.php'
             <img class="top-banner img-fluid" src="../../upload/products/slide1.jpg" alt="">
             
 
-            <!--Danh muc -->
+            <!--Danh muc 
             <div class="product-catalog">
                 <div class="catalog-header">
                     <h2 class="section-title">DANH MỤC SẢN PHẨM</h2>
                     <div class="catalog-buttons">
-                        <?php if (!empty($categories)) : ?>
-                            <?php foreach ($categories as $category) : ?>
-                                <button class="category-btn">
-                                    <?= htmlspecialchars($category['TenDM']) ?>
-                                </button>
-                            <?php endforeach; ?>
-                        <?php else : ?>
-                            <p>Không có dữ liệu</p>
-                        <?php endif; ?>
+                        
                     </div>
                 </div>
             </div>
-
+                        -->
 
 
             <!--All products-->
             <div class="all-products">
                 <h2 class="section-title">TẤT CẢ SẢN PHẨM</h2>
-                <div class="section-products">
-                <!-- Sản phẩm sẽ được chèn ở đây -->
-                </div>
+                <div class=" mt-4 container">
+                        <div class="section-products">
+                            <!-- sản phẩm ở đây -->
+                        </div>
+                    </div>
 
-                <div class="view-more-container">
-                    <a href="product.php" class="view-more-button">Xem thêm</a>
+                    <div class="view-more-container">
+                        <a href="product.php" class="view-more-button">Xem thêm</a>
+                    </div>  
                 </div>
 
             </div>
@@ -74,19 +69,17 @@ require_once 'header.php'
 
             <!--San pham ban chay -->
             <div class="best-selling-product">
-                <div class="top-section">
-                    <h2 class="section-title">SẢN PHẨM BÁN CHẠY</h2>
-                </div>
-                <div class="product-box">
+                <h2 class="section-title">SẢN PHẨM BÁN CHẠY</h2>
+                <div class=" mt-4 container">
                     <div class="product-grid"></div>
                 </div>
+                <div class="view-more-container">
+                        <a href="product.php" class="view-more-button">Xem thêm</a>
+                    </div>
+                </div>
+
             </div>
 
-            
-
-           
-        </section>
-        
 
         <footer class="footer-container">
                 <div class="footer-left">
@@ -98,18 +91,19 @@ require_once 'header.php'
                     </div>
                 </div>
                 <div class="footer-center">
-                    <p>Đường An Dương Vương, Quận 5, TP. HCM</p>
-                    <p>0909096407</p>
-                    <p>dt@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Đường An Dương Vương, Quận 5, TP. HCM</p>
+                    <p><i class="fas fa-phone"></i> 0909096407</p>
+                    <p><i class="fas fa-envelope"></i> dt@gmail.com</p>
                 </div>
                 <div class="footer-right">
                     <ul>
-                        <li><a href="#">Điều khoản sử dụng</a></li>
-                        <li><a href="#">Chính sách bảo mật</a></li>
-                        <li><a href="#">Trả hàng đổi</a></li>
-                        <li><a href="#">Chính sách vận chuyển</a></li>
-                        <li><a href="#">Chăm sóc khách hàng</a></li>
+                        <li><i class="fas fa-file-contract"></i> <a href="#">Điều khoản sử dụng</a></li>
+                        <li><i class="fas fa-shield-alt"></i> <a href="#">Chính sách bảo mật</a></li>
+                        <li><i class="fas fa-exchange-alt"></i> <a href="#">Trả đổi hàng</a></li>
+                        <li><i class="fas fa-truck"></i> <a href="#">Chính sách vận chuyển</a></li>
+                        <li><i class="fas fa-headset"></i> <a href="#">Chăm sóc khách hàng</a></li>
                     </ul>
+
                 </div>
 
         </footer> 
@@ -117,7 +111,6 @@ require_once 'header.php'
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../../public/user/js/products.js"></script>
     <script src="../../public/user/js/home_product.js"></script>
-
 
 
 </body>

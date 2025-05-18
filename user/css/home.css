@@ -69,11 +69,6 @@ body {
     margin-bottom: 50px;
 }
 
-.section-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
 
 /* Product card (áp dụng cho js render) */
 .product-card {
@@ -142,57 +137,88 @@ body {
 
 .product-box {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, 1fr); /* Luôn hiển thị đúng 4 sản phẩm */
     gap: 20px;
-}
+} 
 
-/* Footer */
+/* Footer tổng thể */
 .footer-container {
-    background-color: #333;
-    color: #fff;
-    padding: 30px 20px;
+    background-color: black;
+    color: white;
+    padding: 40px 20px;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
-.footer-container h3 {
+/* Căn chỉnh các phần của footer */
+.footer-left,
+.footer-center,
+.footer-right {
+    flex: 1;
+    padding: 10px;
+}
+
+/* Làm nổi bật phần thương hiệu */
+.footer-left h3 {
+    font-size: 50px;
+    font-weight: bold;
     margin-bottom: 15px;
 }
 
+/* Các icon mạng xã hội */
 .footer-section a {
     color: white;
-    font-size: 20px;
-    margin-right: 12px;
-    transition: color 0.3s;
+    font-size: 16px;
+    margin: 0 10px;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .footer-section a:hover {
-    color: #dc3545;
+    color: #ff4081;
+    transform: scale(1.2);
 }
 
+/* Căn giữa nội dung ở phần trung tâm */
 .footer-center p {
-    margin-bottom: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-
+.footer-center i {
+    color: #ff4081; 
+    font-size: 18px;
+}
+/* Điều chỉnh danh sách liên kết */
 .footer-right ul {
     list-style: none;
+    padding: 0;
 }
 
-.footer-right li {
-    margin-bottom: 8px;
+.footer-right ul li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
 }
 
-.footer-right a {
+.footer-right ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.footer-right ul li i {
+    color: white;
+    font-size: 18px;
+}
+.footer-right ul li a {
     color: white;
     text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-right a:hover {
-    color: #dc3545;
+    font-size: 16px;
+    transition: color 0.3s ease;
 }
 
 /* Responsive */
@@ -203,7 +229,7 @@ body {
         gap: 20px;
     }
 
-    .section-products, .product-box {
+    .section-products, .product-grid {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     }
 
