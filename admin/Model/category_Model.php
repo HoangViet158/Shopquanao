@@ -21,4 +21,18 @@ class category_Model{
         }
         return $data;
     }
+    public function getAllTypeByCategory($id){
+        $sql= "select * from phanloai where  MaDM='$id'";
+        $result=$this->database->execute($sql);
+        $data=array();
+        if($result->num_rows>0){
+            while($row=$result->fetch_assoc()){
+                $data[]=array(
+                    'MaPL' => $row['MaPL'],
+                    'TenPL' =>$row['TenPL']
+                );
+            }
+        }
+        return $data;
+    }
 }

@@ -148,10 +148,15 @@ function filterBills() {
 
     // Validate
     if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
-        alert('Ngày bắt đầu phải nhỏ hơn ngày kết thúc');
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Ngày bắt đầu không thể lớn hơn ngày kết thúc',
+            confirmButtonText: 'Đã hiểu'
+        });
         return;
     }
-
+    
     // Tạo object filter
     const filters = {};
     if (status !== '') filters.status = status;
@@ -273,7 +278,12 @@ function updateBillStatus(billId) {
         dataType: 'json',
         success: (bill) => {
             if ([2, 3].includes(parseInt(bill[0].TrangThai))) {
-                alert('Không thể chỉnh sửa hóa đơn đã giao thành công hoặc đã hủy');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể cập nhật!',
+                    text: 'Hóa đơn đã kết thúc, không thể cập nhật trạng thái!',
+                    confirmButtonText: 'Đã hiểu'
+                });
                 return;
             }
             console.log(bill[0].TrangThai)
@@ -292,7 +302,12 @@ function confirmUpdateStatus() {
     const billId = $('#updateBillId').text();
     const newStatus = $('#newStatus').val();
     if ([2, 3].includes(parseInt($('#currentStatus').data('status')))) {
-        alert('Không thể cập nhật hóa đơn đã kết thúc');
+        Swal.fire({
+            icon: 'error',
+            title: 'Không thể cập nhật!',
+            text: 'Hóa đơn đã kết thúc, không thể cập nhật trạng thái!',
+            confirmButtonText: 'Đã hiểu'
+        });
         return;
     }
     $.ajax({

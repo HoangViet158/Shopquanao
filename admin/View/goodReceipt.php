@@ -1,5 +1,7 @@
 <?php require_once "sidebar.php"
+    
 ?>
+
 <div id="statistic-content" class="content-container">
     <div class="Mange_client">
         <h3> Chi tiết phiếu nhập </h3>

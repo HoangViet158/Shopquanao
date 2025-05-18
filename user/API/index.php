@@ -25,17 +25,18 @@ $limit = $_GET['limit'] ?? 6;
 $productController = new product_Controller();
 switch ($type) {
     case 'filter':
-        $filter = [
-            'keyword' => $_GET['keyword'] ?? null,
-            'categories' => isset($_GET['categories']) ? explode(',', $_GET['categories']) : [],
-            'price' => $_GET['price'] ?? null,
-            'genders' => isset($_GET['genders']) ? explode(',', $_GET['genders']) : [],
-            'sizes' => isset($_GET['sizes']) ? explode(',', $_GET['sizes']) : []
-        ];
+    $filter = [
+        'keyword' => $_GET['keyword'] ?? null,
+        'categories' => isset($_GET['categories']) ? explode(',', $_GET['categories']) : [],
+        'types' => isset($_GET['types']) ? $_GET['types'] : null,
+        'price' => $_GET['price'] ?? null,
+        'genders' => isset($_GET['genders']) ? explode(',', $_GET['genders']) : [],
+        'sizes' => isset($_GET['sizes']) ? explode(',', $_GET['sizes']) : []
+    ];
 
-        $result = $productController->filterProducts($filter, $page, $limit);
-        echo json_encode($result);
-        break;
+    $result = $productController->filterProducts($filter, $page, $limit);
+    echo json_encode($result);
+    break;
     case 'getProductDetail':
         $id = $_GET['id'] ?? 0;
         $result = $productController->getProductDetail($id);

@@ -18,9 +18,9 @@ class product_Controller
 
         return $this->product_model->getAllProducts($page, $perPage);
     }
-    public function AddProducts($MaKM, $MaDM, $tenSP, $Mota, $GioiTinh)
+    public function AddProducts($MaKM, $MaDM, $MaPL, $tenSP, $Mota, $GioiTinh)
     {
-        return $this->product_model->AddProducts($MaKM, $MaDM, $tenSP, $Mota, $GioiTinh);
+        return $this->product_model->AddProducts($MaKM, $MaDM, $MaPL, $tenSP, $Mota, $GioiTinh);
     }
     public function addProductImage($maSP, $Url)
     {
@@ -36,7 +36,7 @@ class product_Controller
             $MaSP,
             $productData['TenSP'],
             $productData['MaDM'],
-            // $productData['MaKM'],
+            $productData['MaPL'],
             $productData['GioiTinh'],
             $productData['MoTa']
         );
@@ -62,10 +62,29 @@ class product_Controller
     }
     public function deleteProduct($MaSP)
     {
-        return $this->product_model->deleteProduct($MaSP);
+        if ($this->product_model->checkAvailableProduct($MaSP)) {
+            return [
+                'success' => false,
+                'message' => 'Không thể xóa sản phẩm này vì số lượng tồn kho lớn hơn 0'
+            ];
+        }
+
+        $result = $this->product_model->deleteProduct($MaSP);
+
+        return $result
+            ? ['success' => true, 'message' => 'Xóa sản phẩm thành công']
+            : ['success' => false, 'message' => 'Xóa sản phẩm thất bại'];
     }
     public function searchByIdOrTenSP($keyword)
     {
         return $this->product_model->searchByIdOrTenSP($keyword);
+    }
+    public function getProductsByType($type)
+    {
+        return $this->product_model->getProductsByType($type);
+    }
+    public function getProductImages($masp)
+    {
+        return $this->product_model->getProductImages($masp);
     }
 }

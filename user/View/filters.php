@@ -4,31 +4,21 @@
     </div>
     <div class="card-body">
         <form id="filter-form">
-            <!-- Loại sản phẩm -->
+            <!-- Danh mục sản phẩm -->
             <div class="mb-3">
-                <h6 class="fw-bold">Loại sản phẩm</h6>
-                <div class="form-check">
-                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-tshirt" value="1">
-                    <label class="form-check-label" for="category-tshirt">Áo thun</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-shirt" value="2">
-                    <label class="form-check-label" for="category-shirt">Áo sơ mi</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-polo" value="3">
-                    <label class="form-check-label" for="category-polo">Quần jean</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-pants" value="4">
-                    <label class="form-check-label" for="category-pants">Quần Short</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input filter-option" type="checkbox" name="category" id="category-jacket" value="5">
-                    <label class="form-check-label" for="category-jacket">Đầm/váy</label>
+                <h6 class="fw-bold">Danh mục</h6>
+                <div id="category-filters">
+                    <!-- Danh mục sẽ được load bằng JavaScript -->
                 </div>
             </div>
 
+            <!-- Phân loại (sẽ hiển thị khi chọn danh mục) -->
+            <div class="mb-3" id="type-filters-container" style="display: none;">
+                <h6 class="fw-bold">Phân loại</h6>
+                <div id="type-filters">
+                    <!-- Phân loại sẽ được load động -->
+                </div>
+            </div>
             <!-- Giá (radio: chỉ chọn 1) -->
             <div class="mb-3">
                 <h6 class="fw-bold">Giá</h6>

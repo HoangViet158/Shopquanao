@@ -10,4 +10,7 @@ class category_Controller{
     public function getAllCategories(){
         return $this->category_Model->getAllCategories();
     }
+    public function getAllTypeByCategory($id){
+        return $this->category_Model->getAllTypeByCategory($id);
+    }
 }

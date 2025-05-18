@@ -112,7 +112,7 @@ header h4 {
 }
 
 /* dropdown menu header */
-.dropdown-menu {
+/* .dropdown-menu {
             max-height: 300px;
             overflow-y: auto;
         }
@@ -147,7 +147,7 @@ header h4 {
         .icons i {
             font-size: 1.2rem;
             cursor: pointer;
-        }
+        } */
 /*end  dropdown menu */
 .user-info-dropdown {
   position: relative;

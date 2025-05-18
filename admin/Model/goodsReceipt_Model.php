@@ -284,22 +284,40 @@ class goodsReceipt_Model
             return 0;
         }
     }
-    // Add this function to the goodsReceipt_Model class
-    public function getDetailedPriceCalculation($MaSP, $profitPercentage)
+    public function getProductByCategoryandType($categoryId, $typeId)
     {
-        $averageCostPrice = $this->getAverageCostPrice($MaSP);
-        $discount = $this->getProductDiscount($MaSP);
-        $currentQuantity = $this->getCurrentQuantity($MaSP);
-        $suggestedPrice = $averageCostPrice * (1 + ($profitPercentage / 100) - ($discount / 100));
-
-        return [
-            'productId' => $MaSP,
-            'averageCostPrice' => $averageCostPrice,
-            'discount' => $discount,
-            'currentQuantity' => $currentQuantity,
-            'profitPercentage' => $profitPercentage,
-            'suggestedPrice' => $suggestedPrice,
-            'calculation' => "$averageCostPrice × (1 + ($profitPercentage/100) - ($discount/100)) = $suggestedPrice"
-        ];
+        $sql = "SELECT * FROM sanpham WHERE MaDM = ? AND MaPL = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("ii", $categoryId, $typeId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = array();
+        $sqlImg = "SELECT * FROM anh WHERE MaSP = ?";
+        $stmtImg = $this->database->prepare($sqlImg);
+        $stmtImg->bind_param("i", $categoryId);
+        $stmtImg->execute();
+        $resultImg = $stmtImg->get_result();
+        $dataImg = array();
+        if ($resultImg->num_rows > 0) {
+            while ($row = $resultImg->fetch_assoc()) {
+                $dataImg[] = array(
+                    'MaSP' => $row['MaSP'],
+                    'Url' => $row['Url'],
+                );
+            }
+        }
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = array(
+                    'MaSP' => $row['MaSP'],
+                    'TenSP' => $row['TenSP'],
+                    'GiaBan' => $row['GiaBan'],
+                    'SoLuongTong' => $row['SoLuongTong'],
+                    'Anh' => $dataImg,
+                );
+            }
+        }
+        
+        return $data;
     }
 }
