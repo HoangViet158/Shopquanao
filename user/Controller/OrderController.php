@@ -95,7 +95,6 @@ class OrderController
         } else {
             $orders = $this->model->getOrdersByUser($userId);
         }
-        include __DIR__ . '/../View/order_history.php';
     }
 
     public function cancelOrder()

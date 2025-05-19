@@ -401,19 +401,33 @@ function addProductRow() {
     })
 
     if (duplicateCount > 1) {
-      newRow.style.border = "2px solid red"
-      const errorDiv = document.createElement("div")
-      errorDiv.className = "alert alert-danger"
-      errorDiv.innerText = "Sản phẩm và size đã tồn tại trong danh sách!"
-      errorDiv.style.marginTop = "10px"
-      errorDiv.style.fontSize = "14px"
-      errorDiv.style.color = "red"
-      errorDiv.style.fontWeight = "bold"
-    
-      calculateSuggestedPrices() // Cập nhật thông báo lỗi
+      newRow.style.border = "2px solid red";
+      // Xóa thông báo lỗi cũ nếu có
+      let oldError = newRow.querySelector(".duplicate-error");
+      if (oldError) oldError.remove();
+      // Thêm thông báo lỗi mới
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "alert alert-danger duplicate-error";
+      errorDiv.innerText = "Sản phẩm và size đã tồn tại trong danh sách!";
+      errorDiv.style.marginTop = "10px";
+      errorDiv.style.fontSize = "14px";
+      errorDiv.style.color = "red";
+      errorDiv.style.fontWeight = "bold";
+      newRow.querySelector("td").appendChild(errorDiv);
+      // Disable các input trong dòng này
+      newRow.querySelectorAll("input, select").forEach(el => {
+      el.disabled = true;
+      });
     } else {
-      newRow.style.border = ""
-      calculateSuggestedPrices()
+      newRow.style.border = "";
+      // Xóa thông báo lỗi nếu hết trùng lặp
+      let oldError = newRow.querySelector(".duplicate-error");
+      if (oldError) oldError.remove();
+      // Enable lại các input
+      newRow.querySelectorAll("input, select, button").forEach(el => {
+      el.disabled = false;
+      });
+      calculateSuggestedPrices();
     }
   }
 
