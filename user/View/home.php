@@ -95,7 +95,7 @@ require_once 'header.php'
                     <p><i class="fas fa-phone"></i> 0909096407</p>
                     <p><i class="fas fa-envelope"></i> dt@gmail.com</p>
                 </div>
-                <div class="footer-right">
+                <div class="footer-right ekfjeiroghrie">
                     <ul>
                         <li><i class="fas fa-file-contract"></i> <a href="#">Điều khoản sử dụng</a></li>
                         <li><i class="fas fa-shield-alt"></i> <a href="#">Chính sách bảo mật</a></li>
