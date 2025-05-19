@@ -399,8 +399,9 @@ switch ($type) {
         $DiaChi  = $data['DiaChi']  ?? '';
         $MaLoai  = (int)($data['MaLoai'] ?? 1);
         $MaQuyen = (int)($data['MaQuyen'] ?? 3);
+        $SoDienThoai = $data['SoDienThoai'] ?? "";
 
-        $success = $userController->editUser($MaTK, $TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
+        $success = $userController->editUser($MaTK, $TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
         exit;

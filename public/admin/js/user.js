@@ -20,6 +20,7 @@ async function validateAddUserForm() {
     const matKhau = document.querySelector('input[name="MatKhau"]').value;
     const gmail = document.querySelector('input[name="Email"]').value.trim();
     const address = document.querySelector('input[name="DiaChi"]').value.trim();
+    const phone = document.querySelector('input[name="SoDienThoai"]').value.trim();
 
     if (tenTK === '') {
         Swal.fire({
@@ -51,6 +52,17 @@ async function validateAddUserForm() {
         return false;
     }
 
+    const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/
+
+    if (!phoneRegex.test(phone)){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Cảnh báo!',
+            text: 'Bạn đã nhập sai định dạng số điện thoại',
+            confirmButtonText: 'Đã hiểu'
+          });
+        return
+        }
     const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
     if (!emailRegex.test(gmail)) {
         Swal.fire({
@@ -267,6 +279,7 @@ async function RenderUserList(userlist) {
                         <th>Tên Tài Khoản</th>
                         <th>Địa chỉ</th>
                         <th>Email</th>
+                        <th>Số điện thoại </th>
                         <th>Chức vụ</th>
                         <th>Quyền</th>
                         <th>Ngày tạo</th>
@@ -289,6 +302,7 @@ async function RenderUserList(userlist) {
                     <td>${user.TenTK}</td>
                     <td>${user.DiaChi}</td>
                     <td>${user.Email}</td>
+                    <td>${user.SoDienThoai}</td>
                     <td>${allType[user.MaLoai]}</td>
                     <td>${allPermission[user.MaQuyen]}</td>
                     <td>${user.NgayTaoTK}</td>
@@ -613,6 +627,7 @@ async function openEditUser(id) {
       document.getElementById('editEmail').value   = user.Email;
       document.getElementById('editDiaChi').value  = user.DiaChi;
       document.getElementById('editMaLoai').value  = user.MaLoai;
+      document.getElementById('editSoDienThoai').value = user.SoDienThoai;
     //   document.getElementById('editMaQuyen').value = user.MaQuyen;
       editModal.show();
   
@@ -620,10 +635,14 @@ async function openEditUser(id) {
       console.error(error);
     }
   }
-async function updateUser(e){
-    e.preventDefault();
+async function updateUser(){
+    // e.preventDefault();
     const isValid = await validateEditUserForm(); // ❗ Đợi kết quả async
-    if (!isValid) return;
+    if (!isValid) 
+        {
+            console.log(isValid)
+            return;
+        }
     // if(!validateEditUserForm()){
     //     return;
     // }
@@ -631,7 +650,18 @@ async function updateUser(e){
     const formData = new FormData(editUserForm);
     const data = Object.fromEntries(formData.entries());
     const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
+    const phoneRegex= /^(0[3|5|7|8|9])[0-9]{8}$/;
 
+
+    if (!phoneRegex.test(data.SoDienThoai)){
+       Swal.fire({
+            icon: 'warning',
+            title: 'Cảnh báo!',
+            text: 'Bạn đã nhập sai định dạng số điện thoại',
+            confirmButtonText: 'Đã hiểu'
+          });
+        return
+        } 
     if (!emailRegex.test(data.Email)) {
         Swal.fire({
             icon: 'warning',

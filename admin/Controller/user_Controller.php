@@ -23,7 +23,7 @@ class user_Controller{
         return $this->user_model->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
     }
 
-    public function editUser($MaTK, $TenTK,$MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen) {
+    public function editUser($MaTK, $TenTK,$MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai) {
         if (!empty(trim($MatKhau))) {
             // Có mật khẩu mới: hash và cập nhật
             $hashedPassword = password_hash($MatKhau, PASSWORD_DEFAULT);
@@ -31,7 +31,7 @@ class user_Controller{
             // Không nhập gì → dùng lại mật khẩu cũ từ DB
             $hashedPassword = $this->user_model->getPasswordById($MaTK)['MatKhau'];
         }
-        return $this->user_model->editUser($MaTK, $TenTK, $hashedPassword ,$DiaChi, $Email, $MaLoai, $MaQuyen);
+        return $this->user_model->editUser($MaTK, $TenTK, $hashedPassword ,$DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
     }
 
     public function deleteUser($TrangThai,$MaTK) {
