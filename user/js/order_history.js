@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.querySelectorAll(".btn-view-detail").forEach(btn => {
         btn.addEventListener("click", function () {
             const MaHD = this.getAttribute("data-id");
+            // console.log(MaHD)
             window.location.href = "order_history.php?detail=" + MaHD;
         });
     });

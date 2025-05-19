@@ -58,6 +58,10 @@
                     <input type="text" name="DiaChi" class="form-control" required>
                     </div>
                     <div class="col-sm-6">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" name="SoDienThoai" class="form-control" required>
+                    </div>
+                    <div class="col-sm-6">
                     <label class="form-label">Loại tài khoản</label>
                     <select id="addUserType" name="MaLoai" class="form-select">
                         <!-- <option value="1">Khách hàng</option>
@@ -114,6 +118,10 @@
                     <div class="mb-3 col-sm-6">
                         <label for="editDiaChi" class="form-label">Địa chỉ</label>
                         <input type="text" class="form-control" id="editDiaChi" name="DiaChi">
+                    </div>
+                    <div>
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" name="SoDienThoai" id="editSoDienThoai" class="form-control" required>
                     </div>
                     <div class="mb-3 col-sm-6">
                         <label for="editMaLoai" class="form-label">Mã loại</label>

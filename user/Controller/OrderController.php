@@ -34,6 +34,12 @@ class OrderController
         $address = $this->model->getUserAddress($userId);
         $cartItems = $this->model->getCartItems($userId);
 
+        $information = [
+            'id' => $userId,
+            'address' => $address,
+            'cartItem' => $cartItems
+        ];
+
         require_once __DIR__ . '/../View/order_form.php';
     }
 
@@ -91,9 +97,9 @@ class OrderController
         $MaHD = $_GET['detail'] ?? null;
 
         if ($MaHD) {
-            $detailOrder = $this->model->getOrderDetails($MaHD);
+            return $detailOrder = $this->model->getOrderDetails($MaHD);
         } else {
-            $orders = $this->model->getOrdersByUser($userId);
+            return $orders = $this->model->getOrdersByUser($userId);
         }
     }
 
