@@ -7,6 +7,7 @@ $orders =  $controller->showOrderHistory();
 $detailOrderId = $_GET['detail'] ?? null;
 if ($detailOrderId != null){
     $detailOrder = $controller->getOrderDetail($detailOrderId, $_SESSION['user']['id']);
+    var_dump($detailOrder);
 }
 ?>
 
@@ -93,7 +94,7 @@ if ($detailOrderId != null){
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($detailOrder as $item): ?>
+                            <?php foreach ($detailOrder['items'] as $item): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($item['TenSP']) ?></td>
                                     <td><?= htmlspecialchars($item['TenSize']) ?></td>
