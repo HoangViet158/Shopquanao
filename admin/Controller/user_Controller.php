@@ -19,8 +19,8 @@ class user_Controller{
     public function getTotalUser($search){
         return $this->user_model->getTotalUser($search);
     }
-    public function addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen) {
-        return $this->user_model->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
+    public function addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai) {
+        return $this->user_model->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
     }
 
     public function editUser($MaTK, $TenTK,$MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen) {

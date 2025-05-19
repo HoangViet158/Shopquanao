@@ -358,8 +358,9 @@ switch ($type) {
         $DiaChi  = $data['DiaChi']  ?? '';
         $MaLoai  = (int)($data['MaLoai'] ?? 1);
         $MaQuyen = (int)($data['MaQuyen'] ?? 3);
+        $SoDienThoai = $data['SoDienThoai'] ?? '';
 
-        $success = $userController->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
+        $success = $userController->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
         exit;
