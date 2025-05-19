@@ -23,7 +23,8 @@ class OrderController
     }
     public function showOrderForm()
     {
-        session_start();
+        @session_start(); // dấu @ sẽ ẩn mọi lỗi phát sinh từ hàm này
+
         if (!isset($_SESSION['user'])) {
             header("Location: /Shopquanao/user/View/login.php");
             exit();
@@ -55,16 +56,16 @@ class OrderController
                 throw new Exception("Giỏ hàng trống");
             }
             foreach ($cartItems as $item) {
-            $available = $this->model->checkAmountAvaible(
-                $item['MaSP'], 
-                $item['MaSize'], 
-                $item['SoLuong']
-            );
-            
-            if (!$available) {
-                throw new Exception("Sản phẩm {$item['TenSP']} size {$item['TenSize']} không đủ số lượng trong kho, vui lòng giảm số lượng hoặc chọn sản phẩm khác");
+                $available = $this->model->checkAmountAvaible(
+                    $item['MaSP'],
+                    $item['MaSize'],
+                    $item['SoLuong']
+                );
+
+                if (!$available) {
+                    throw new Exception("Sản phẩm {$item['TenSP']} size {$item['TenSize']} không đủ số lượng trong kho, vui lòng giảm số lượng hoặc chọn sản phẩm khác");
+                }
             }
-        }
             // Create order
             $orderId = $this->model->createOrder($userId, $paymentMethod, $address, $phone);
             return $orderId;
@@ -74,8 +75,11 @@ class OrderController
         }
     }
 
-    public function showOrderHistory() {
-        session_start();
+    public function showOrderHistory()
+    {
+        @session_start(); // dấu @ sẽ ẩn mọi lỗi phát sinh từ hàm này
+
+
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
             header("Location: ./user/view/login.php");
@@ -94,7 +98,8 @@ class OrderController
         include '../View/order_history.php';
     }
 
-    public function cancelOrder() {
+    public function cancelOrder()
+    {
         $MaHD = $_POST['MaHD'] ?? null;
         $userId = $_SESSION['user']['id'] ?? null;
 
@@ -107,15 +112,15 @@ class OrderController
         echo $result ? "Hủy đơn hàng thành công!" : "Hủy đơn hàng thất bại!";
     }
     public function getOrderDetail($orderId, $userId)
-{
-    try {
-        $order = $this->model->getOrderDetail($orderId, $userId);
-        if (!$order) {
-            throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về bạn");
+    {
+        try {
+            $order = $this->model->getOrderDetail($orderId, $userId);
+            if (!$order) {
+                throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về bạn");
+            }
+            return $order;
+        } catch (Exception $e) {
+            throw $e;
         }
-        return $order;
-    } catch (Exception $e) {
-        throw $e;
     }
-}
 }

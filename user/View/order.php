@@ -39,7 +39,7 @@ $userPhone = $orderController->getUserPhone($_SESSION['user']['id']);
                     </div>
 
                     <div class="card-body">
-                        <form id="order-form" action="../../user/API/cart_api.php?type=createOrder" method="POST">
+                        <form id="order-form"  method="POST">
                             <div class="mb-3">
                                 <label for="diachi" class="form-label">Địa chỉ nhận hàng</label>
                                 <input type="text" class="form-control" id="diachi" name="diachi"
@@ -57,12 +57,12 @@ $userPhone = $orderController->getUserPhone($_SESSION['user']['id']);
                                 <label for="thanhtoan" class="form-label">Phương thức thanh toán</label>
                                 <select class="form-select" id="thanhtoan" name="thanhtoan" required>
                                     <option value="Thanh toán khi nhận hàng">Thanh toán khi nhận hàng</option>
-                                    <option value="Chuyển khoản">Chuyển khoản</option>
+                                    <option value="Thẻ ATM">Thẻ ATM</option>
                                 </select>
                             </div>
                             <div id="bank-info" class="mb-3" style="display: none;">
                                 <label for="bankNumber" class="form-label">Số thẻ ngân hàng</label>
-                                <input type="text" class="form-control" id="bankNumber" name="bankNumber" placeholder="Nhập số thẻ">
+                                <input type="text" class="form-control" id="bankNumber" name="bankNumber" placeholder="Nhập số thẻ" >
 
                                 <label for="bankName" class="form-label mt-2">Ngân hàng</label>
                                 <select class="form-select" id="bankName" name="bankName">
@@ -156,7 +156,7 @@ $userPhone = $orderController->getUserPhone($_SESSION['user']['id']);
             });
         });
         $('#thanhtoan').on('change', function() {
-            if ($(this).val() === 'Chuyển khoản') {
+            if ($(this).val() === 'Thẻ ATM') {
                 $('#bank-info').show();
             } else {
                 $('#bank-info').hide();
@@ -214,8 +214,8 @@ $userPhone = $orderController->getUserPhone($_SESSION['user']['id']);
             </tfoot>
         </table>`;
 
-            const paymentNote = thanhtoan === 'Chuyển khoản' ?
-                `Thanh toán bằng thẻ ngân hàng (${bankName} - ${bankNumber})` :
+            const paymentNote = thanhtoan === 'Thẻ ATM' ?
+                `Thanh toán bằng thẻ ATM (${bankName} - ${bankNumber})` :
                 `Thanh toán khi nhận hàng`;
 
             const html = `
@@ -266,7 +266,11 @@ $userPhone = $orderController->getUserPhone($_SESSION['user']['id']);
                     try {
                         const data = typeof response === 'string' ? JSON.parse(response) : response;
                         if (data.success) {
-                            alert('Đặt hàng thành công!');
+                            Swal.fire({
+                                title: 'Đặt hàng thành công!',
+                                text: 'Cảm ơn bạn đã đặt hàng.',
+                                icon: 'success',
+                            });
                             window.location.href = `order_success.php?order_id=${data.order_id}`;
                         } else {
                             alert(data.error || 'Đặt hàng không thành công');
