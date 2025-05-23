@@ -1,0 +1,14 @@
+-------------------Nhóm 4 môn Lập trình Web nâng cao------- 
+-------------------Danh sách người thực hiện:--------------
+3122410412: Nguyễn Khắc Tiệp
+3122410467: Hoàng Quốc Việt
+3121410090: Nguyễn Trọng Chiến
+3120560024:Nguyễn Phú Hào
+
+-------------------Tài khoản trong hệ thống bán quần áo----
+User :
+email : khactiep@gmail.com
+password: 123456
+Admin:
+email:admin@gmail.com
+password: 123456

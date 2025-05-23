@@ -4,7 +4,13 @@ $(document).on('click', '.xoa-sp', function(e) {
     const row = $(this).closest('tr');
     const maSP = row.data('masp');
     const maSize = row.data('masize');
-    
+    if(soLuong < 1) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Số lượng không hợp lệ',
+            text: 'Vui lòng nhập số lượng lớn hơn 0.',
+        });
+    }
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
     
     $.ajax({
@@ -40,7 +46,14 @@ $(document).on('change', 'input[type="number"]', function() {
     const maSP = row.data('masp');
     const maSize = row.data('masize');
     const soLuong = $(this).val();
-    
+    console.log(soLuong);
+    if(soLuong < 1) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Số lượng không hợp lệ',
+            text: 'Vui lòng nhập số lượng lớn hơn 0.',
+        });
+    }
     $.ajax({
         url: '../../user/API/index.php?type=updateCartItem',
         method: 'POST',

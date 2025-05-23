@@ -15,17 +15,19 @@
 
 
 </head>
-<?php 
+<?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
-
+<h3 class="text-center fw-bold mt-5">Admin</h3>
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    
     <div id="log-in">
         <img src="../../upload/products/imgmainlogin.jpg" alt="Hình ảnh">
+
         <div>
-            <h2  class="text-center"> Đăng nhập </h2>
+            <h2 class="text-center"> Đăng nhập </h2>
             <form id="login-form" method="POST">
                 <div class="mb-3">
                     <label for="username" class="form-label">Email</label>
@@ -36,15 +38,16 @@ if (session_status() === PHP_SESSION_NONE) {
                     <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
                 </div>
                 <div>
-                <div class="d-flex justify-content-center align-items-center mb-2">
-                <button type="submit" name="login" class="btn btn-danger "> Đăng nhập </button>
-                </div>
-                <!-- <div class="d-flex justify-content-center align-items-center">
+                    <div class="d-flex justify-content-center align-items-center mb-2">
+                        <button type="submit" name="login" class="btn btn-danger "> Đăng nhập </button>
+                    </div>
+                    <!-- <div class="d-flex justify-content-center align-items-center">
                      Chưa có tài khoản? <a href="register.php" class="text-dark"><strong> Đăng ký </strong></a>
                 </div> -->
-            </div>
+                </div>
         </div>
     </div>
-</body>
-</html>
-<script src="../../public/admin/js/auth.js"></script>
+    </body>
+
+    </html>
+    <script src="../../public/admin/js/auth.js"></script>

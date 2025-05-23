@@ -7,7 +7,7 @@ $orders =  $controller->showOrderHistory();
 $detailOrderId = $_GET['detail'] ?? null;
 if ($detailOrderId != null){
     $detailOrder = $controller->getOrderDetail($detailOrderId, $_SESSION['user']['id']);
-    var_dump($detailOrder);
+    // var_dump($detailOrder);
 }
 ?>
 

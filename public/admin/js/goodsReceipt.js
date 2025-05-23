@@ -256,8 +256,11 @@ function submitGoodReceiptForm() {
         const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
         const importPrice = parseFloat(row.querySelector('.price').value) || 0;
         const subtotal = parseFloat(row.querySelector('.subtotal').value.replace(/,/g, '')) || 0;
-
-        if (!productId || !sizeId || quantity <= 0 || importPrice <= 0) {
+        if (quantity <= 0 || importPrice <= 0) {
+            alert('Vui lòng nhập số lượng và đơn giá dương cho tất cả sản phẩm');
+            return;
+        }
+        if (!productId || !sizeId  || importPrice <= 0) {
             isValid = false;
             return;
         }
@@ -276,7 +279,10 @@ function submitGoodReceiptForm() {
             ThanhTien: subtotal
         });
     });
-
+    if($subtotal === 0){  
+        alert('Vui lòng nhập số lượng và đơn giá dương cho tất cả sản phẩm');
+        return;
+    }
     if (!isValid) {
         alert('Vui lòng điền đầy đủ thông tin cho tất cả sản phẩm');
         return;
@@ -466,6 +472,10 @@ function calculateTotalPayment() {
     }
   })
   document.getElementById("totalPay").value = totalPayment.toLocaleString()
+  if(totalPayment < 0) {
+    alert("Tổng tiền không hợp lệ, không đưoc nhỏ hơn 0");
+    return;
+}
 }
 
 function loadTypeOptions(row) {

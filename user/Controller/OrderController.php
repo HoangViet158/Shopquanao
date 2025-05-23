@@ -62,6 +62,9 @@ class OrderController
                 throw new Exception("Giỏ hàng trống");
             }
             foreach ($cartItems as $item) {
+                if($item['SoLuong'] <= 0){
+                    throw new Exception("Sản phẩm {$item['TenSP']} size {$item['TenSize']} không hợp lệ");
+                }
                 $available = $this->model->checkAmountAvaible(
                     $item['MaSP'],
                     $item['MaSize'],
