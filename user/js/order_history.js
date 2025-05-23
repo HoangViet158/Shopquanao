@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.querySelectorAll(".btn-view-detail").forEach(btn => {
         btn.addEventListener("click", function () {
             const MaHD = this.getAttribute("data-id");
+            // console.log(MaHD)
             window.location.href = "order_history.php?detail=" + MaHD;
         });
     });
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", function () {
             const maHD = this.getAttribute("data-id");
             showConfirmDialog("Bạn có chắc muốn hủy đơn này?", function () {
-                fetch('../Ajax/cancel_order.php', {
+                fetch('../View/cancel_order.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'MaHD=' + maHD

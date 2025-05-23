@@ -148,11 +148,16 @@ class OrderModel
                 FROM cthoadon cthd 
                 JOIN sanpham sp ON cthd.MaSP = sp.MaSP
                 JOIN size sz ON cthd.MaSize = sz.MaSize
-                WHERE MaHD = ?";
+                WHERE cthd.MaHD = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $maHD);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result();
+        $a = [];
+        while ($row = $result->fetch_assoc()){
+            $a[] =  $row;
+        }
+        return $a;
     }
 
     public function cancelOrder($maHD, $userId)

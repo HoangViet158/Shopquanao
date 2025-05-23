@@ -208,7 +208,7 @@ if (session_status() === PHP_SESSION_NONE) {
     </div>
     <div class="title">
         <div class="logo">
-            <img src="../../upload/products/logo-shop-quan-ao-nam-9.jpg" alt="logo">
+            <img src="../../upload/products/logoHeader.png" alt="logo">
         </div>
         <div class="nav-links">
             <a href="home.php">Trang chủ</a>

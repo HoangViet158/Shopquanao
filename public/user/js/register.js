@@ -31,6 +31,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         'Email'  :document.getElementById('email').value,
         'DiaChi': document.getElementById('address').value,
     }
+    const regex = /^[]
   console.log(data)
   try {
     const res = await fetch('../../admin/API/index.php?type=addUser', {

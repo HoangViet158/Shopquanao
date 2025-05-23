@@ -358,8 +358,9 @@ switch ($type) {
         $DiaChi  = $data['DiaChi']  ?? '';
         $MaLoai  = (int)($data['MaLoai'] ?? 1);
         $MaQuyen = (int)($data['MaQuyen'] ?? 3);
+        $SoDienThoai = $data['SoDienThoai'] ?? '';
 
-        $success = $userController->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
+        $success = $userController->addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
         exit;
@@ -398,8 +399,9 @@ switch ($type) {
         $DiaChi  = $data['DiaChi']  ?? '';
         $MaLoai  = (int)($data['MaLoai'] ?? 1);
         $MaQuyen = (int)($data['MaQuyen'] ?? 3);
+        $SoDienThoai = $data['SoDienThoai'] ?? "";
 
-        $success = $userController->editUser($MaTK, $TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen);
+        $success = $userController->editUser($MaTK, $TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai);
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
         exit;
@@ -550,7 +552,7 @@ switch ($type) {
         $data = json_decode(file_get_contents('php://input'), true);
         echo json_encode($goodReceiptController->calculateSuggestedPrices($data));
         break;
-    case 'login':
+    case 'loginUser':
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
 
@@ -559,13 +561,36 @@ switch ($type) {
 
         $result = $authController->loginValidate($email, $matkhau);
         if ($result) {
-            session_start();
-            $_SESSION['user'] = [
-                'id' => $result['MaNguoiDung'],
-                'username' => $result['TenTK'],
-                'email' => $result['Email'],
-                'permission' => $result['MaQuyen']
-            ];
+            if($result['MaQuyen'] == 3){
+                session_start();
+                $_SESSION['user'] = [
+                    'id' => $result['MaNguoiDung'],
+                    'username' => $result['TenTK'],
+                    'email' => $result['Email'],
+                    'permission' => $result['MaQuyen']
+                ];
+            }       
+        }
+        echo json_encode($result);
+        break;
+    case 'loginAdmin':
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        $email = isset($data['email']) ? $data['email'] : "";
+        $matkhau = isset($data['password']) ? $data['password'] : "";
+
+        $result = $authController->loginValidate($email, $matkhau);
+        if ($result) {
+            if($result['MaQuyen'] != 3){
+                session_start();
+                $_SESSION['user'] = [
+                    'id' => $result['MaNguoiDung'],
+                    'username' => $result['TenTK'],
+                    'email' => $result['Email'],
+                    'permission' => $result['MaQuyen']
+                ];
+            }         
         }
         echo json_encode($result);
         break;

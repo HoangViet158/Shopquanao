@@ -9,6 +9,7 @@ class user_model {
         $sql = "SELECT nguoidung.MaNguoiDung, 
                         nguoidung.DiaChi, 
                         nguoidung.Email, 
+                        nguoidung.SoDienThoai,
                         taikhoan.TrangThai,
                         nguoidung.MaLoai,
                         taikhoan.TenTK,
@@ -30,6 +31,7 @@ class user_model {
         $sql = "SELECT nguoidung.MaNguoiDung, 
                         nguoidung.DiaChi, 
                         nguoidung.Email, 
+                        nguoidung.SoDienThoai,
                         taikhoan.TrangThai,
                         nguoidung.MaLoai,
                         taikhoan.TenTK,
@@ -71,18 +73,19 @@ class user_model {
 
     
     // Thêm user
-    public function addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen) {
+    public function addUser($TenTK, $MatKhau, $DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai) {
         $hashedPassword = password_hash($MatKhau, PASSWORD_DEFAULT);
 
-        $stmt = $this->database->connection()->prepare("INSERT INTO taikhoan (MaQuyen, TenTK, MatKhau, NgayTaoTK, TrangThai) VALUES (?, ?, ?, NOW(), 1)");
+        $conn = $this->database->connection();
+        $stmt = $conn->prepare("INSERT INTO taikhoan (MaQuyen, TenTK, MatKhau, NgayTaoTK, TrangThai) VALUES (?, ?, ?, NOW(), 1)");
         $stmt->bind_param('iss', $MaQuyen, $TenTK, $hashedPassword);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            $MaTK = $this->database->connection()->insert_id;
+            $MaTK = $conn->insert_id;
 
-            $stmt2 =  $this->database->connection()->prepare("INSERT INTO nguoidung (MaNguoiDung, DiaChi, Email, TrangThai, MaLoai) VALUES (?, ?, ?, 1, ?)");
-            $stmt2->bind_param('issi', $MaTK, $DiaChi, $Email, $MaLoai);
+            $stmt2 =  $conn->prepare("INSERT INTO nguoidung (MaNguoiDung, DiaChi, Email, SoDienThoai, TrangThai, MaLoai) VALUES (?, ?, ?, ?, 1, ?)");
+            $stmt2->bind_param('isssi', $MaTK, $DiaChi, $Email, $SoDienThoai, $MaLoai);
             $stmt2->execute();
 
             return true;
@@ -91,13 +94,13 @@ class user_model {
     }
 
     // Sửa user
-    public function editUser($MaTK, $TenTK, $MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen) {
+    public function editUser($MaTK, $TenTK, $MatKhau ,$DiaChi, $Email, $MaLoai, $MaQuyen, $SoDienThoai) {
         $stmt =  $this->database->connection()->prepare("UPDATE taikhoan SET TenTK = ?,MatKhau = ?,MaQuyen = ? WHERE MaTK = ?");
         $stmt->bind_param('ssii', $TenTK,$MatKhau ,$MaQuyen, $MaTK);
         $stmt->execute();
 
-        $stmt = $this->database->connection()->prepare("UPDATE nguoidung SET DiaChi = ?, Email = ?, MaLoai = ? WHERE MaNguoiDung = ?");
-        $stmt->bind_param('ssii', $DiaChi, $Email, $MaLoai, $MaTK);
+        $stmt = $this->database->connection()->prepare("UPDATE nguoidung SET DiaChi = ?, Email = ?, SoDienThoai = ?, MaLoai = ? WHERE MaNguoiDung = ?");
+        $stmt->bind_param('sssii', $DiaChi, $Email, $SoDienThoai, $MaLoai, $MaTK);
         $stmt->execute();
 
         return true;

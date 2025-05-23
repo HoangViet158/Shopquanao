@@ -356,6 +356,7 @@ function loadCategoriesAndPromotions() {
   $("#productImage").change(function () {
     const preview = $("#imagePreview")
     const newFiles = Array.from(this.files)
+    console.log(this.files)
     // Cộng dồn ảnh mới vào danh sách cũ
     selectedImages = selectedImages.concat(newFiles)
     preview.empty()

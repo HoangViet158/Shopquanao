@@ -26,13 +26,19 @@ class OrderController
         @session_start(); // dấu @ sẽ ẩn mọi lỗi phát sinh từ hàm này
 
         if (!isset($_SESSION['user'])) {
-            header("Location: /Shopquanao/user/View/login.php");
+            header("Location: ../View/login.php");
             exit();
         }
 
         $userId = $_SESSION['user']['id'];
         $address = $this->model->getUserAddress($userId);
         $cartItems = $this->model->getCartItems($userId);
+
+        $information = [
+            'id' => $userId,
+            'address' => $address,
+            'cartItem' => $cartItems
+        ];
 
         require_once __DIR__ . '/../View/order_form.php';
     }
@@ -56,6 +62,9 @@ class OrderController
                 throw new Exception("Giỏ hàng trống");
             }
             foreach ($cartItems as $item) {
+                if($item['SoLuong'] <= 0){
+                    throw new Exception("Sản phẩm {$item['TenSP']} size {$item['TenSize']} không hợp lệ");
+                }
                 $available = $this->model->checkAmountAvaible(
                     $item['MaSP'],
                     $item['MaSize'],
@@ -82,7 +91,7 @@ class OrderController
 
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
-            header("Location: ./user/view/login.php");
+            header("Location: ../View/login.php");
             exit;
         }
 
@@ -91,11 +100,10 @@ class OrderController
         $MaHD = $_GET['detail'] ?? null;
 
         if ($MaHD) {
-            $detailOrder = $this->model->getOrderDetails($MaHD);
+            return $detailOrder = $this->model->getOrderDetails($MaHD);
         } else {
-            $orders = $this->model->getOrdersByUser($userId);
+            return $orders = $this->model->getOrdersByUser($userId);
         }
-        include '../View/order_history.php';
     }
 
     public function cancelOrder()

@@ -256,8 +256,11 @@ function submitGoodReceiptForm() {
         const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
         const importPrice = parseFloat(row.querySelector('.price').value) || 0;
         const subtotal = parseFloat(row.querySelector('.subtotal').value.replace(/,/g, '')) || 0;
-
-        if (!productId || !sizeId || quantity <= 0 || importPrice <= 0) {
+        if (quantity <= 0 || importPrice <= 0) {
+            alert('Vui lòng nhập số lượng và đơn giá dương cho tất cả sản phẩm');
+            return;
+        }
+        if (!productId || !sizeId  || importPrice <= 0) {
             isValid = false;
             return;
         }
@@ -276,7 +279,10 @@ function submitGoodReceiptForm() {
             ThanhTien: subtotal
         });
     });
-
+    if($subtotal === 0){  
+        alert('Vui lòng nhập số lượng và đơn giá dương cho tất cả sản phẩm');
+        return;
+    }
     if (!isValid) {
         alert('Vui lòng điền đầy đủ thông tin cho tất cả sản phẩm');
         return;
@@ -401,19 +407,33 @@ function addProductRow() {
     })
 
     if (duplicateCount > 1) {
-      newRow.style.border = "2px solid red"
-      const errorDiv = document.createElement("div")
-      errorDiv.className = "alert alert-danger"
-      errorDiv.innerText = "Sản phẩm và size đã tồn tại trong danh sách!"
-      errorDiv.style.marginTop = "10px"
-      errorDiv.style.fontSize = "14px"
-      errorDiv.style.color = "red"
-      errorDiv.style.fontWeight = "bold"
-    
-      calculateSuggestedPrices() // Cập nhật thông báo lỗi
+      newRow.style.border = "2px solid red";
+      // Xóa thông báo lỗi cũ nếu có
+      let oldError = newRow.querySelector(".duplicate-error");
+      if (oldError) oldError.remove();
+      // Thêm thông báo lỗi mới
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "alert alert-danger duplicate-error";
+      errorDiv.innerText = "Sản phẩm và size đã tồn tại trong danh sách!";
+      errorDiv.style.marginTop = "10px";
+      errorDiv.style.fontSize = "14px";
+      errorDiv.style.color = "red";
+      errorDiv.style.fontWeight = "bold";
+      newRow.querySelector("td").appendChild(errorDiv);
+      // Disable các input trong dòng này
+      newRow.querySelectorAll("input, select").forEach(el => {
+      el.disabled = true;
+      });
     } else {
-      newRow.style.border = ""
-      calculateSuggestedPrices()
+      newRow.style.border = "";
+      // Xóa thông báo lỗi nếu hết trùng lặp
+      let oldError = newRow.querySelector(".duplicate-error");
+      if (oldError) oldError.remove();
+      // Enable lại các input
+      newRow.querySelectorAll("input, select, button").forEach(el => {
+      el.disabled = false;
+      });
+      calculateSuggestedPrices();
     }
   }
 
@@ -452,6 +472,10 @@ function calculateTotalPayment() {
     }
   })
   document.getElementById("totalPay").value = totalPayment.toLocaleString()
+  if(totalPayment < 0) {
+    alert("Tổng tiền không hợp lệ, không đưoc nhỏ hơn 0");
+    return;
+}
 }
 
 function loadTypeOptions(row) {

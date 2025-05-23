@@ -4,7 +4,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
     
-    const res = await fetch ('../../admin/API/index.php?type=loginUser', {
+    const res = await fetch ('../../admin/API/index.php?type=loginAdmin', {
         method : 'POST',
         headers : {
             'Content-Type' : 'application/json'
@@ -17,7 +17,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     console.log(user)
 
     if(user){
-        if(user.MaQuyen != 3){
+        if(user.MaQuyen == 3){
             Swal.fire({
             icon: 'warning',
             title: 'Thông báo!',
